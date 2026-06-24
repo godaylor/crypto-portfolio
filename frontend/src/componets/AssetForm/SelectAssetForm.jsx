@@ -2,9 +2,9 @@ import { Select, Space } from 'antd'
 import { useCrypto } from '../../context/CryptoContext'
 
 export default function SelectAssetForm({ setCoin }) {
-  const { crypto } = useCrypto()
+  const { marketCoins } = useCrypto()
   const handleSelectChange = (value) =>
-    value ? setCoin(crypto.find((c) => c.id === value)) : setCoin(null)
+    value ? setCoin(marketCoins.find((c) => c.id === value)) : setCoin(null)
 
   return (
     <Select
@@ -12,7 +12,7 @@ export default function SelectAssetForm({ setCoin }) {
       //   onSelect={handleSelectChange}
       onChange={handleSelectChange}
       placeholder='Select coin'
-      options={crypto.map((coin) => ({
+      options={marketCoins.map((coin) => ({
         label: coin.name,
         value: coin.id,
         icon: coin.icon,

@@ -1,28 +1,32 @@
 import { createContext, useState, useEffect, useContext } from 'react'
-import { fakeFetchCrypto, fetchAssets } from '../api'
+import { fetchUserPortfolio, fakeCurrentPrices } from '../api'
 import { percentDifference } from '../utils'
 
 const CryptoContext = createContext({
-  assets: [],
-  crypto: [],
+  userPortfolio: [],
+  marketCoins: [],
   loading: false,
 })
 
 export function CryptoContextProvider({ children }) {
   const [loading, setLoading] = useState(false)
-  const [crypto, setCrypto] = useState([])
-  const [assets, setAssets] = useState([])
+  const [marketCoins, setMarketCoins] = useState([])
+  const [userPortfolio, setUserPortfolio] = useState([])
 
-  function mapAssets(assets, result) {
-    return assets.map((asset) => {
-      const coin = result.find((c) => c.id === asset.id)
+  function combinePortfolioWithMarket(userPortfolio, marketCoins) {
+    return userPortfolio.map((portfolioCoin) => {
+      const marketCoin = marketCoins.find(
+        (coin) => coin.id === portfolioCoin.id,
+      )
       return {
-        grow: asset.price < coin.price, // boolean
-        growPercent: percentDifference(asset.price, coin.price),
-        totalAmount: asset.amount * coin.price,
-        totalProfit: asset.amount * coin.price - asset.amount * asset.price,
-        name: coin.name,
-        ...asset,
+        grow: portfolioCoin.price < marketCoin.price, // boolean
+        growPercent: percentDifference(portfolioCoin.price, marketCoin.price),
+        totalAmount: portfolioCoin.amount * marketCoin.price,
+        totalProfit:
+          portfolioCoin.amount * marketCoin.price -
+          portfolioCoin.amount * portfolioCoin.price,
+        name: marketCoin.name,
+        ...portfolioCoin,
       }
     })
   }
@@ -30,23 +34,29 @@ export function CryptoContextProvider({ children }) {
   useEffect(() => {
     async function preload() {
       setLoading(true)
-      const { result } = await fakeFetchCrypto()
-      const assets = await fetchAssets()
+      const fetchedPortfolio = await fetchUserPortfolio()
+      const fetchedMarketCoins = await fakeCurrentPrices()
 
-      setAssets(mapAssets(assets, result))
+      setUserPortfolio(
+        combinePortfolioWithMarket(fetchedPortfolio, fetchedMarketCoins),
+      )
 
-      setCrypto(result)
+      setMarketCoins(fetchedMarketCoins)
       setLoading(false)
     }
     preload()
   }, [])
 
-  function addAsset(newAsset) {
-    setAssets((prev) => mapAssets([...prev, newAsset], crypto))
+  function addCoinToPortfolio(newPortfolioCoin) {
+    setUserPortfolio((prev) =>
+      combinePortfolioWithMarket([...prev, newPortfolioCoin], marketCoins),
+    )
   }
 
   return (
-    <CryptoContext.Provider value={{ loading, crypto, assets, addAsset }}>
+    <CryptoContext.Provider
+      value={{ loading, marketCoins, userPortfolio, addCoinToPortfolio }}
+    >
       {children}
     </CryptoContext.Provider>
   )

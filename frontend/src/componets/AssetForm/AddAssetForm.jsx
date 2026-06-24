@@ -18,7 +18,7 @@ const validateMessages = {
 export default function AddAssetForm({ closeAssetDrawer }) {
   const [coin, setCoin] = useState(null)
   const [form] = Form.useForm()
-  const { addAsset } = useCrypto()
+  const { addCoinToPortfolio } = useCrypto()
   const [assetAdded, setAssetAdded] = useState(false)
 
   // Подписка на поле amount, price: обновляется при вводе числа пользователем
@@ -82,7 +82,7 @@ export default function AddAssetForm({ closeAssetDrawer }) {
     // setResultAsset(asset)
     setAssetAdded(true)
     assetButton()
-    addAsset(resultAsset)
+    addCoinToPortfolio(resultAsset)
   }
 
   return (

@@ -1,17 +1,17 @@
-import { cryptoData, cryptoAssets } from './data'
+import { userPortfolio, marketCoins } from './data'
 
-export function fakeFetchCrypto() {
+export function fetchUserPortfolio() {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(cryptoData)
+      resolve(userPortfolio)
     }, 1)
   })
 }
 
-export function fetchAssets() {
+export function fakeCurrentPrices() {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(cryptoAssets)
+      resolve(marketCoins)
     }, 1)
   })
 }

@@ -13,11 +13,11 @@ const cardStyle = {
 }
 
 export default function AppSider() {
-  const { assets } = useContext(CryptoContext)
+  const { userPortfolio } = useContext(CryptoContext)
 
   return (
     <Layout.Sider width='25%' style={siderStyle}>
-      {assets.map((asset) => (
+      {userPortfolio.map((asset) => (
         <Card key={asset.id} style={cardStyle}>
           <Statistic
             title={asset.id.charAt(0).toUpperCase() + asset.id.slice(1)}

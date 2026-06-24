@@ -19,7 +19,7 @@ export default function AppHeader() {
   const [coin, setCoin] = useState(null)
   const [modal, setModal] = useState(false)
   const [drawer, setDrawer] = useState(false)
-  const { crypto } = useCrypto()
+  const { marketCoins } = useCrypto()
 
   useEffect(() => {
     const keypress = (event) => {
@@ -32,7 +32,7 @@ export default function AppHeader() {
   }, [])
 
   function handleSelect(value) {
-    setCoin(crypto.find((c) => c.id === value))
+    setCoin(marketCoins.find((c) => c.id === value))
     setModal(true)
   }
 
@@ -44,7 +44,7 @@ export default function AppHeader() {
         onSelect={handleSelect}
         onClick={() => setSelect((prev) => !prev)}
         value='press / to open'
-        options={crypto.map((coin) => ({
+        options={marketCoins.map((coin) => ({
           label: coin.name,
           value: coin.id,
           icon: coin.icon,
