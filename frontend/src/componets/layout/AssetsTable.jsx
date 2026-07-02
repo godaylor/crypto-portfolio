@@ -1,12 +1,12 @@
-import React from 'react'
 import { Table } from 'antd'
+
 import { useCrypto } from '../../context/CryptoContext'
 
 const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
-    sorter: (a, b) => a.name.length - b.name.length,
+    sorter: (a, b) => a.name.localeCompare(b.name),
     sortDirections: ['descend'],
   },
   {
@@ -26,12 +26,20 @@ const columns = [
 export default function AssetsTable() {
   const { userPortfolio } = useCrypto()
 
-  const data = userPortfolio.map((a) => ({
-    key: a.id,
-    name: a.name,
-    price: a.price,
-    amount: a.amount,
+  // Подготавливаем данные
+  // для отображения в таблице.
+  const tableData = userPortfolio.map((portfolioCoin) => ({
+    key: portfolioCoin.id,
+    name: portfolioCoin.name,
+    price: portfolioCoin.price,
+    amount: portfolioCoin.amount,
   }))
 
-  return <Table pagination={false} columns={columns} dataSource={data} />
+  return (
+    <Table
+      columns={columns}
+      dataSource={tableData}
+      pagination={false}
+    />
+  )
 }

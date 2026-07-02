@@ -1,4 +1,4 @@
-import { userPortfolio, marketCoins } from './data'
+import { marketCoins, userPortfolio } from './data'
 
 export function fetchUserPortfolio() {
   return new Promise((resolve) => {
@@ -8,7 +8,7 @@ export function fetchUserPortfolio() {
   })
 }
 
-export function fakeCurrentPrices() {
+export function fetchMarketCoins() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(marketCoins)

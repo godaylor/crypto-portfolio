@@ -1,7 +1,9 @@
 import { Layout, Typography } from 'antd'
+
 import { useCrypto } from '../../context/CryptoContext'
-import PortfolioChart from './PortfolioChart'
+
 import AssetsTable from './AssetsTable'
+import PortfolioChart from './PortfolioChart'
 
 const contentStyle = {
   textAlign: 'center',
@@ -14,22 +16,36 @@ const contentStyle = {
 export default function AppContent() {
   const { userPortfolio, marketCoins } = useCrypto()
 
-  const cryptoPriceMap = marketCoins.reduce((accum, coinR) => {
-    accum[coinR.id] = coinR.price
-    return accum
+  // Создаём объект, где ключ — id монеты,
+  // а значение — её текущая цена.
+  const coinPricesById = marketCoins.reduce((pricesById, marketCoin) => {
+    pricesById[marketCoin.id] = marketCoin.price
+    return pricesById
   }, {})
+
+  // Рассчитываем общую стоимость портфеля.
+  const portfolioBalance = userPortfolio
+    .map(
+      (portfolioCoin) =>
+        portfolioCoin.amount * coinPricesById[portfolioCoin.id]
+    )
+    .reduce((totalBalance, value) => totalBalance + value, 0)
+    .toFixed(2)
 
   return (
     <Layout.Content style={contentStyle}>
-      <Typography.Title level={3} style={{ textAlign: 'left', color: '#fff' }}>
-        Portfolio:{' '}
-        {userPortfolio
-          .map((userPortfolio) => userPortfolio.amount * cryptoPriceMap[userPortfolio.id])
-          .reduce((acc, v) => (acc += v), 0)
-          .toFixed(2)}
-        $
+      <Typography.Title
+        level={3}
+        style={{
+          textAlign: 'left',
+          color: '#fff',
+        }}
+      >
+        Portfolio: {portfolioBalance} $
       </Typography.Title>
-      <PortfolioChart/>
+
+      <PortfolioChart />
+
       <AssetsTable />
     </Layout.Content>
   )

@@ -1,78 +1,105 @@
-import { Layout, Select, Space, Button, Modal, Drawer } from 'antd'
-import { useCrypto } from '../../context/CryptoContext'
 import { useEffect, useState } from 'react'
+
+import { Button, Drawer, Layout, Modal, Select, Space } from 'antd'
+
+import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
-import AddAssetForm from '../AssetForm/AddAssetForm'
+
+import { useCrypto } from '../../context/CryptoContext'
 
 const headerStyle = {
   width: '100%',
-  textAlign: 'center',
   height: 60,
   padding: '1rem',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  textAlign: 'center',
 }
 
 export default function AppHeader() {
-  const [select, setSelect] = useState(false)
-  const [coin, setCoin] = useState(null)
-  const [modal, setModal] = useState(false)
-  const [drawer, setDrawer] = useState(false)
   const { marketCoins } = useCrypto()
 
+  const [coin, setCoin] = useState(null)
+
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  // Горячая клавиша "/" открывает
+  // или закрывает поиск монет.
   useEffect(() => {
-    const keypress = (event) => {
+    const handleKeyPress = (event) => {
       if (event.key === '/') {
-        setSelect((prev) => !prev)
+        setIsSelectOpen((prev) => !prev)
       }
     }
-    document.addEventListener('keypress', keypress)
-    return () => document.removeEventListener('keypress', keypress)
+
+    document.addEventListener('keypress', handleKeyPress)
+
+    return () => {
+      document.removeEventListener('keypress', handleKeyPress)
+    }
   }, [])
 
-  function handleSelect(value) {
-    setCoin(marketCoins.find((c) => c.id === value))
-    setModal(true)
+  // После выбора монеты
+  // открываем окно с информацией о ней.
+  function handleSelect(selectedCoinId) {
+    const selectedCoin = marketCoins.find(
+      (marketCoin) => marketCoin.id === selectedCoinId,
+    )
+
+    setCoin(selectedCoin)
+    setIsModalOpen(true)
   }
 
   return (
     <Layout.Header style={headerStyle}>
       <Select
         style={{ width: 250 }}
-        open={select}
+        open={isSelectOpen}
+        value='Press "/" to open'
+        placeholder='Select coin'
         onSelect={handleSelect}
-        onClick={() => setSelect((prev) => !prev)}
-        value='press / to open'
-        options={marketCoins.map((coin) => ({
-          label: coin.name,
-          value: coin.id,
-          icon: coin.icon,
+        onClick={() => setIsSelectOpen((prev) => !prev)}
+        options={marketCoins.map((marketCoin) => ({
+          label: marketCoin.name,
+          value: marketCoin.id,
+          icon: marketCoin.icon,
         }))}
+        // Отображаем иконку и название
+        // каждой монеты в списке.
         optionRender={(option) => (
           <Space>
             <img
               style={{ width: 20, marginTop: 6 }}
               src={option.data.icon}
-              alt={option.data.labbel}
-            />{' '}
+              alt={option.data.label}
+            />
             {option.data.label}
           </Space>
         )}
       />
-      <Button type='primary' onClick={() => setDrawer(true)}>
+
+      <Button type='primary' onClick={() => setIsDrawerOpen(true)}>
         Add Asset
       </Button>
+
       <Drawer
         title='Add Asset'
         width={600}
+        open={isDrawerOpen}
         closable={{ 'aria-label': 'Close Button' }}
-        onClose={() => setDrawer(false)}
-        open={drawer}
+        onClose={() => setIsDrawerOpen(false)}
       >
-        <AddAssetForm closeAssetDrawer={() => setDrawer(false)} />
+        <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />
       </Drawer>
-      <Modal open={modal} onCancel={() => setModal(false)} footer={null}>
+
+      <Modal
+        open={isModalOpen}
+        footer={null}
+        onCancel={() => setIsModalOpen(false)}
+      >
         <CoinInfoModal coin={coin} />
       </Modal>
     </Layout.Header>

@@ -1,6 +1,8 @@
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons'
-import { Layout, Card, Statistic, List, Typography, Tag } from 'antd'
 import { useContext } from 'react'
+
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
+import { Card, Layout, List, Statistic, Tag, Typography } from 'antd'
+
 import CryptoContext from '../../context/CryptoContext'
 
 const siderStyle = {
@@ -17,54 +19,78 @@ export default function AppSider() {
 
   return (
     <Layout.Sider width='25%' style={siderStyle}>
-      {userPortfolio.map((asset) => (
-        <Card key={asset.id} style={cardStyle}>
+      {/* Отображаем информацию по каждой монете портфеля */}
+      {userPortfolio.map((portfolioCoin) => (
+        <Card key={portfolioCoin.id} style={cardStyle}>
           <Statistic
-            title={asset.id.charAt(0).toUpperCase() + asset.id.slice(1)}
-            value={asset.totalAmount}
+            title={
+              portfolioCoin.id.charAt(0).toUpperCase() +
+              portfolioCoin.id.slice(1)
+            }
+            value={portfolioCoin.totalAmount}
             precision={2}
-            valueStyle={{ color: asset.grow ? '#3f8600' : '#cf1322' }}
-            prefix={asset.grow ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            valueStyle={{
+              color: portfolioCoin.grow ? '#3f8600' : '#cf1322',
+            }}
+            prefix={
+              portfolioCoin.grow
+                ? <ArrowUpOutlined />
+                : <ArrowDownOutlined />
+            }
             suffix='$'
           />
+
           <List
             size='small'
+            // Данные, которые отображаются
+            // внутри карточки монеты.
             dataSource={[
               {
                 title: 'Total Profit',
-                value: asset.totalProfit,
+                value: portfolioCoin.totalProfit,
                 withTag: true,
               },
-              { title: 'Asser Amount', value: asset.amount, isPlain: true },
-              // { title: "Difference", value: asset.growPercent },
-              // { title: "Grow", value: asset.grow },
-              // { title: "Grow Percent", value: asset.growPercent },
-              // { title: "Total Amount", value: asset.totalAmount },
+              {
+                title: 'Coin Amount',
+                value: portfolioCoin.amount,
+                isPlain: true,
+              },
             ]}
-            renderItem={(item) => (
+            renderItem={(infoItem) => (
               <List.Item style={{ flexWrap: 'nowrap' }}>
-                <span style={{ marginRight: '1.5rem', whiteSpace: 'nowrap' }}>
-                  {item.title}
+                <span
+                  style={{
+                    marginRight: '1.5rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {infoItem.title}
                 </span>
+
                 <span style={{ display: 'flex' }}>
-                  {item.withTag && (
-                    <Tag style={{}} color={asset.grow ? 'green' : 'red'}>
-                      {asset.growPercent}%
+                  {infoItem.withTag && (
+                    <Tag
+                      color={portfolioCoin.grow ? 'green' : 'red'}
+                    >
+                      {portfolioCoin.growPercent}%
                     </Tag>
                   )}
-                  {item.isPlain && Number(item.value)}
-                  {!item.isPlain && (
+
+                  {infoItem.isPlain && Number(infoItem.value)}
+
+                  {!infoItem.isPlain && (
                     <Typography.Text
-                      style={{ wordBreak: 'normal' }}
+                      // Цвет зависит от прибыли
+                      // или убытка.
                       type={
-                        asset.totalProfit > 0
+                        portfolioCoin.totalProfit > 0
                           ? 'success'
-                          : asset.totalProfit < 0
+                          : portfolioCoin.totalProfit < 0
                             ? 'danger'
                             : 'warning'
                       }
                     >
-                      {Number(item.value).toFixed(2)}
+                      {Number(infoItem.value).toFixed(2)}
                     </Typography.Text>
                   )}
                 </span>
