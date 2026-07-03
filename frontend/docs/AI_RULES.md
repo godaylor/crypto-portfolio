@@ -165,6 +165,18 @@ Project documentation should evolve through discussion, not assumptions.
 
 ---
 
+# Communication
+
+Use Russian for all explanations,
+reviews,
+and discussions.
+
+Keep code,
+identifiers,
+and documentation in English unless requested otherwise.
+
+---
+
 # Final Rule
 
 If something is unclear, ask before modifying the code.

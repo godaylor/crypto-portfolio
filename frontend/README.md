@@ -1,102 +1,34 @@
-# Crypto Portfolio
+# 🚀 Crypto Portfolio
 
-A React application for tracking and managing a cryptocurrency portfolio.
+Веб-приложение для управления криптовалютным портфелем, разработанное в рамках изучения современной Frontend-разработки.
 
-The application allows users to build a portfolio, analyze its performance, and explore detailed cryptocurrency information through a modern and responsive interface.
-
----
-
-## ✨ Features
-
-- 📊 View your cryptocurrency portfolio.
-- ➕ Add new cryptocurrency purchases.
-- ℹ️ View detailed information about each cryptocurrency.
-- 💰 Display current market prices.
-- 📈 Automatically calculate the total portfolio value.
-- 📉 Track profit and loss for each portfolio coin.
-- 🥧 Visualize portfolio distribution with a pie chart.
-- ↕️ Sort portfolio coins by different criteria.
-- 🎨 Modern user interface built with Ant Design.
-- ⚛️ Global state management using React Context.
+Проект создан как практическая работа по React и современному JavaScript с использованием инженерного подхода к разработке: Git, документации, AI-инструментов и постепенного развития архитектуры.
 
 ---
 
-## 🛠 Tech Stack
+# ✨ Возможности
 
-| Category | Technologies |
-|----------|--------------|
-| Frontend | React, Vite |
-| Language | JavaScript (ES6+) |
-| UI | Ant Design |
-| Charts | Chart.js |
-| State Management | React Context API |
+На текущий момент приложение позволяет:
 
----
-
-## 🚀 Getting Started
-
-### Clone the repository
-
-```bash
-git clone <repository-url>
-```
-
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Start the development server
-
-```bash
-npm run dev
-```
-
-The application will be available at:
-
-```text
-http://localhost:5173
-```
+- 📊 Просматривать криптовалютный портфель.
+- ➕ Добавлять новые покупки криптовалюты.
+- ℹ️ Просматривать подробную информацию о каждой монете.
+- 💰 Отображать актуальные рыночные цены.
+- 📈 Автоматически рассчитывать общую стоимость портфеля.
+- 📉 Отображать прибыль или убыток по каждой монете.
+- 🥧 Визуализировать распределение портфеля с помощью круговой диаграммы.
+- ↕️ Сортировать монеты по различным критериям.
+- 🎨 Использовать современный интерфейс на базе Ant Design.
+- ⚛️ Управлять состоянием приложения через React Context.
 
 ---
 
-## 📁 Project Structure
+# 🛠 Используемые технологии
 
-The project follows a simple and scalable structure focused on readability and maintainability.
-
-Detailed information about the project organization is available in:
-
-- `docs/PROJECT_STRUCTURE.md`
-
----
-
-## 📚 Documentation
-
-Additional project documentation is available in the `docs/` directory.
-
-| Document | Description |
-|----------|-------------|
-| `AI_RULES.md` | Rules for working with AI assistants |
-| `NAMING_GUIDE.md` | Project naming conventions |
-| `PROJECT_STRUCTURE.md` | Project organization principles |
-
----
-
-## 📌 Future Improvements
-
-Planned for future versions:
-
-- TypeScript
-- React Router
-- API integration
-- Redux Toolkit
-- TanStack Query
-- Authentication
-- Testing
-
----
-
-## 📄 License
-
-This project was created for educational purposes.
+| Категория             | Технологии        |
+| --------------------- | ----------------- |
+| Frontend              | React, Vite       |
+| Язык                  | JavaScript (ES6+) |
+| UI                    | Ant Design        |
+| Графики               | Chart.js          |
+| Управление состоянием | React Context API |
