@@ -1,104 +1,148 @@
-import { useContext } from 'react'
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+} from '@ant-design/icons'
+import {
+  Avatar,
+  Card,
+  Flex,
+  Layout,
+  Space,
+  Tag,
+  Typography,
+} from 'antd'
 
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
-import { Card, Layout, List, Statistic, Tag, Typography } from 'antd'
-
-import CryptoContext from '../../context/CryptoContext'
+import { useCrypto } from '../../context/CryptoContext'
 
 const siderStyle = {
-  padding: '1rem',
+  padding: '24px 16px',
+  background: '#0f172a',
+  borderRight: '1px solid #1e293b',
+}
+
+const titleStyle = {
+  color: '#f8fafc',
+  marginBottom: 16,
 }
 
 const cardStyle = {
-  marginBottom: '1rem',
-  minWidth: '280px',
+  marginBottom: 12,
+  background: '#111c2e',
+  border: '1px solid #1e293b',
+}
+
+function getProfitType(value) {
+  if (value > 0) {
+    return 'success'
+  }
+
+  if (value < 0) {
+    return 'danger'
+  }
+
+  return 'warning'
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(value)
 }
 
 export default function AppSider() {
-  const { userPortfolio } = useContext(CryptoContext)
+  const { userPortfolio, marketCoins } = useCrypto()
 
   return (
-    <Layout.Sider width='25%' style={siderStyle}>
-      {/* Отображаем информацию по каждой монете портфеля */}
-      {userPortfolio.map((portfolioCoin) => (
-        <Card key={portfolioCoin.id} style={cardStyle}>
-          <Statistic
-            title={
-              portfolioCoin.id.charAt(0).toUpperCase() +
-              portfolioCoin.id.slice(1)
-            }
-            value={portfolioCoin.totalAmount}
-            precision={2}
-            valueStyle={{
-              color: portfolioCoin.grow ? '#3f8600' : '#cf1322',
-            }}
-            prefix={
-              portfolioCoin.grow
-                ? <ArrowUpOutlined />
-                : <ArrowDownOutlined />
-            }
-            suffix='$'
-          />
+    <Layout.Sider
+      className='portfolio-sider'
+      width={320}
+      breakpoint='xl'
+      collapsedWidth={0}
+      style={siderStyle}
+    >
+      <Typography.Title level={4} style={titleStyle}>
+        Активы портфеля
+      </Typography.Title>
 
-          <List
-            size='small'
-            // Данные, которые отображаются
-            // внутри карточки монеты.
-            dataSource={[
-              {
-                title: 'Total Profit',
-                value: portfolioCoin.totalProfit,
-                withTag: true,
-              },
-              {
-                title: 'Coin Amount',
-                value: portfolioCoin.amount,
-                isPlain: true,
-              },
-            ]}
-            renderItem={(infoItem) => (
-              <List.Item style={{ flexWrap: 'nowrap' }}>
-                <span
-                  style={{
-                    marginRight: '1.5rem',
-                    whiteSpace: 'nowrap',
-                  }}
+      <Typography.Text className='sider-subtitle'>
+        Быстрый обзор монет и результата
+      </Typography.Text>
+
+      {userPortfolio.map((portfolioCoin) => {
+        const marketCoin = marketCoins.find(
+          (coin) => coin.id === portfolioCoin.id
+        )
+
+        return (
+          <Card
+            className='dashboard-card portfolio-coin-card'
+            key={portfolioCoin.id}
+            style={cardStyle}
+          >
+            <Flex justify='space-between' align='flex-start' gap={16}>
+              <Space align='start'>
+                <Avatar
+                  src={marketCoin?.icon}
+                  alt={portfolioCoin.name}
+                  size={40}
                 >
-                  {infoItem.title}
-                </span>
+                  {marketCoin?.symbol}
+                </Avatar>
 
-                <span style={{ display: 'flex' }}>
-                  {infoItem.withTag && (
-                    <Tag
-                      color={portfolioCoin.grow ? 'green' : 'red'}
-                    >
-                      {portfolioCoin.growPercent}%
-                    </Tag>
-                  )}
+                <Space direction='vertical' size={2}>
+                  <Typography.Text strong>
+                    {portfolioCoin.name}
+                  </Typography.Text>
 
-                  {infoItem.isPlain && Number(infoItem.value)}
+                  <Typography.Text type='secondary'>
+                    {marketCoin?.symbol}
+                  </Typography.Text>
+                </Space>
+              </Space>
 
-                  {!infoItem.isPlain && (
-                    <Typography.Text
-                      // Цвет зависит от прибыли
-                      // или убытка.
-                      type={
-                        portfolioCoin.totalProfit > 0
-                          ? 'success'
-                          : portfolioCoin.totalProfit < 0
-                            ? 'danger'
-                            : 'warning'
-                      }
-                    >
-                      {Number(infoItem.value).toFixed(2)}
-                    </Typography.Text>
-                  )}
-                </span>
-              </List.Item>
-            )}
-          />
-        </Card>
-      ))}
+              <Tag color={portfolioCoin.grow ? 'green' : 'red'}>
+                {portfolioCoin.grow ? (
+                  <ArrowUpOutlined />
+                ) : (
+                  <ArrowDownOutlined />
+                )}{' '}
+                {portfolioCoin.growPercent}%
+              </Tag>
+            </Flex>
+
+            <Flex
+              justify='space-between'
+              align='flex-end'
+              style={{ marginTop: 16 }}
+            >
+              <Space direction='vertical' size={0}>
+                <Typography.Text type='secondary'>
+                  Стоимость
+                </Typography.Text>
+
+                <Typography.Text strong>
+                  {formatCurrency(portfolioCoin.totalAmount)}
+                </Typography.Text>
+              </Space>
+
+              <Space direction='vertical' size={0} align='end'>
+                <Typography.Text type='secondary'>
+                  Результат
+                </Typography.Text>
+
+                <Typography.Text
+                  type={getProfitType(portfolioCoin.totalProfit)}
+                  strong
+                >
+                  {formatCurrency(portfolioCoin.totalProfit)}
+                </Typography.Text>
+              </Space>
+            </Flex>
+          </Card>
+        )
+      })}
     </Layout.Sider>
   )
 }

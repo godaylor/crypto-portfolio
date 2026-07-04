@@ -7,8 +7,6 @@ export default function CoinAddedMessage({
   setCoin,
   setIsCoinAdded,
 }) {
-  // Возвращаем пользователя
-  // к форме добавления новой монеты.
   function addAnotherCoin() {
     setIsCoinAdded(false)
     setCoin(null)
@@ -16,16 +14,17 @@ export default function CoinAddedMessage({
 
   return (
     <Result
+      className='coin-added-result'
       status='success'
-      title='Coin successfully added!'
-      subTitle={`Successfully added ${coinToAdd.amount} ${coin.name} to your portfolio. Purchase price: $${coinToAdd.price}`}
+      title='Монета добавлена'
+      subTitle={`В портфель добавлено ${coinToAdd.amount} ${coin.name}. Цена покупки: $${coinToAdd.price}.`}
       extra={[
         <Button type='primary' key='close' onClick={closeCoinDrawer}>
-          Close
+          Закрыть
         </Button>,
 
         <Button key='add-more' onClick={addAnotherCoin}>
-          Add More
+          Добавить еще
         </Button>,
       ]}
     />

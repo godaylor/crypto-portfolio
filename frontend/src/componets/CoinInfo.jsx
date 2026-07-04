@@ -1,34 +1,23 @@
-import { Flex, Typography } from 'antd'
+import { Avatar, Flex, Space, Typography } from 'antd'
 
 export default function CoinInfo({ coin, withSymbol }) {
   return (
-    <Flex align='center'>
-      <img
-        src={coin.icon}
-        alt={coin.name}
-        style={{
-          width: 40,
-          marginRight: 15,
-        }}
-      />
+    <Flex align='center' gap={14}>
+      <Avatar src={coin.icon} alt={coin.name} size={44}>
+        {coin.symbol}
+      </Avatar>
 
-      <Typography.Title
-        level={2}
-        style={{
-          marginBottom: 0,
-          paddingBottom: 3,
-        }}
-      >
-        {/* Показываем тикер,
-            только если он отличается
-            от полного названия монеты. */}
-        {coin.symbol !== coin.name &&
-          withSymbol && (
-            <span>({coin.symbol}) </span>
-          )}
+      <Space direction='vertical' size={0}>
+        <Typography.Title level={withSymbol ? 3 : 4}>
+          {coin.name}
+        </Typography.Title>
 
-        {coin.name}
-      </Typography.Title>
+        {coin.symbol !== coin.name && withSymbol && (
+          <Typography.Text type='secondary'>
+            Тикер: {coin.symbol}
+          </Typography.Text>
+        )}
+      </Space>
     </Flex>
   )
 }

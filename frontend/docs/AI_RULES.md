@@ -19,6 +19,23 @@ The goal is to improve code quality while preserving readability, consistency, a
 
 ---
 
+# Token Usage
+
+Minimize token consumption.
+
+Before editing:
+
+- read only files that are relevant;
+- do not scan the entire repository unless necessary;
+- do not rewrite files that don't require changes;
+- keep explanations concise;
+- avoid repeating previous context;
+- avoid long planning if the task is already clear.
+
+Prefer incremental edits over large rewrites.
+
+---
+
 # Before Editing Code
 
 Before changing any code, AI should:
@@ -174,6 +191,20 @@ and discussions.
 Keep code,
 identifiers,
 and documentation in English unless requested otherwise.
+
+---
+
+# Required Project Reading
+
+Before implementing any task:
+
+1. Read AI_RULES.md
+2. Read PROJECT_STRUCTURE.md
+3. Read NAMING_GUIDE.md
+
+Always follow these documents unless the user explicitly instructs otherwise.
+
+Never ignore project documentation.
 
 ---
 

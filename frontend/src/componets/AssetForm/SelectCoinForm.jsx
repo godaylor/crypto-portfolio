@@ -1,12 +1,11 @@
-import { Select, Space } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
+import { Select, Space, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
 export default function SelectCoinForm({ setCoin }) {
   const { marketCoins } = useCrypto()
 
-  // После выбора монеты сохраняем её
-  // в состоянии родительского компонента.
   function handleSelectChange(selectedCoinId) {
     if (!selectedCoinId) {
       setCoin(null)
@@ -22,28 +21,33 @@ export default function SelectCoinForm({ setCoin }) {
 
   return (
     <Select
+      className='drawer-coin-select'
+      popupClassName='coin-search-dropdown'
       style={{ width: '100%' }}
       onChange={handleSelectChange}
-      placeholder='Select coin'
+      placeholder='Выберите монету'
+      suffixIcon={<SearchOutlined />}
+      showSearch
+      optionFilterProp='label'
       options={marketCoins.map((coin) => ({
         label: coin.name,
         value: coin.id,
         icon: coin.icon,
+        symbol: coin.symbol,
       }))}
-      // Отображаем иконку и название
-      // каждой монеты в списке.
       optionRender={(option) => (
         <Space>
           <img
-            style={{ width: 20, marginTop: 6 }}
+            className='coin-option-icon'
             src={option.data.icon}
             alt={option.data.label}
           />
-          {option.data.label}
+          <span>{option.data.label}</span>
+          <Typography.Text type='secondary'>
+            {option.data.symbol}
+          </Typography.Text>
         </Space>
       )}
-      // Позволяет очистить выбранную монету
-      // и вернуться к пустой форме.
       allowClear
     />
   )

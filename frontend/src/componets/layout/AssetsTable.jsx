@@ -1,45 +1,169 @@
-import { Table } from 'antd'
+import { Avatar, Card, Space, Table, Tag, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    sorter: (a, b) => a.name.localeCompare(b.name),
-    sortDirections: ['descend'],
-  },
-  {
-    title: 'Price, $',
-    dataIndex: 'price',
-    defaultSortOrder: 'descend',
-    sorter: (a, b) => a.price - b.price,
-  },
-  {
-    title: 'Amount',
-    dataIndex: 'amount',
-    defaultSortOrder: 'descend',
-    sorter: (a, b) => a.amount - b.amount,
-  },
-]
+const tableCardStyle = {
+  height: '100%',
+  background: '#111c2e',
+  border: '1px solid #1e293b',
+}
+
+const tableTitleStyle = {
+  color: '#f8fafc',
+  marginBottom: 4,
+}
+
+const tableSubtitleStyle = {
+  color: '#94a3b8',
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function formatCoinAmount(value) {
+  return new Intl.NumberFormat('ru-RU', {
+    maximumFractionDigits: 8,
+  }).format(value)
+}
+
+function getChangeColor(value) {
+  if (value > 0) {
+    return 'green'
+  }
+
+  if (value < 0) {
+    return 'red'
+  }
+
+  return 'gold'
+}
 
 export default function AssetsTable() {
-  const { userPortfolio } = useCrypto()
+  const { userPortfolio, marketCoins } = useCrypto()
 
-  // Подготавливаем данные
-  // для отображения в таблице.
-  const tableData = userPortfolio.map((portfolioCoin) => ({
-    key: portfolioCoin.id,
-    name: portfolioCoin.name,
-    price: portfolioCoin.price,
-    amount: portfolioCoin.amount,
-  }))
+  const portfolioBalance = userPortfolio
+    .map((portfolioCoin) => portfolioCoin.totalAmount)
+    .reduce((totalBalance, value) => totalBalance + value, 0)
+
+  const tableData = userPortfolio.map((portfolioCoin) => {
+    const marketCoin = marketCoins.find(
+      (coin) => coin.id === portfolioCoin.id
+    )
+
+    return {
+      key: portfolioCoin.id,
+      coinName: portfolioCoin.name,
+      coinSymbol: marketCoin?.symbol,
+      coinIcon: marketCoin?.icon,
+      currentPrice: marketCoin?.price ?? portfolioCoin.price,
+      amount: portfolioCoin.amount,
+      allocation: portfolioBalance
+        ? (portfolioCoin.totalAmount / portfolioBalance) * 100
+        : 0,
+      totalAmount: portfolioCoin.totalAmount,
+      totalProfit: portfolioCoin.totalProfit,
+      growPercent: portfolioCoin.growPercent,
+    }
+  })
+
+  const columns = [
+    {
+      title: 'Монета',
+      dataIndex: 'coinName',
+      sorter: (a, b) => a.coinName.localeCompare(b.coinName),
+      render: (_, coin) => (
+        <Space>
+          <Avatar src={coin.coinIcon} alt={coin.coinName} size={36}>
+            {coin.coinSymbol}
+          </Avatar>
+
+          <Space direction='vertical' size={0}>
+            <Typography.Text strong>{coin.coinName}</Typography.Text>
+            <Typography.Text type='secondary'>
+              {coin.coinSymbol}
+            </Typography.Text>
+          </Space>
+        </Space>
+      ),
+    },
+    {
+      title: 'Цена',
+      dataIndex: 'currentPrice',
+      sorter: (a, b) => a.currentPrice - b.currentPrice,
+      render: (price) => formatCurrency(price),
+    },
+    {
+      title: 'Количество',
+      dataIndex: 'amount',
+      sorter: (a, b) => a.amount - b.amount,
+      render: (amount) => formatCoinAmount(amount),
+    },
+    {
+      title: 'Доля',
+      dataIndex: 'allocation',
+      sorter: (a, b) => a.allocation - b.allocation,
+      render: (allocation) => `${allocation.toFixed(2)}%`,
+    },
+    {
+      title: 'Стоимость',
+      dataIndex: 'totalAmount',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.totalAmount - b.totalAmount,
+      render: (totalAmount) => (
+        <Typography.Text strong>
+          {formatCurrency(totalAmount)}
+        </Typography.Text>
+      ),
+    },
+    {
+      title: 'Прибыль / убыток',
+      dataIndex: 'totalProfit',
+      sorter: (a, b) => a.totalProfit - b.totalProfit,
+      render: (totalProfit, coin) => (
+        <Space>
+          <Typography.Text
+            type={
+              totalProfit > 0
+                ? 'success'
+                : totalProfit < 0
+                  ? 'danger'
+                  : 'warning'
+            }
+          >
+            {formatCurrency(totalProfit)}
+          </Typography.Text>
+
+          <Tag color={getChangeColor(totalProfit)}>
+            {coin.growPercent}%
+          </Tag>
+        </Space>
+      ),
+    },
+  ]
 
   return (
-    <Table
-      columns={columns}
-      dataSource={tableData}
-      pagination={false}
-    />
+    <Card className='dashboard-card holdings-card' style={tableCardStyle}>
+      <Typography.Title level={4} style={tableTitleStyle}>
+        Мои активы
+      </Typography.Title>
+
+      <Typography.Text style={tableSubtitleStyle}>
+        Текущие позиции, стоимость и результат
+      </Typography.Text>
+
+      <Table
+        className='holdings-table'
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+        scroll={{ x: 760 }}
+        style={{ marginTop: 20 }}
+      />
+    </Card>
   )
 }
