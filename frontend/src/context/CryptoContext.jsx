@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { fakeCurrentPrices, fetchUserPortfolio } from '../api'
+import {
+  fetchUserPortfolio,
+  fetchMarketCoins,
+} from '../api'
 import { percentDifference } from '../utils'
 
 const CryptoContext = createContext({
@@ -46,7 +49,7 @@ export function CryptoContextProvider({ children }) {
       setLoading(true)
 
       const fetchedPortfolio = await fetchUserPortfolio()
-      const fetchedMarketCoins = await fakeCurrentPrices()
+      const fetchedMarketCoins = await fetchMarketCoins()
 
       setUserPortfolio(
         preparePortfolio(
