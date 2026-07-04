@@ -13,5 +13,4 @@ crypto-portfolio/
 │
 ├── frontend/      React-приложение
 ├── .gitignore
-├── package.json
 └── README.md
