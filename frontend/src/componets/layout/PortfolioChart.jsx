@@ -6,27 +6,7 @@ import { useCrypto } from '../../context/CryptoContext'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const chartCardStyle = {
-  height: '100%',
-  background: '#111c2e',
-  border: '1px solid #1e293b',
-}
-
-const chartWrapperStyle = {
-  height: 320,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-}
-
-const chartTitleStyle = {
-  color: '#f8fafc',
-  marginBottom: 4,
-}
-
-const chartSubtitleStyle = {
-  color: '#94a3b8',
-}
+const chartColors = ['#ff9f1a', '#6380f6', '#21d6a3', '#f3ba2f', '#14f195']
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('ru-RU', {
@@ -36,7 +16,20 @@ function formatCurrency(value) {
   }).format(value)
 }
 
-export default function PortfolioChart() {
+function getThemeValue(name, fallback) {
+  if (typeof window === 'undefined') {
+    return fallback
+  }
+
+  const themeRoot = document.querySelector('.app-shell') ?? document.documentElement
+  const value = getComputedStyle(themeRoot)
+    .getPropertyValue(name)
+    .trim()
+
+  return value || fallback
+}
+
+export default function PortfolioChart({ themeName }) {
   const { userPortfolio } = useCrypto()
 
   const chartData = {
@@ -48,20 +41,12 @@ export default function PortfolioChart() {
         data: userPortfolio.map(
           (portfolioCoin) => portfolioCoin.totalAmount
         ),
-
-        backgroundColor: [
-          '#f7931a',
-          '#627eea',
-          '#26a17b',
-          '#f3ba2f',
-          '#14f195',
-          '#23292f',
-        ],
-
-        borderColor: '#111c2e',
-        borderWidth: 4,
-        spacing: 2,
-        hoverOffset: 8,
+        backgroundColor: chartColors,
+        borderColor: getThemeValue('--surface-card', '#111c2e'),
+        borderWidth: 5,
+        borderRadius: 8,
+        spacing: 3,
+        hoverOffset: 10,
       },
     ],
   }
@@ -69,16 +54,22 @@ export default function PortfolioChart() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '68%',
+    cutout: '70%',
+    animation: {
+      animateRotate: true,
+      duration: 700,
+      easing: 'easeOutQuart',
+    },
     plugins: {
       tooltip: {
-        backgroundColor: '#0f172a',
-        borderColor: '#25344d',
+        backgroundColor: getThemeValue('--surface-elevated', '#0f172a'),
+        borderColor: getThemeValue('--border-strong', '#25344d'),
         borderWidth: 1,
-        titleColor: '#f8fafc',
-        bodyColor: '#cbd5e1',
+        titleColor: getThemeValue('--text-primary', '#f8fafc'),
+        bodyColor: getThemeValue('--text-secondary', '#cbd5e1'),
         padding: 12,
-        cornerRadius: 10,
+        cornerRadius: 12,
+        displayColors: true,
         callbacks: {
           label: (context) =>
             `${context.label}: ${formatCurrency(context.parsed)}`,
@@ -87,26 +78,30 @@ export default function PortfolioChart() {
       legend: {
         position: 'bottom',
         labels: {
-          color: '#cbd5e1',
+          color: getThemeValue('--text-secondary', '#cbd5e1'),
           boxWidth: 10,
-          padding: 16,
+          boxHeight: 10,
+          padding: 18,
           usePointStyle: true,
+          pointStyle: 'circle',
+          font: {
+            size: 12,
+            weight: 600,
+          },
         },
       },
     },
   }
 
   return (
-    <Card className='dashboard-card' style={chartCardStyle}>
-      <Typography.Title level={4} style={chartTitleStyle}>
-        Распределение активов
-      </Typography.Title>
+    <Card className='dashboard-card chart-card'>
+      <Typography.Title level={4}>Распределение активов</Typography.Title>
 
-      <Typography.Text style={chartSubtitleStyle}>
+      <Typography.Text>
         Текущая стоимость по каждой монете
       </Typography.Text>
 
-      <div style={chartWrapperStyle}>
+      <div className='chart-wrapper' data-theme={themeName}>
         <Doughnut data={chartData} options={chartOptions} />
       </div>
     </Card>

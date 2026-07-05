@@ -25,23 +25,7 @@ import ThemeSwitcher from '../ThemeSwitcher'
 
 import { useCrypto } from '../../context/CryptoContext'
 
-const headerStyle = {
-  width: '100%',
-  height: 72,
-  padding: '0 24px',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  gap: 20,
-  background: '#08111f',
-  borderBottom: '1px solid #1e293b',
-}
-
-const brandIconStyle = {
-  background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-}
-
-export default function AppHeader() {
+export default function AppHeader({ themeName, setThemeName }) {
   const { marketCoins } = useCrypto()
 
   const [coin, setCoin] = useState(null)
@@ -76,14 +60,10 @@ export default function AppHeader() {
   }
 
   return (
-    <Layout.Header className='app-header' style={headerStyle}>
-      <Space className='app-brand' size={12}>
-        <Avatar icon={<WalletOutlined />} style={brandIconStyle} />
-
-        <Space direction='vertical' size={0}>
-          <Typography.Text strong>CryptoPortfolio</Typography.Text>
-          <Typography.Text type='secondary'>Панель инвестора</Typography.Text>
-        </Space>
+    <Layout.Header className='app-header'>
+      <Space className='app-brand header-brand' size={12}>
+        <Avatar className='brand-icon' icon={<WalletOutlined />} />
+        <Typography.Text strong>Crypto Portfolio</Typography.Text>
       </Space>
 
       <Select
@@ -118,7 +98,7 @@ export default function AppHeader() {
       />
 
       <Flex className='header-actions' align='center' gap={10}>
-        <ThemeSwitcher />
+        <ThemeSwitcher themeName={themeName} setThemeName={setThemeName} />
 
         <Button
           className='header-icon-button'

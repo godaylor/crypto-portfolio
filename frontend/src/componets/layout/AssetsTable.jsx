@@ -2,21 +2,6 @@ import { Avatar, Card, Space, Table, Tag, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
-const tableCardStyle = {
-  height: '100%',
-  background: '#111c2e',
-  border: '1px solid #1e293b',
-}
-
-const tableTitleStyle = {
-  color: '#f8fafc',
-  marginBottom: 4,
-}
-
-const tableSubtitleStyle = {
-  color: '#94a3b8',
-}
-
 function formatCurrency(value) {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
@@ -78,7 +63,7 @@ export default function AssetsTable() {
       sorter: (a, b) => a.coinName.localeCompare(b.coinName),
       render: (_, coin) => (
         <Space>
-          <Avatar src={coin.coinIcon} alt={coin.coinName} size={36}>
+          <Avatar src={coin.coinIcon} alt={coin.coinName} size={38}>
             {coin.coinSymbol}
           </Avatar>
 
@@ -147,12 +132,10 @@ export default function AssetsTable() {
   ]
 
   return (
-    <Card className='dashboard-card holdings-card' style={tableCardStyle}>
-      <Typography.Title level={4} style={tableTitleStyle}>
-        Мои активы
-      </Typography.Title>
+    <Card className='dashboard-card holdings-card'>
+      <Typography.Title level={4}>Мои активы</Typography.Title>
 
-      <Typography.Text style={tableSubtitleStyle}>
+      <Typography.Text>
         Текущие позиции, стоимость и результат
       </Typography.Text>
 
@@ -162,7 +145,6 @@ export default function AssetsTable() {
         dataSource={tableData}
         pagination={false}
         scroll={{ x: 760 }}
-        style={{ marginTop: 20 }}
       />
     </Card>
   )

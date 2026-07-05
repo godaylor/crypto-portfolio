@@ -1,35 +1,40 @@
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  BarChartOutlined,
+  HomeOutlined,
+  SettingOutlined,
+  StarOutlined,
+  SwapOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
-import {
-  Avatar,
-  Card,
-  Flex,
-  Layout,
-  Space,
-  Tag,
-  Typography,
-} from 'antd'
+import { Avatar, Card, Flex, Layout, Space, Tag, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
-const siderStyle = {
-  padding: '24px 16px',
-  background: '#0f172a',
-  borderRight: '1px solid #1e293b',
-}
-
-const titleStyle = {
-  color: '#f8fafc',
-  marginBottom: 16,
-}
-
-const cardStyle = {
-  marginBottom: 12,
-  background: '#111c2e',
-  border: '1px solid #1e293b',
-}
+const navigationItems = [
+  {
+    label: 'Обзор',
+    icon: <HomeOutlined />,
+    isActive: true,
+  },
+  {
+    label: 'Избранное',
+    icon: <StarOutlined />,
+  },
+  {
+    label: 'Рынки',
+    icon: <BarChartOutlined />,
+  },
+  {
+    label: 'Транзакции',
+    icon: <SwapOutlined />,
+  },
+  {
+    label: 'Настройки',
+    icon: <SettingOutlined />,
+  },
+]
 
 function getProfitType(value) {
   if (value > 0) {
@@ -57,12 +62,16 @@ export default function AppSider() {
   return (
     <Layout.Sider
       className='portfolio-sider'
-      width={320}
+      width={276}
       breakpoint='xl'
       collapsedWidth={0}
-      style={siderStyle}
     >
-      <Typography.Title level={4} style={titleStyle}>
+      <Space className='app-brand sidebar-brand' size={12}>
+        <Avatar className='brand-icon' icon={<WalletOutlined />} />
+        <Typography.Text strong>Crypto Portfolio</Typography.Text>
+      </Space>
+
+      <Typography.Title className='sider-title' level={4}>
         Активы портфеля
       </Typography.Title>
 
@@ -70,79 +79,98 @@ export default function AppSider() {
         Быстрый обзор монет и результата
       </Typography.Text>
 
-      {userPortfolio.map((portfolioCoin) => {
-        const marketCoin = marketCoins.find(
-          (coin) => coin.id === portfolioCoin.id
-        )
-
-        return (
-          <Card
-            className='dashboard-card portfolio-coin-card'
-            key={portfolioCoin.id}
-            style={cardStyle}
+      <Space className='sider-navigation' direction='vertical' size={8}>
+        {navigationItems.map((navigationItem) => (
+          <Flex
+            className={
+              navigationItem.isActive
+                ? 'sider-navigation-item is-active'
+                : 'sider-navigation-item'
+            }
+            align='center'
+            gap={10}
+            key={navigationItem.label}
           >
-            <Flex justify='space-between' align='flex-start' gap={16}>
-              <Space align='start'>
-                <Avatar
-                  src={marketCoin?.icon}
-                  alt={portfolioCoin.name}
-                  size={40}
-                >
-                  {marketCoin?.symbol}
-                </Avatar>
+            {navigationItem.icon}
+            <Typography.Text>{navigationItem.label}</Typography.Text>
+          </Flex>
+        ))}
+      </Space>
 
-                <Space direction='vertical' size={2}>
-                  <Typography.Text strong>
-                    {portfolioCoin.name}
+      <Space className='sider-coin-list' direction='vertical' size={12}>
+        {userPortfolio.map((portfolioCoin) => {
+          const marketCoin = marketCoins.find(
+            (coin) => coin.id === portfolioCoin.id
+          )
+
+          return (
+            <Card
+              className='dashboard-card portfolio-coin-card'
+              key={portfolioCoin.id}
+            >
+              <Flex justify='space-between' align='flex-start' gap={16}>
+                <Space align='start'>
+                  <Avatar
+                    src={marketCoin?.icon}
+                    alt={portfolioCoin.name}
+                    size={42}
+                  >
+                    {marketCoin?.symbol}
+                  </Avatar>
+
+                  <Space direction='vertical' size={2}>
+                    <Typography.Text strong>
+                      {portfolioCoin.name}
+                    </Typography.Text>
+
+                    <Typography.Text type='secondary'>
+                      {marketCoin?.symbol}
+                    </Typography.Text>
+                  </Space>
+                </Space>
+
+                <Tag color={portfolioCoin.grow ? 'green' : 'red'}>
+                  {portfolioCoin.grow ? (
+                    <ArrowUpOutlined />
+                  ) : (
+                    <ArrowDownOutlined />
+                  )}{' '}
+                  {portfolioCoin.growPercent}%
+                </Tag>
+              </Flex>
+
+              <Flex
+                justify='space-between'
+                align='flex-end'
+                style={{ marginTop: 16 }}
+              >
+                <Space direction='vertical' size={0}>
+                  <Typography.Text type='secondary'>
+                    Стоимость
                   </Typography.Text>
 
-                  <Typography.Text type='secondary'>
-                    {marketCoin?.symbol}
+                  <Typography.Text strong>
+                    {formatCurrency(portfolioCoin.totalAmount)}
                   </Typography.Text>
                 </Space>
-              </Space>
 
-              <Tag color={portfolioCoin.grow ? 'green' : 'red'}>
-                {portfolioCoin.grow ? (
-                  <ArrowUpOutlined />
-                ) : (
-                  <ArrowDownOutlined />
-                )}{' '}
-                {portfolioCoin.growPercent}%
-              </Tag>
-            </Flex>
+                <Space direction='vertical' size={0} align='end'>
+                  <Typography.Text type='secondary'>
+                    Результат
+                  </Typography.Text>
 
-            <Flex
-              justify='space-between'
-              align='flex-end'
-              style={{ marginTop: 16 }}
-            >
-              <Space direction='vertical' size={0}>
-                <Typography.Text type='secondary'>
-                  Стоимость
-                </Typography.Text>
-
-                <Typography.Text strong>
-                  {formatCurrency(portfolioCoin.totalAmount)}
-                </Typography.Text>
-              </Space>
-
-              <Space direction='vertical' size={0} align='end'>
-                <Typography.Text type='secondary'>
-                  Результат
-                </Typography.Text>
-
-                <Typography.Text
-                  type={getProfitType(portfolioCoin.totalProfit)}
-                  strong
-                >
-                  {formatCurrency(portfolioCoin.totalProfit)}
-                </Typography.Text>
-              </Space>
-            </Flex>
-          </Card>
-        )
-      })}
+                  <Typography.Text
+                    type={getProfitType(portfolioCoin.totalProfit)}
+                    strong
+                  >
+                    {formatCurrency(portfolioCoin.totalProfit)}
+                  </Typography.Text>
+                </Space>
+              </Flex>
+            </Card>
+          )
+        })}
+      </Space>
     </Layout.Sider>
   )
 }

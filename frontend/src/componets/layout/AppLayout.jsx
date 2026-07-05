@@ -5,17 +5,17 @@ import AppContent from './AppContent'
 import { useContext } from 'react'
 import CryptoContext from '../../context/CryptoContext'
 
-export default function AppLayout() {
+export default function AppLayout({ themeName, setThemeName }) {
   const { loading } = useContext(CryptoContext)
   if (loading) {
     return <Spin fullscreen />
   }
   return (
-    <Layout>
-      <AppHeader />
-      <Layout>
+    <Layout className='app-shell' data-theme={themeName}>
+      <AppHeader themeName={themeName} setThemeName={setThemeName} />
+      <Layout className='app-body'>
         <AppSider />
-        <AppContent />
+        <AppContent themeName={themeName} />
       </Layout>
     </Layout>
   )

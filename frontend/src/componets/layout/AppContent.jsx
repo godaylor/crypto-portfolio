@@ -1,52 +1,56 @@
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  PercentageOutlined,
+  TrophyOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
-import { Card, Col, Layout, Row, Statistic, Typography } from 'antd'
+import { Card, Col, Flex, Layout, Row, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
 import AssetsTable from './AssetsTable'
 import PortfolioChart from './PortfolioChart'
 
-const contentStyle = {
-  minHeight: 'calc(100vh - 72px)',
-  backgroundColor: '#08111f',
-  padding: '24px',
-}
-
-const dashboardHeaderStyle = {
-  marginBottom: 24,
-}
-
-const dashboardTitleStyle = {
-  color: '#f8fafc',
-  marginBottom: 4,
-}
-
-const dashboardSubtitleStyle = {
-  color: '#94a3b8',
-}
-
-const dashboardCardStyle = {
-  height: '100%',
-  background: '#111c2e',
-  border: '1px solid #1e293b',
-}
-
-function getValueColor(value) {
+function getValueStatus(value) {
   if (value > 0) {
-    return '#22c55e'
+    return 'positive'
   }
 
   if (value < 0) {
-    return '#ef4444'
+    return 'negative'
   }
 
-  return '#eab308'
+  return 'neutral'
 }
 
-export default function AppContent() {
+function formatNumber(value) {
+  return new Intl.NumberFormat('ru-RU', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(value)
+}
+
+function KpiCard({ title, value, suffix, icon, status = 'neutral' }) {
+  return (
+    <Card className='dashboard-card kpi-card'>
+      <Flex className='kpi-card-content' align='center' gap={16}>
+        <span className={`kpi-icon is-${status}`}>{icon}</span>
+
+        <div>
+          <Typography.Text className='kpi-label'>{title}</Typography.Text>
+
+          <Typography.Title className={`kpi-value is-${status}`} level={3}>
+            {value}
+            {suffix && <span>{suffix}</span>}
+          </Typography.Title>
+        </div>
+      </Flex>
+    </Card>
+  )
+}
+
+export default function AppContent({ themeName }) {
   const { userPortfolio, marketCoins } = useCrypto()
 
   const coinPricesById = marketCoins.reduce((pricesById, marketCoin) => {
@@ -81,78 +85,66 @@ export default function AppContent() {
     portfolioProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />
 
   return (
-    <Layout.Content style={contentStyle}>
-      <div style={dashboardHeaderStyle}>
-        <Typography.Title level={2} style={dashboardTitleStyle}>
-          Обзор портфеля
-        </Typography.Title>
+    <Layout.Content className='dashboard-content'>
+      <div className='dashboard-inner'>
+        <div className='dashboard-header'>
+          <Typography.Title level={2}>Обзор портфеля</Typography.Title>
 
-        <Typography.Text style={dashboardSubtitleStyle}>
-          Следите за распределением, доходностью и текущими активами.
-        </Typography.Text>
-      </div>
+          <Typography.Text>
+            Следите за распределением, доходностью и текущими активами.
+          </Typography.Text>
+        </div>
 
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col xs={24} sm={12} xl={6}>
-          <Card className='dashboard-card' style={dashboardCardStyle}>
-            <Statistic
+        <Row className='kpi-grid' gutter={[18, 18]}>
+          <Col xs={24} sm={12} xl={6}>
+            <KpiCard
               title='Общая стоимость'
-              value={portfolioBalance}
-              precision={2}
-              prefix='$'
-              valueStyle={{ color: '#f8fafc' }}
+              value={formatNumber(portfolioBalance)}
+              icon={<WalletOutlined />}
             />
-          </Card>
-        </Col>
+          </Col>
 
-        <Col xs={24} sm={12} xl={6}>
-          <Card className='dashboard-card' style={dashboardCardStyle}>
-            <Statistic
+          <Col xs={24} sm={12} xl={6}>
+            <KpiCard
               title='Прибыль / убыток'
-              value={portfolioProfit}
-              precision={2}
-              prefix={profitIcon}
-              suffix='$'
-              valueStyle={{ color: getValueColor(portfolioProfit) }}
+              value={formatNumber(portfolioProfit)}
+              suffix=' $'
+              icon={profitIcon}
+              status={getValueStatus(portfolioProfit)}
             />
-          </Card>
-        </Col>
+          </Col>
 
-        <Col xs={24} sm={12} xl={6}>
-          <Card className='dashboard-card' style={dashboardCardStyle}>
-            <Statistic
+          <Col xs={24} sm={12} xl={6}>
+            <KpiCard
               title='Изменение портфеля'
-              value={portfolioProfitPercent}
-              precision={2}
-              suffix='%'
-              valueStyle={{
-                color: getValueColor(portfolioProfitPercent),
-              }}
+              value={formatNumber(portfolioProfitPercent)}
+              suffix=' %'
+              icon={<PercentageOutlined />}
+              status={getValueStatus(portfolioProfitPercent)}
             />
-          </Card>
-        </Col>
+          </Col>
 
-        <Col xs={24} sm={12} xl={6}>
-          <Card className='dashboard-card' style={dashboardCardStyle}>
-            <Statistic
+          <Col xs={24} sm={12} xl={6}>
+            <KpiCard
               title='Активы в плюсе'
               value={positiveCoinsCount}
-              suffix={`/ ${userPortfolio.length}`}
-              valueStyle={{ color: '#38bdf8' }}
+              suffix={` / ${userPortfolio.length}`}
+              icon={<TrophyOutlined />}
+              status='accent'
             />
-          </Card>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
 
-      <Row gutter={[16, 16]} align='stretch'>
-        <Col xs={24} xl={8}>
-          <PortfolioChart />
-        </Col>
+        <Row className='portfolio-grid' gutter={[18, 18]} align='stretch'>
+          <Col xs={24} xl={8}>
+            <PortfolioChart themeName={themeName} />
+          </Col>
 
-        <Col xs={24} xl={16}>
-          <AssetsTable />
-        </Col>
-      </Row>
+          <Col xs={24} xl={16}>
+            <AssetsTable />
+          </Col>
+        </Row>
+      </div>
     </Layout.Content>
   )
 }

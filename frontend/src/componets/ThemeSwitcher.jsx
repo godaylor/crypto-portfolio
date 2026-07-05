@@ -1,56 +1,68 @@
 import {
   CheckOutlined,
-  DesktopOutlined,
+  ExperimentOutlined,
   MoonOutlined,
+  SunOutlined,
 } from '@ant-design/icons'
-import { Button, Dropdown, Space, Tag, Typography } from 'antd'
+import { Button, Dropdown, Space, Typography } from 'antd'
 
-const menuItems = [
+const themes = [
   {
     key: 'dark-modern',
-    label: (
-      <Space className='theme-switcher-item'>
-        <MoonOutlined />
-        <span>Темная современная</span>
-        <CheckOutlined />
-      </Space>
-    ),
+    label: 'Dark Modern',
+    description: 'Контрастная темная тема',
+    icon: <MoonOutlined />,
   },
   {
     key: 'dark-glass',
-    disabled: true,
-    label: (
-      <Space className='theme-switcher-item'>
-        <DesktopOutlined />
-        <span>Темное стекло</span>
-        <Tag>скоро</Tag>
-      </Space>
-    ),
+    label: 'Dark Glass',
+    description: 'Glassmorphism с глубиной',
+    icon: <ExperimentOutlined />,
   },
   {
     key: 'light-modern',
-    disabled: true,
-    label: (
-      <Space className='theme-switcher-item'>
-        <DesktopOutlined />
-        <span>Светлая современная</span>
-        <Tag>скоро</Tag>
-      </Space>
-    ),
+    label: 'Light Modern',
+    description: 'Светлая премиальная тема',
+    icon: <SunOutlined />,
   },
 ]
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({ themeName, setThemeName }) {
+  const currentTheme = themes.find((theme) => theme.key === themeName)
+
+  const menuItems = themes.map((theme) => ({
+    key: theme.key,
+    label: (
+      <Space className='theme-switcher-item' size={12}>
+        <span className='theme-switcher-icon'>{theme.icon}</span>
+
+        <Space direction='vertical' size={0}>
+          <Typography.Text>{theme.label}</Typography.Text>
+          <Typography.Text type='secondary'>
+            {theme.description}
+          </Typography.Text>
+        </Space>
+
+        {theme.key === themeName && <CheckOutlined />}
+      </Space>
+    ),
+  }))
+
   return (
     <Dropdown
-      menu={{ items: menuItems, selectable: true, selectedKeys: ['dark-modern'] }}
+      menu={{
+        items: menuItems,
+        selectable: true,
+        selectedKeys: [themeName],
+        onClick: ({ key }) => setThemeName(key),
+      }}
       placement='bottomRight'
       trigger={['click']}
     >
-      <Button className='header-icon-button' type='text'>
+      <Button className='header-icon-button theme-trigger' type='text'>
         <Space size={8}>
-          <MoonOutlined />
-          <Typography.Text>Тема</Typography.Text>
+          {currentTheme?.icon}
+          <Typography.Text>{currentTheme?.label ?? 'Theme'}</Typography.Text>
         </Space>
       </Button>
     </Dropdown>
