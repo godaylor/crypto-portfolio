@@ -5,22 +5,13 @@ import { Doughnut } from 'react-chartjs-2'
 import { Card, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
+import {
+  chartColorPalettes,
+  defaultThemeValues,
+  readChartThemeValues,
+} from './chartTheme'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
-
-const chartColorPalettes = {
-  'dark-modern': ['#ff9f1a', '#6380f6', '#21d6a3', '#3b82f6', '#14f195'],
-  'dark-glass': ['#ffb020', '#6d5dfc', '#2ed3aa', '#38c6ff', '#8b5cf6'],
-  'light-modern': ['#ff9f1a', '#4f7cff', '#16b981', '#2563eb', '#7c3aed'],
-}
-
-const defaultThemeValues = {
-  surfaceCard: '#111c30',
-  surfaceElevated: '#101a2c',
-  borderStrong: '#25344d',
-  textPrimary: '#f8fafc',
-  textSecondary: '#cbd5e1',
-}
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('ru-RU', {
@@ -28,38 +19,6 @@ function formatCurrency(value) {
     currency: 'USD',
     maximumFractionDigits: 2,
   }).format(value)
-}
-
-function getThemeValue(name, fallback) {
-  if (typeof window === 'undefined') {
-    return fallback
-  }
-
-  const themeRoot = document.querySelector('.app-shell') ?? document.documentElement
-  const value = getComputedStyle(themeRoot)
-    .getPropertyValue(name)
-    .trim()
-
-  return value || fallback
-}
-
-function readChartThemeValues() {
-  return {
-    surfaceCard: getThemeValue('--surface-card', defaultThemeValues.surfaceCard),
-    surfaceElevated: getThemeValue(
-      '--surface-elevated',
-      defaultThemeValues.surfaceElevated
-    ),
-    borderStrong: getThemeValue(
-      '--border-strong',
-      defaultThemeValues.borderStrong
-    ),
-    textPrimary: getThemeValue('--text-primary', defaultThemeValues.textPrimary),
-    textSecondary: getThemeValue(
-      '--text-secondary',
-      defaultThemeValues.textSecondary
-    ),
-  }
 }
 
 export default function PortfolioChart({ themeName }) {

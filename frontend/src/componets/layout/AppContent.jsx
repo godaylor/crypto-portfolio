@@ -10,6 +10,7 @@ import { Card, Col, Flex, Layout, Row, Typography } from 'antd'
 import { useCrypto } from '../../context/CryptoContext'
 
 import AssetsTable from './AssetsTable'
+import PortfolioAnalytics from './PortfolioAnalytics'
 import PortfolioChart from './PortfolioChart'
 
 function getValueStatus(value) {
@@ -134,6 +135,14 @@ export default function AppContent({ themeName }) {
             />
           </Col>
         </Row>
+
+        <PortfolioAnalytics
+          portfolioBalance={portfolioBalance}
+          portfolioProfit={portfolioProfit}
+          portfolioProfitPercent={portfolioProfitPercent}
+          themeName={themeName}
+          userPortfolio={userPortfolio}
+        />
 
         <Row className='portfolio-grid' gutter={[18, 18]} align='stretch'>
           <Col xs={24} xl={8}>

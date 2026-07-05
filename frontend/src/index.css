@@ -561,9 +561,11 @@ body {
 }
 
 .dashboard-header,
+.analytics-card,
 .chart-card,
 .holdings-card,
-.kpi-card {
+.kpi-card,
+.performance-card {
   min-width: 0;
 }
 
@@ -576,13 +578,20 @@ body {
   margin-bottom: 18px;
 }
 
+.analytics-grid {
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
 .kpi-grid,
+.analytics-grid,
 .portfolio-grid {
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
 
 .kpi-grid > .ant-col,
+.analytics-grid > .ant-col,
 .portfolio-grid > .ant-col {
   min-width: 0;
 }
@@ -746,22 +755,26 @@ body {
   font-size: 0.9em;
 }
 
+.analytics-grid > .ant-col,
 .portfolio-grid > .ant-col {
   display: flex;
 }
 
 .chart-card,
-.holdings-card {
+.holdings-card,
+.performance-card {
   width: 100%;
 }
 
 .chart-card .ant-card-body,
-.holdings-card .ant-card-body {
+.holdings-card .ant-card-body,
+.performance-card .ant-card-body {
   padding: 25px;
 }
 
 .chart-card h4.ant-typography,
-.holdings-card h4.ant-typography {
+.holdings-card h4.ant-typography,
+.performance-card h4.ant-typography {
   margin: 0 0 5px;
   color: var(--text-primary);
   font-size: 20px;
@@ -770,8 +783,172 @@ body {
 }
 
 .chart-card .ant-typography,
-.holdings-card .ant-typography {
+.holdings-card .ant-typography,
+.performance-card .ant-typography {
   color: var(--text-secondary);
+}
+
+.performance-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 410px;
+}
+
+.performance-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.performance-range-control {
+  flex: 0 0 auto;
+  padding: 3px;
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.performance-range-control .ant-segmented-item {
+  border-radius: 9px;
+}
+
+.performance-range-control .ant-segmented-item-label {
+  min-height: 28px;
+  padding-inline: 10px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.performance-range-control .ant-segmented-item-selected {
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+.performance-summary {
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
+.performance-summary h3.ant-typography {
+  margin: 1px 0 0;
+  color: var(--text-primary);
+  font-size: 25px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.performance-change {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 850;
+  border-radius: 999px;
+}
+
+.performance-change.is-positive {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+}
+
+.performance-change.is-negative {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+}
+
+.performance-chart-wrapper {
+  flex: 1 1 auto;
+  min-height: 260px;
+  margin-top: 4px;
+}
+
+.performance-chart-wrapper canvas {
+  max-width: 100%;
+}
+
+.analytics-card-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.analytics-card .ant-card-body {
+  min-height: 196px;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.analytics-card-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.analytics-card-content .ant-space-item:last-child {
+  min-width: 0;
+}
+
+.analytics-card-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+  border-radius: 12px;
+}
+
+.analytics-card-icon.is-positive,
+.analytics-card-value.is-positive {
+  color: var(--success);
+}
+
+.analytics-card-icon.is-negative,
+.analytics-card-value.is-negative {
+  color: var(--danger);
+}
+
+.analytics-card-icon.is-accent,
+.analytics-card-value.is-accent {
+  color: var(--info);
+}
+
+.analytics-card-icon.is-neutral,
+.analytics-card-value.is-neutral {
+  color: var(--text-primary);
+}
+
+.analytics-card-label {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.analytics-card-value.ant-typography {
+  max-width: 100%;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 21px;
+  line-height: 1.16;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.analytics-card-detail {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .chart-wrapper {
@@ -1064,6 +1241,7 @@ body {
     width: min(520px, 42vw);
   }
 
+  .analytics-grid > .ant-col,
   .portfolio-grid > .ant-col {
     flex: 0 0 100%;
     max-width: 100%;
@@ -1071,6 +1249,14 @@ body {
 
   .chart-wrapper {
     height: 360px;
+  }
+
+  .performance-card .ant-card-body {
+    min-height: 390px;
+  }
+
+  .analytics-card .ant-card-body {
+    min-height: 150px;
   }
 }
 
@@ -1158,8 +1344,37 @@ body {
   }
 
   .chart-card .ant-card-body,
-  .holdings-card .ant-card-body {
+  .holdings-card .ant-card-body,
+  .performance-card .ant-card-body {
     padding: 20px;
+  }
+
+  .performance-card-header {
+    flex-direction: column;
+  }
+
+  .performance-range-control {
+    width: 100%;
+  }
+
+  .performance-range-control .ant-segmented-group {
+    width: 100%;
+  }
+
+  .performance-range-control .ant-segmented-item {
+    flex: 1 1 0;
+  }
+
+  .analytics-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-card .ant-card-body {
+    min-height: 126px;
+  }
+
+  .performance-chart-wrapper {
+    min-height: 230px;
   }
 
   .chart-wrapper {
