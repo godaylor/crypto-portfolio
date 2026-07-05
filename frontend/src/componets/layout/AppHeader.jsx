@@ -62,6 +62,21 @@ export default function AppHeader({ themeName, setThemeName }) {
     return document.querySelector('.app-shell') ?? document.body
   }
 
+  const addAssetDrawerTitle = (
+    <Flex className='add-coin-drawer-title' align='center' gap={12}>
+      <span className='add-coin-drawer-title-icon'>
+        <PlusOutlined />
+      </span>
+
+      <Space direction='vertical' size={1}>
+        <Typography.Text strong>Добавление актива</Typography.Text>
+        <Typography.Text type='secondary'>
+          Новая покупка для портфеля
+        </Typography.Text>
+      </Space>
+    </Flex>
+  )
+
   return (
     <Layout.Header className='app-header'>
       <BrandLockup className='header-brand' />
@@ -120,7 +135,7 @@ export default function AppHeader({ themeName, setThemeName }) {
       <Drawer
         className='add-coin-drawer'
         rootClassName='add-coin-drawer-root'
-        title='Добавление актива'
+        title={addAssetDrawerTitle}
         width={560}
         open={isDrawerOpen}
         closeIcon={<CloseOutlined />}

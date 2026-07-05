@@ -320,6 +320,13 @@ body {
   box-shadow: 0 0 0 3px var(--accent-soft) !important;
 }
 
+.drawer-coin-select.ant-select-disabled .ant-select-selector,
+.add-coin-form .ant-input-number-disabled,
+.add-coin-form .ant-picker-disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
 .coin-search-dropdown .ant-select-item {
   min-height: 42px;
   margin: 4px;
@@ -343,6 +350,50 @@ body {
 .coin-search-dropdown .ant-select-item-option-active,
 .coin-search-dropdown .ant-select-item-option-selected {
   background: var(--accent-soft) !important;
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-panel-container {
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(var(--blur));
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-header,
+.app-shell .ant-picker-dropdown .ant-picker-cell,
+.app-shell .ant-picker-dropdown .ant-picker-time-panel-cell-inner {
+  color: var(--text-secondary);
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-content th,
+.app-shell .ant-picker-dropdown .ant-picker-header button,
+.app-shell .ant-picker-dropdown .ant-picker-now-btn {
+  color: var(--text-primary);
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-cell-in-view {
+  color: var(--text-primary);
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-cell-inner {
+  border-radius: 8px;
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: var(--accent);
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+.app-shell .ant-picker-dropdown .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.app-shell .ant-picker-dropdown .ant-picker-cell-in-view:hover .ant-picker-cell-inner,
+.app-shell .ant-picker-dropdown .ant-picker-time-panel-cell-inner:hover {
+  background: var(--accent-soft);
 }
 
 .coin-option-icon {
@@ -1128,17 +1179,46 @@ body {
 
 .add-coin-drawer .ant-drawer-title {
   color: var(--text-primary);
-  font-size: 20px;
-  font-weight: 850;
 }
 
 .add-coin-drawer .ant-drawer-body {
   padding: 28px;
 }
 
+.add-coin-drawer-title {
+  min-width: 0;
+}
+
+.add-coin-drawer-title-icon {
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 13px;
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+.add-coin-drawer-title .ant-typography {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.add-coin-drawer-title .ant-typography-secondary {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .add-coin-form-wrapper,
 .add-coin-form-wrapper .ant-space-item {
   width: 100%;
+}
+
+.add-coin-form-intro {
+  padding: 2px 2px 0;
 }
 
 .add-coin-form-wrapper h4.ant-typography {
@@ -1147,13 +1227,106 @@ body {
   font-weight: 850;
 }
 
+.asset-form-section {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 96%, #ffffff 4%), var(--surface-elevated));
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.asset-form-section::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 34%),
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 12%, transparent), transparent 32%);
+}
+
+.asset-form-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.app-shell[data-theme='dark-glass'] .asset-form-section {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, var(--surface-card), rgba(19, 23, 56, 0.72));
+  border-color: rgba(204, 211, 255, 0.24);
+}
+
+.app-shell[data-theme='light-modern'] .asset-form-section {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  box-shadow: 0 18px 42px rgba(69, 88, 124, 0.12);
+}
+
+.asset-form-eyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.asset-form-section h5.ant-typography {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.asset-form-section .ant-typography-secondary {
+  color: var(--text-secondary);
+}
+
+.asset-form-section-body {
+  margin-top: 15px;
+}
+
 .add-coin-form .ant-form-item-label > label {
   color: var(--text-secondary);
-  font-weight: 650;
+  font-size: 12px;
+  font-weight: 750;
 }
 
 .add-coin-form .ant-form-item {
-  margin-bottom: 21px;
+  margin-bottom: 18px;
+}
+
+.asset-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+}
+
+.add-coin-form .ant-form-item-explain-error {
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.add-coin-form .ant-form-item-has-error .ant-input-number,
+.add-coin-form .ant-form-item-has-error .ant-picker {
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface-muted)) !important;
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 17%, transparent) !important;
+}
+
+.add-coin-form .ant-form-item-has-success .ant-input-number,
+.add-coin-form .ant-form-item-has-success .ant-picker {
+  border-color: color-mix(in srgb, var(--success) 58%, var(--border-strong)) !important;
+}
+
+.add-coin-form .ant-input-number-group-wrapper,
+.add-coin-form .ant-input-number-wrapper {
+  width: 100%;
 }
 
 .selected-coin-card,
@@ -1165,9 +1338,19 @@ body {
 }
 
 .selected-coin-card {
+  overflow: hidden;
   box-shadow:
     0 16px 42px rgba(0, 0, 0, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.selected-coin-card .ant-card-body {
+  padding: 16px 18px;
+}
+
+.selected-coin-card h4.ant-typography {
+  margin: 0;
+  font-size: 17px;
 }
 
 .add-coin-form .ant-input-number-group-addon {
@@ -1182,23 +1365,131 @@ body {
   background: color-mix(in srgb, var(--surface-muted) 82%, transparent) !important;
 }
 
-.add-coin-form .ant-btn:not(.ant-btn-primary) {
+.asset-total-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 70px;
+  padding: 14px 16px;
+  margin: 2px 0 20px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface-muted));
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border-subtle));
+  border-radius: 15px;
+}
+
+.asset-total-preview h4.ant-typography {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.asset-form-actions .ant-btn,
+.coin-added-actions .ant-btn {
+  min-width: 120px;
+  font-weight: 750;
+  border-radius: 12px;
+}
+
+.asset-form-actions .ant-btn:not(.ant-btn-primary),
+.coin-added-actions .ant-btn:not(.ant-btn-primary) {
   color: var(--text-secondary);
   background: var(--surface-card);
   border-color: var(--border-strong);
 }
 
-.add-coin-form .ant-btn:not(.ant-btn-primary):hover {
+.asset-form-actions .ant-btn:not(.ant-btn-primary):hover,
+.coin-added-actions .ant-btn:not(.ant-btn-primary):hover {
   color: var(--text-primary) !important;
+  background: var(--surface-card-hover) !important;
   border-color: var(--accent) !important;
+}
+
+.asset-form-empty-state {
+  min-height: 118px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 24px 18px;
+  text-align: center;
+  background: color-mix(in srgb, var(--surface-muted) 72%, transparent);
+  border: 1px dashed var(--border-strong);
+  border-radius: 18px;
+}
+
+.asset-form-empty-state .anticon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 13px;
+}
+
+.coin-added-result {
+  padding: 10px 0 0;
+}
+
+.coin-added-result .ant-result {
+  padding: 22px 10px 18px;
+}
+
+.coin-added-result .ant-result-icon {
+  margin-bottom: 16px;
+}
+
+.coin-added-result .ant-result-icon .anticon {
+  color: var(--success);
 }
 
 .coin-added-result .ant-result-title {
   color: var(--text-primary);
+  font-weight: 850;
 }
 
 .coin-added-result .ant-result-subtitle {
   color: var(--text-secondary);
+}
+
+.coin-added-summary {
+  padding: 18px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 96%, #ffffff 4%), var(--surface-elevated));
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.coin-added-summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.coin-added-summary .ant-typography {
+  color: var(--text-primary);
+}
+
+.coin-added-summary .ant-typography-secondary {
+  color: var(--text-secondary);
+}
+
+.coin-added-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.coin-added-actions {
+  margin-top: 18px;
 }
 
 .coin-info-modal .ant-modal-content {
