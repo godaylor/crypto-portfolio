@@ -60,9 +60,11 @@ export default function ThemeSwitcher({ themeName, setThemeName }) {
       trigger={['click']}
     >
       <Button className='header-icon-button theme-trigger' type='text'>
-        <Space size={8}>
-          {currentTheme?.icon}
-          <Typography.Text>{currentTheme?.label ?? 'Theme'}</Typography.Text>
+        <Space className='theme-trigger-content' size={8}>
+          <span className='theme-trigger-icon'>{currentTheme?.icon}</span>
+          <Typography.Text className='theme-trigger-label'>
+            {currentTheme?.label ?? 'Theme'}
+          </Typography.Text>
         </Space>
       </Button>
     </Dropdown>

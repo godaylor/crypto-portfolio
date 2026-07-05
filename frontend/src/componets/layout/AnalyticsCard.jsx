@@ -9,7 +9,7 @@ export default function AnalyticsCard({
 }) {
   return (
     <Card className='dashboard-card analytics-card' size='small'>
-      <Space className='analytics-card-content' align='start' size={12}>
+      <Space className='analytics-card-content' align='start' size={10}>
         <span className={`analytics-card-icon is-${status}`}>{icon}</span>
 
         <Space direction='vertical' size={3}>

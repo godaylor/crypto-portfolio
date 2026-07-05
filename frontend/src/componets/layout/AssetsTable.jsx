@@ -72,14 +72,21 @@ export default function AssetsTable() {
       dataIndex: 'coinName',
       sorter: (a, b) => a.coinName.localeCompare(b.coinName),
       render: (_, coin) => (
-        <Space>
-          <Avatar src={coin.coinIcon} alt={coin.coinName} size={38}>
+        <Space className='asset-cell asset-cell-coin'>
+          <Avatar
+            className='asset-token-icon'
+            src={coin.coinIcon}
+            alt={coin.coinName}
+            size={34}
+          >
             {coin.coinSymbol}
           </Avatar>
 
           <Space direction='vertical' size={0}>
-            <Typography.Text strong>{coin.coinName}</Typography.Text>
-            <Typography.Text type='secondary'>
+            <Typography.Text className='asset-name' strong>
+              {coin.coinName}
+            </Typography.Text>
+            <Typography.Text className='asset-symbol' type='secondary'>
               {coin.coinSymbol}
             </Typography.Text>
           </Space>
@@ -110,7 +117,7 @@ export default function AssetsTable() {
       defaultSortOrder: 'descend',
       sorter: (a, b) => a.totalAmount - b.totalAmount,
       render: (totalAmount) => (
-        <Typography.Text strong>
+        <Typography.Text className='asset-amount' strong>
           {formatCurrency(totalAmount)}
         </Typography.Text>
       ),
@@ -120,8 +127,9 @@ export default function AssetsTable() {
       dataIndex: 'totalProfit',
       sorter: (a, b) => a.totalProfit - b.totalProfit,
       render: (totalProfit, coin) => (
-        <Space>
+        <Space className='asset-profit-cell' size={8}>
           <Typography.Text
+            className='asset-profit-value'
             type={
               totalProfit > 0
                 ? 'success'
@@ -133,7 +141,7 @@ export default function AssetsTable() {
             {formatCurrency(totalProfit)}
           </Typography.Text>
 
-          <Tag color={getChangeColor(totalProfit)}>
+          <Tag className='asset-change-tag' color={getChangeColor(totalProfit)}>
             {coin.growPercent}%
           </Tag>
         </Space>

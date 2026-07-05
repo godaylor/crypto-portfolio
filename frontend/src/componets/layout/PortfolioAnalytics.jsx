@@ -58,7 +58,7 @@ export default function PortfolioAnalytics({
   const bestAssetChange = bestAsset ? getAssetSignedChange(bestAsset) : 0
 
   return (
-    <Row className='analytics-grid' gutter={[18, 18]} align='stretch'>
+    <Row className='analytics-grid' gutter={[16, 16]} align='stretch'>
       <Col xs={24} xl={16}>
         <PortfolioPerformanceChart
           portfolioBalance={portfolioBalance}
