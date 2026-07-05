@@ -6,11 +6,11 @@ import {
   SettingOutlined,
   StarOutlined,
   SwapOutlined,
-  WalletOutlined,
 } from '@ant-design/icons'
 import { Avatar, Card, Flex, Layout, Space, Tag, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
+import BrandLockup from './BrandLockup'
 
 const navigationItems = [
   {
@@ -66,10 +66,7 @@ export default function AppSider() {
       breakpoint='xl'
       collapsedWidth={0}
     >
-      <Space className='app-brand sidebar-brand' size={12}>
-        <Avatar className='brand-icon' icon={<WalletOutlined />} />
-        <Typography.Text strong>Crypto Portfolio</Typography.Text>
-      </Space>
+      <BrandLockup className='sidebar-brand' />
 
       <Typography.Title className='sider-title' level={4}>
         Активы портфеля

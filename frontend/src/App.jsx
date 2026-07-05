@@ -16,11 +16,11 @@ const themeConfigs = {
       colorError: '#ff4d5e',
       colorWarning: '#ff9f1a',
       colorBgBase: '#060b16',
-      colorBgContainer: '#101a2c',
-      colorBgElevated: '#111c30',
-      colorBorder: '#263958',
+      colorBgContainer: '#101b2f',
+      colorBgElevated: '#0f1a2e',
+      colorBorder: '#314766',
       colorText: '#f7fbff',
-      colorTextSecondary: '#91a5c8',
+      colorTextSecondary: '#a7b7d4',
     },
   },
   'dark-glass': {
@@ -31,11 +31,11 @@ const themeConfigs = {
       colorError: '#ff5268',
       colorWarning: '#ff9f1a',
       colorBgBase: '#08091a',
-      colorBgContainer: 'rgba(25, 28, 58, 0.68)',
-      colorBgElevated: 'rgba(30, 34, 70, 0.82)',
-      colorBorder: 'rgba(145, 156, 255, 0.24)',
+      colorBgContainer: 'rgba(24, 29, 68, 0.78)',
+      colorBgElevated: 'rgba(32, 36, 82, 0.86)',
+      colorBorder: 'rgba(204, 211, 255, 0.26)',
       colorText: '#f8fbff',
-      colorTextSecondary: '#b6bde2',
+      colorTextSecondary: '#c7cdf0',
     },
   },
   'light-modern': {
@@ -48,9 +48,9 @@ const themeConfigs = {
       colorBgBase: '#f6f8ff',
       colorBgContainer: '#ffffff',
       colorBgElevated: '#ffffff',
-      colorBorder: '#dde6f7',
-      colorText: '#101729',
-      colorTextSecondary: '#61708a',
+      colorBorder: '#d7e1f2',
+      colorText: '#081120',
+      colorTextSecondary: '#47566f',
     },
   },
 }
@@ -78,6 +78,9 @@ function createAntTheme(themeName) {
       Drawer: {
         colorBgElevated: selectedTheme.token.colorBgElevated,
       },
+      Dropdown: {
+        controlItemBgHover: selectedTheme.token.colorPrimary,
+      },
       InputNumber: {
         controlHeight: 44,
       },
@@ -86,6 +89,7 @@ function createAntTheme(themeName) {
       },
       Table: {
         headerBg: 'transparent',
+        rowHoverBg: 'transparent',
       },
     },
   }
@@ -96,7 +100,13 @@ export default function App() {
   const appTheme = useMemo(() => createAntTheme(themeName), [themeName])
 
   return (
-    <ConfigProvider locale={ruRU} theme={appTheme}>
+    <ConfigProvider
+      locale={ruRU}
+      theme={appTheme}
+      getPopupContainer={(triggerNode) =>
+        triggerNode?.closest?.('.app-shell') ?? document.body
+      }
+    >
       <CryptoContextProvider>
         <AppLayout themeName={themeName} setThemeName={setThemeName} />
       </CryptoContextProvider>

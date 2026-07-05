@@ -5,10 +5,8 @@ import {
   CloseOutlined,
   PlusOutlined,
   SearchOutlined,
-  WalletOutlined,
 } from '@ant-design/icons'
 import {
-  Avatar,
   Button,
   Drawer,
   Flex,
@@ -22,6 +20,7 @@ import {
 import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
 import ThemeSwitcher from '../ThemeSwitcher'
+import BrandLockup from './BrandLockup'
 
 import { useCrypto } from '../../context/CryptoContext'
 
@@ -59,12 +58,13 @@ export default function AppHeader({ themeName, setThemeName }) {
     setIsModalOpen(true)
   }
 
+  function getDrawerContainer() {
+    return document.querySelector('.app-shell') ?? document.body
+  }
+
   return (
     <Layout.Header className='app-header'>
-      <Space className='app-brand header-brand' size={12}>
-        <Avatar className='brand-icon' icon={<WalletOutlined />} />
-        <Typography.Text strong>Crypto Portfolio</Typography.Text>
-      </Space>
+      <BrandLockup className='header-brand' />
 
       <Select
         className='coin-search-select'
@@ -119,10 +119,12 @@ export default function AppHeader({ themeName, setThemeName }) {
 
       <Drawer
         className='add-coin-drawer'
+        rootClassName='add-coin-drawer-root'
         title='Добавление актива'
         width={560}
         open={isDrawerOpen}
         closeIcon={<CloseOutlined />}
+        getContainer={getDrawerContainer}
         onClose={() => setIsDrawerOpen(false)}
       >
         <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />

@@ -96,7 +96,7 @@ export default function AppContent({ themeName }) {
         </div>
 
         <Row className='kpi-grid' gutter={[18, 18]}>
-          <Col xs={24} sm={12} xl={6}>
+          <Col xs={24} md={12} xl={6}>
             <KpiCard
               title='Общая стоимость'
               value={formatNumber(portfolioBalance)}
@@ -104,7 +104,7 @@ export default function AppContent({ themeName }) {
             />
           </Col>
 
-          <Col xs={24} sm={12} xl={6}>
+          <Col xs={24} md={12} xl={6}>
             <KpiCard
               title='Прибыль / убыток'
               value={formatNumber(portfolioProfit)}
@@ -114,7 +114,7 @@ export default function AppContent({ themeName }) {
             />
           </Col>
 
-          <Col xs={24} sm={12} xl={6}>
+          <Col xs={24} md={12} xl={6}>
             <KpiCard
               title='Изменение портфеля'
               value={formatNumber(portfolioProfitPercent)}
@@ -124,7 +124,7 @@ export default function AppContent({ themeName }) {
             />
           </Col>
 
-          <Col xs={24} sm={12} xl={6}>
+          <Col xs={24} md={12} xl={6}>
             <KpiCard
               title='Активы в плюсе'
               value={positiveCoinsCount}

@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { Avatar, Card, Space, Table, Tag, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
@@ -31,30 +33,38 @@ function getChangeColor(value) {
 export default function AssetsTable() {
   const { userPortfolio, marketCoins } = useCrypto()
 
-  const portfolioBalance = userPortfolio
-    .map((portfolioCoin) => portfolioCoin.totalAmount)
-    .reduce((totalBalance, value) => totalBalance + value, 0)
+  const portfolioBalance = useMemo(
+    () =>
+      userPortfolio
+        .map((portfolioCoin) => portfolioCoin.totalAmount)
+        .reduce((totalBalance, value) => totalBalance + value, 0),
+    [userPortfolio]
+  )
 
-  const tableData = userPortfolio.map((portfolioCoin) => {
-    const marketCoin = marketCoins.find(
-      (coin) => coin.id === portfolioCoin.id
-    )
+  const tableData = useMemo(
+    () =>
+      [...userPortfolio].map((portfolioCoin, index) => {
+        const marketCoin = marketCoins.find(
+          (coin) => coin.id === portfolioCoin.id
+        )
 
-    return {
-      key: portfolioCoin.id,
-      coinName: portfolioCoin.name,
-      coinSymbol: marketCoin?.symbol,
-      coinIcon: marketCoin?.icon,
-      currentPrice: marketCoin?.price ?? portfolioCoin.price,
-      amount: portfolioCoin.amount,
-      allocation: portfolioBalance
-        ? (portfolioCoin.totalAmount / portfolioBalance) * 100
-        : 0,
-      totalAmount: portfolioCoin.totalAmount,
-      totalProfit: portfolioCoin.totalProfit,
-      growPercent: portfolioCoin.growPercent,
-    }
-  })
+        return {
+          key: `${portfolioCoin.id}-${portfolioCoin.date?.getTime?.() ?? index}-${index}`,
+          coinName: portfolioCoin.name,
+          coinSymbol: marketCoin?.symbol,
+          coinIcon: marketCoin?.icon,
+          currentPrice: marketCoin?.price ?? portfolioCoin.price,
+          amount: portfolioCoin.amount,
+          allocation: portfolioBalance
+            ? (portfolioCoin.totalAmount / portfolioBalance) * 100
+            : 0,
+          totalAmount: portfolioCoin.totalAmount,
+          totalProfit: portfolioCoin.totalProfit,
+          growPercent: portfolioCoin.growPercent,
+        }
+      }),
+    [marketCoins, portfolioBalance, userPortfolio]
+  )
 
   const columns = [
     {
@@ -144,6 +154,7 @@ export default function AssetsTable() {
         columns={columns}
         dataSource={tableData}
         pagination={false}
+        rowKey='key'
         scroll={{ x: 760 }}
       />
     </Card>
