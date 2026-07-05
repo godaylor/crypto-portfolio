@@ -3,11 +3,13 @@ import {
   ArrowUpOutlined,
   BarChartOutlined,
   HomeOutlined,
+  MenuOutlined,
   SettingOutlined,
   StarOutlined,
   SwapOutlined,
 } from '@ant-design/icons'
 import { Avatar, Card, Flex, Layout, Space, Tag, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
 import BrandLockup from './BrandLockup'
@@ -56,16 +58,96 @@ function formatCurrency(value) {
   }).format(value)
 }
 
+const RESPONSIVE_SIDER_QUERY = '(max-width: 1439px)'
+const MOBILE_SIDER_QUERY = '(max-width: 920px)'
+
+function isResponsiveSiderViewport() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia(RESPONSIVE_SIDER_QUERY).matches
+  )
+}
+
+function isMobileSiderViewport() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia(MOBILE_SIDER_QUERY).matches
+  )
+}
+
 export default function AppSider() {
   const { userPortfolio, marketCoins } = useCrypto()
+  const [isResponsiveSider, setIsResponsiveSider] = useState(
+    isResponsiveSiderViewport
+  )
+  const [isMobileSider, setIsMobileSider] = useState(isMobileSiderViewport)
+  const [isSiderCollapsed, setIsSiderCollapsed] = useState(
+    isResponsiveSiderViewport
+  )
+
+  useEffect(() => {
+    const responsiveMediaQuery = window.matchMedia(RESPONSIVE_SIDER_QUERY)
+    const mobileMediaQuery = window.matchMedia(MOBILE_SIDER_QUERY)
+
+    function syncSiderState() {
+      const isResponsive = responsiveMediaQuery.matches
+      const isMobile = mobileMediaQuery.matches
+
+      setIsResponsiveSider(isResponsive)
+      setIsMobileSider(isMobile)
+      setIsSiderCollapsed(isResponsive)
+    }
+
+    syncSiderState()
+    responsiveMediaQuery.addEventListener('change', syncSiderState)
+    mobileMediaQuery.addEventListener('change', syncSiderState)
+
+    return () => {
+      responsiveMediaQuery.removeEventListener('change', syncSiderState)
+      mobileMediaQuery.removeEventListener('change', syncSiderState)
+    }
+  }, [])
+
+  function handleNavigationClick() {
+    if (isMobileSider) {
+      setIsSiderCollapsed(true)
+    }
+  }
 
   return (
-    <Layout.Sider
-      className='portfolio-sider'
-      width={276}
-      breakpoint='xl'
-      collapsedWidth={0}
-    >
+    <>
+      {isMobileSider && isSiderCollapsed && (
+        <button
+          className='portfolio-mobile-menu-trigger'
+          type='button'
+          aria-label='Open menu'
+          onClick={() => setIsSiderCollapsed(false)}
+        >
+          <span className='mobile-menu-brand-mark' aria-hidden='true'>
+            <span className='brand-mark-core' />
+          </span>
+          <MenuOutlined />
+        </button>
+      )}
+
+      {isMobileSider && !isSiderCollapsed && (
+        <button
+          className='portfolio-sider-backdrop'
+          type='button'
+          aria-label='Close menu'
+          onClick={() => setIsSiderCollapsed(true)}
+        />
+      )}
+
+      <Layout.Sider
+        className={
+          isMobileSider ? 'portfolio-sider is-mobile-drawer' : 'portfolio-sider'
+        }
+        width={276}
+        collapsed={isResponsiveSider ? isSiderCollapsed : false}
+        collapsedWidth={isMobileSider ? 0 : 72}
+        trigger={null}
+      >
       <BrandLockup className='sidebar-brand' />
 
       <Typography.Title className='sider-title' level={4}>
@@ -87,6 +169,7 @@ export default function AppSider() {
             align='center'
             gap={10}
             key={navigationItem.label}
+            onClick={handleNavigationClick}
           >
             {navigationItem.icon}
             <Typography.Text>{navigationItem.label}</Typography.Text>
@@ -168,6 +251,7 @@ export default function AppSider() {
           )
         })}
       </Space>
-    </Layout.Sider>
+      </Layout.Sider>
+    </>
   )
 }

@@ -190,9 +190,17 @@ body {
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(var(--blur));
   transition:
+    height 0.18s ease,
+    min-height 0.18s ease,
+    padding 0.18s ease,
     background 0.22s ease,
     border-color 0.22s ease,
     box-shadow 0.22s ease;
+}
+
+.app-header.is-compact {
+  height: 64px;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
 }
 
 .brand-lockup {
@@ -507,13 +515,66 @@ body {
 }
 
 .portfolio-sider.ant-layout-sider-collapsed {
-  overflow: visible;
+  padding-inline: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .portfolio-sider.ant-layout-sider-collapsed .ant-layout-sider-children {
-  width: 0;
+  width: 100%;
   min-width: 0;
+  align-items: center;
+  overflow: visible;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .brand-lockup {
+  justify-content: center;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .brand-wordmark,
+.portfolio-sider.ant-layout-sider-collapsed .sider-title,
+.portfolio-sider.ant-layout-sider-collapsed .sider-subtitle,
+.portfolio-sider.ant-layout-sider-collapsed .sider-coin-list,
+.portfolio-sider.ant-layout-sider-collapsed .sider-navigation-item .ant-typography {
+  display: none;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .sidebar-brand {
+  margin-bottom: 22px;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .sider-navigation {
+  align-items: center;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .sider-navigation-item {
+  width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  padding: 0;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .sider-navigation-item:hover {
+  transform: none;
+}
+
+.portfolio-sider.is-mobile-drawer.ant-layout-sider-collapsed .ant-layout-sider-children {
+  width: 0;
   overflow: hidden;
+}
+
+.portfolio-mobile-menu-trigger,
+.portfolio-sider-backdrop {
+  display: none;
 }
 
 .sidebar-brand {
@@ -622,6 +683,9 @@ body {
 
 .dashboard-header .ant-typography {
   color: var(--text-secondary);
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .kpi-grid {
@@ -731,9 +795,10 @@ body {
 }
 
 .kpi-card .ant-card-body {
-  min-height: 120px;
+  min-height: 96px;
   display: flex;
   align-items: center;
+  padding: 20px 22px;
 }
 
 .kpi-card-content {
@@ -746,8 +811,8 @@ body {
 }
 
 .kpi-icon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: grid;
   flex: 0 0 auto;
   place-items: center;
@@ -782,19 +847,19 @@ body {
 
 .kpi-label {
   display: block;
-  margin-bottom: 9px;
+  margin-bottom: 7px;
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   word-break: normal;
 }
 
 .kpi-value.ant-typography {
   margin: 0;
-  font-size: 25px;
+  font-size: 23px;
   line-height: 1.1;
   font-weight: 900;
   letter-spacing: -0.025em;
@@ -820,7 +885,7 @@ body {
 .chart-card .ant-card-body,
 .holdings-card .ant-card-body,
 .performance-card .ant-card-body {
-  padding: 25px;
+  padding: 22px;
 }
 
 .chart-card h4.ant-typography,
@@ -842,7 +907,7 @@ body {
 .performance-card .ant-card-body {
   display: flex;
   flex-direction: column;
-  min-height: 410px;
+  min-height: 340px;
 }
 
 .performance-card-header {
@@ -915,7 +980,7 @@ body {
 
 .performance-chart-wrapper {
   flex: 1 1 auto;
-  min-height: 260px;
+  min-height: 200px;
   margin-top: 4px;
 }
 
@@ -931,10 +996,10 @@ body {
 }
 
 .analytics-card .ant-card-body {
-  min-height: 196px;
+  min-height: 160px;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 18px;
 }
 
 .analytics-card-content {
@@ -983,6 +1048,7 @@ body {
   font-weight: 850;
   letter-spacing: 0.045em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .analytics-card-value.ant-typography {
@@ -1039,6 +1105,7 @@ body {
 
 .holdings-table .ant-table-content {
   overflow-x: auto !important;
+  overscroll-behavior-x: contain;
 }
 
 .holdings-table .ant-table-thead > tr > th {
@@ -1498,8 +1565,24 @@ body {
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
 }
 
+.coin-info-modal {
+  width: min(520px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px);
+}
+
 .coin-info-content {
   width: 100%;
+  min-width: 0;
+}
+
+.coin-info-content .ant-space-item,
+.coin-info-content .ant-flex,
+.coin-info-content .ant-typography {
+  min-width: 0;
+}
+
+.coin-info-content .ant-typography {
+  overflow-wrap: anywhere;
 }
 
 .contract-address {
@@ -1507,7 +1590,7 @@ body {
   word-break: break-all;
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1439px) {
   .app-header {
     padding-left: 92px;
   }
@@ -1522,16 +1605,75 @@ body {
     position: fixed !important;
     top: 72px;
     left: 0;
-    z-index: 40;
+    z-index: 60;
     height: calc(100dvh - 72px);
     max-width: min(276px, calc(100vw - 24px));
+  }
+
+  .portfolio-sider.ant-layout-sider-collapsed {
+    max-width: 72px;
+  }
+
+  .portfolio-mobile-menu-trigger {
+    position: fixed;
+    top: 18px;
+    left: 14px;
+    z-index: 70;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    place-items: center;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background:
+      linear-gradient(145deg, color-mix(in srgb, var(--accent) 78%, #00d4ff), var(--accent-2));
+    border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+    border-radius: 15px;
+    box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 34%, transparent);
+    cursor: pointer;
+  }
+
+  .portfolio-mobile-menu-trigger .anticon {
+    position: relative;
+    z-index: 1;
+    font-size: 16px;
+  }
+
+  .mobile-menu-brand-mark {
+    position: absolute;
+    inset: 8px;
+    display: grid;
+    place-items: center;
+    background: var(--surface-sidebar);
+    border-radius: 9px;
+    transform: rotate(45deg);
+  }
+
+  .mobile-menu-brand-mark .brand-mark-core {
+    width: 9px;
+    height: 9px;
+    opacity: 0.7;
+  }
+
+  .portfolio-sider-backdrop {
+    position: fixed;
+    inset: 72px 0 0;
+    z-index: 55;
+    display: block;
+    padding: 0;
+    background: rgba(3, 7, 18, 0.46);
+    border: 0;
+    backdrop-filter: blur(4px);
   }
 
   .coin-search-select {
     flex-basis: 420px;
     width: min(520px, 42vw);
   }
+}
 
+@media (max-width: 1199px) {
   .analytics-grid > .ant-col,
   .portfolio-grid > .ant-col {
     flex: 0 0 100%;
@@ -1543,15 +1685,19 @@ body {
   }
 
   .performance-card .ant-card-body {
-    min-height: 390px;
+    min-height: 330px;
   }
 
   .analytics-card .ant-card-body {
-    min-height: 150px;
+    min-height: 136px;
   }
 }
 
 @media (max-width: 920px) {
+  .app-body {
+    min-height: calc(100dvh - 72px);
+  }
+
   .app-header {
     height: auto;
     min-height: 72px;
@@ -1560,12 +1706,30 @@ body {
     padding: 14px 18px 14px 72px;
   }
 
+  .app-header.is-compact {
+    height: auto;
+    min-height: 64px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
   .header-brand {
     display: inline-flex !important;
   }
 
-  .sidebar-brand {
-    display: none !important;
+  .portfolio-sider.is-mobile-drawer {
+    max-width: min(276px, calc(100vw - 24px));
+    padding: 20px 16px;
+  }
+
+  .portfolio-sider.is-mobile-drawer .sidebar-brand {
+    display: inline-flex !important;
+    margin-bottom: 28px;
+  }
+
+  .portfolio-sider.is-mobile-drawer.ant-layout-sider-collapsed {
+    max-width: 0;
+    padding-inline: 0;
   }
 
   .coin-search-select {
@@ -1577,7 +1741,7 @@ body {
 
   .dashboard-content {
     width: 100%;
-    padding: 26px 18px 32px 76px;
+    padding: 24px 18px 32px;
   }
 
   .dashboard-header h2.ant-typography {
@@ -1586,8 +1750,12 @@ body {
 
   .portfolio-sider {
     top: 0;
-    z-index: 50;
+    z-index: 60;
     height: 100dvh;
+  }
+
+  .portfolio-sider-backdrop {
+    inset: 0;
   }
 }
 
@@ -1599,6 +1767,7 @@ body {
   .header-actions {
     margin-left: auto;
     gap: 8px !important;
+    min-width: 0;
   }
 
   .theme-trigger {
@@ -1611,6 +1780,8 @@ body {
   }
 
   .add-coin-button {
+    width: 44px;
+    min-width: 44px;
     padding-inline: 12px;
   }
 
@@ -1619,7 +1790,7 @@ body {
   }
 
   .dashboard-content {
-    padding: 22px 12px 28px 64px;
+    padding: 20px 12px 28px;
   }
 
   .dashboard-header {
@@ -1631,7 +1802,7 @@ body {
   }
 
   .kpi-card .ant-card-body {
-    min-height: 106px;
+    min-height: 88px;
   }
 
   .chart-card .ant-card-body,
@@ -1665,7 +1836,7 @@ body {
   }
 
   .performance-chart-wrapper {
-    min-height: 230px;
+    min-height: 190px;
   }
 
   .chart-wrapper {
@@ -1684,24 +1855,129 @@ body {
 
   .add-coin-drawer-root .ant-drawer-content-wrapper,
   .add-coin-drawer .ant-drawer-content-wrapper {
-    width: min(100vw, 560px) !important;
+    width: min(100dvw, 560px) !important;
+    max-width: 100dvw;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-header {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: center;
+    padding-inline: 62px 12px;
+  }
+
+  .header-brand {
+    grid-column: 1;
+  }
+
+  .header-actions {
+    grid-column: 3;
+    width: 0;
+    height: 0;
+    min-width: 0;
+  }
+
+  .theme-trigger {
+    display: none;
+  }
+
+  .header-icon-button,
+  .add-coin-button {
+    width: 42px;
+    min-width: 42px;
+    padding: 0;
+  }
+
+  .header-actions > .header-icon-button:not(.theme-trigger) {
+    display: none;
+  }
+
+  .add-coin-button {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 75;
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
+
+  .header-brand .brand-wordmark {
+    display: none;
+  }
+
+  .coin-search-select {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .dashboard-content {
+    padding: 18px 10px 28px;
+  }
+
+  .dashboard-header h2.ant-typography {
+    font-size: 23px;
+  }
+
+  .kpi-card .ant-card-body {
+    padding: 18px;
+  }
+
+  .kpi-card-content {
+    gap: 12px !important;
+  }
+
+  .kpi-value.ant-typography {
+    font-size: 22px;
+  }
+
+  .asset-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-total-preview {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .asset-total-preview h4.ant-typography {
+    width: 100%;
+    font-size: 18px;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .asset-form-actions {
+    flex-direction: column;
+  }
+
+  .asset-form-actions .ant-btn {
+    width: 100%;
+  }
+
+  .add-coin-drawer .ant-drawer-body,
+  .add-coin-drawer .ant-drawer-header {
+    padding-inline: 16px;
+  }
+
+  .selected-coin-card .ant-card-body,
+  .asset-form-section,
+  .coin-added-summary {
+    padding: 16px;
+  }
+
+  .coin-info-modal .ant-modal-content {
+    padding: 18px;
   }
 }
 
 @media (max-width: 420px) {
-  .app-brand .ant-typography {
-    max-width: 152px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .dashboard-content {
-    padding-left: 60px;
-  }
-
   .kpi-value.ant-typography {
-    font-size: 23px;
+    font-size: 21px;
   }
 
   .chart-wrapper {

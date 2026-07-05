@@ -29,9 +29,23 @@ export default function AppHeader({ themeName, setThemeName }) {
 
   const [coin, setCoin] = useState(null)
 
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsHeaderCompact(window.scrollY > 12)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   // Горячая клавиша открывает или закрывает поиск монет.
   useEffect(() => {
@@ -78,7 +92,9 @@ export default function AppHeader({ themeName, setThemeName }) {
   )
 
   return (
-    <Layout.Header className='app-header'>
+    <Layout.Header
+      className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
+    >
       <BrandLockup className='header-brand' />
 
       <Select
