@@ -21,6 +21,10 @@ function getChangeColor(value) {
 }
 
 export default function CoinInfoModal({ coin }) {
+  if (!coin) {
+    return null
+  }
+
   return (
     <Space className='coin-info-content' direction='vertical' size={18}>
       <CoinInfo coin={coin} withSymbol />

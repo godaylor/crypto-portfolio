@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   BellOutlined,
@@ -28,9 +28,12 @@ export default function AppHeader({ themeName, setThemeName }) {
   const { marketCoins } = useCrypto()
 
   const [coin, setCoin] = useState(null)
+  const searchSelectRef = useRef(null)
 
   const [isHeaderCompact, setIsHeaderCompact] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [selectedSearchValue, setSelectedSearchValue] = useState(undefined)
+  const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -50,7 +53,18 @@ export default function AppHeader({ themeName, setThemeName }) {
   // Горячая клавиша открывает или закрывает поиск монет.
   useEffect(() => {
     const handleKeyPress = (event) => {
+      const target = event.target
+      const isTyping =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+
+      if (isTyping) {
+        return
+      }
+
       if (event.key === '/') {
+        event.preventDefault()
         setIsSelectOpen((prev) => !prev)
       }
     }
@@ -62,17 +76,35 @@ export default function AppHeader({ themeName, setThemeName }) {
     }
   }, [])
 
+  function clearGlobalSearch() {
+    setSelectedSearchValue(undefined)
+    setSearchValue('')
+
+    window.requestAnimationFrame(() => {
+      setSelectedSearchValue(undefined)
+      setSearchValue('')
+      searchSelectRef.current?.blur?.()
+    })
+  }
+
   function handleSelect(selectedCoinId) {
     const selectedCoin = marketCoins.find(
       (marketCoin) => marketCoin.id === selectedCoinId
     )
 
+    if (!selectedCoin) {
+      clearGlobalSearch()
+      setIsSelectOpen(false)
+      return
+    }
+
     setCoin(selectedCoin)
+    clearGlobalSearch()
     setIsSelectOpen(false)
     setIsModalOpen(true)
   }
 
-  function getDrawerContainer() {
+  function getOverlayContainer() {
     return document.querySelector('.app-shell') ?? document.body
   }
 
@@ -98,15 +130,34 @@ export default function AppHeader({ themeName, setThemeName }) {
       <BrandLockup className='header-brand' />
 
       <Select
+        ref={searchSelectRef}
         className='coin-search-select'
         popupClassName='coin-search-dropdown'
         open={isSelectOpen}
         placeholder='Поиск монеты, например BTC'
         suffixIcon={<SearchOutlined />}
+        searchValue={searchValue}
         showSearch
+        value={selectedSearchValue}
+        autoClearSearchValue
         optionFilterProp='label'
+        onSearch={setSearchValue}
         onSelect={handleSelect}
-        onOpenChange={setIsSelectOpen}
+        onChange={(value) => {
+          setSelectedSearchValue(value)
+
+          if (!value) {
+            clearGlobalSearch()
+          }
+        }}
+        onBlur={clearGlobalSearch}
+        onOpenChange={(open) => {
+          setIsSelectOpen(open)
+
+          if (!open) {
+            clearGlobalSearch()
+          }
+        }}
         options={marketCoins.map((marketCoin) => ({
           label: marketCoin.name,
           value: marketCoin.id,
@@ -155,7 +206,9 @@ export default function AppHeader({ themeName, setThemeName }) {
         width={560}
         open={isDrawerOpen}
         closeIcon={<CloseOutlined />}
-        getContainer={getDrawerContainer}
+        destroyOnClose
+        getContainer={getOverlayContainer}
+        rootStyle={{ position: 'absolute' }}
         onClose={() => setIsDrawerOpen(false)}
       >
         <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />
@@ -163,9 +216,17 @@ export default function AppHeader({ themeName, setThemeName }) {
 
       <Modal
         className='coin-info-modal'
+        rootClassName='coin-info-modal-root'
         open={isModalOpen}
         footer={null}
-        onCancel={() => setIsModalOpen(false)}
+        centered
+        destroyOnClose
+        getContainer={getOverlayContainer}
+        afterClose={() => setCoin(null)}
+        onCancel={() => {
+          clearGlobalSearch()
+          setIsModalOpen(false)
+        }}
       >
         <CoinInfoModal coin={coin} />
       </Modal>

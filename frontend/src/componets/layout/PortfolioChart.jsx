@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
@@ -28,10 +28,64 @@ function formatPercent(value) {
   }).format(value)
 }
 
+function useMeasuredChartFrame() {
+  const frameRef = useRef(null)
+  const [isFrameReady, setIsFrameReady] = useState(false)
+
+  useEffect(() => {
+    let animationFrameId = 0
+    let isActive = true
+
+    function updateFrameReadiness() {
+      const frameElement = frameRef.current
+      const frameRect = frameElement?.getBoundingClientRect()
+      const isReady =
+        Boolean(frameElement?.isConnected) &&
+        Number.isFinite(frameRect?.width) &&
+        Number.isFinite(frameRect?.height) &&
+        frameRect.width > 0 &&
+        frameRect.height > 0
+
+      if (isActive) {
+        setIsFrameReady((currentValue) =>
+          currentValue === isReady ? currentValue : isReady
+        )
+      }
+    }
+
+    function scheduleReadinessUpdate() {
+      window.cancelAnimationFrame(animationFrameId)
+      animationFrameId = window.requestAnimationFrame(updateFrameReadiness)
+    }
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleReadinessUpdate)
+        : null
+
+    if (frameRef.current && resizeObserver) {
+      resizeObserver.observe(frameRef.current)
+    }
+
+    scheduleReadinessUpdate()
+    window.addEventListener('resize', scheduleReadinessUpdate)
+
+    return () => {
+      isActive = false
+      window.cancelAnimationFrame(animationFrameId)
+      window.removeEventListener('resize', scheduleReadinessUpdate)
+      resizeObserver?.disconnect()
+    }
+  }, [])
+
+  return [frameRef, isFrameReady]
+}
+
 export default function PortfolioChart({ themeName }) {
   const { userPortfolio, marketCoins } = useCrypto()
 
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
+  const [chartFrameRef, isChartFrameReady] = useMeasuredChartFrame()
 
   useLayoutEffect(() => {
     setThemeValues(readChartThemeValues())
@@ -145,13 +199,16 @@ export default function PortfolioChart({ themeName }) {
       </div>
 
       <div className='allocation-card-layout'>
-        <div className='chart-wrapper allocation-chart-wrapper' data-theme={themeName}>
-          <Doughnut
-            key={`${themeName}-${themeValues.surfaceCard}-${themeValues.textSecondary}`}
-            data={chartData}
-            options={chartOptions}
-            redraw
-          />
+        <div
+          className='chart-wrapper allocation-chart-wrapper'
+          data-theme={themeName}
+          ref={chartFrameRef}
+        >
+          {isChartFrameReady ? (
+            <Doughnut data={chartData} options={chartOptions} />
+          ) : (
+            <span className='chart-mount-placeholder' aria-hidden='true' />
+          )}
           <div className='allocation-center'>
             <strong>{topAsset ? `${formatPercent(topAsset.percent)}%` : '0%'}</strong>
             <span>{topAsset?.symbol ?? 'Asset'}</span>

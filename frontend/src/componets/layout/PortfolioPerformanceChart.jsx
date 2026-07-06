@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import {
   CategoryScale,
@@ -58,6 +58,59 @@ function formatPercent(value) {
   }).format(value)
 }
 
+function useMeasuredChartFrame() {
+  const frameRef = useRef(null)
+  const [isFrameReady, setIsFrameReady] = useState(false)
+
+  useEffect(() => {
+    let animationFrameId = 0
+    let isActive = true
+
+    function updateFrameReadiness() {
+      const frameElement = frameRef.current
+      const frameRect = frameElement?.getBoundingClientRect()
+      const isReady =
+        Boolean(frameElement?.isConnected) &&
+        Number.isFinite(frameRect?.width) &&
+        Number.isFinite(frameRect?.height) &&
+        frameRect.width > 0 &&
+        frameRect.height > 0
+
+      if (isActive) {
+        setIsFrameReady((currentValue) =>
+          currentValue === isReady ? currentValue : isReady
+        )
+      }
+    }
+
+    function scheduleReadinessUpdate() {
+      window.cancelAnimationFrame(animationFrameId)
+      animationFrameId = window.requestAnimationFrame(updateFrameReadiness)
+    }
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleReadinessUpdate)
+        : null
+
+    if (frameRef.current && resizeObserver) {
+      resizeObserver.observe(frameRef.current)
+    }
+
+    scheduleReadinessUpdate()
+    window.addEventListener('resize', scheduleReadinessUpdate)
+
+    return () => {
+      isActive = false
+      window.cancelAnimationFrame(animationFrameId)
+      window.removeEventListener('resize', scheduleReadinessUpdate)
+      resizeObserver?.disconnect()
+    }
+  }, [])
+
+  return [frameRef, isFrameReady]
+}
+
 export default function PortfolioPerformanceChart({
   portfolioBalance,
   portfolioDailyChange,
@@ -67,6 +120,7 @@ export default function PortfolioPerformanceChart({
 }) {
   const [range, setRange] = useState('1d')
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
+  const [chartFrameRef, isChartFrameReady] = useMeasuredChartFrame()
 
   useLayoutEffect(() => {
     setThemeValues(readChartThemeValues())
@@ -265,13 +319,12 @@ export default function PortfolioPerformanceChart({
         </div>
       </div>
 
-      <div className='performance-chart-wrapper'>
-        <Line
-          key={`${themeName}-${range}-${themeValues.accent}-${themeValues.textMuted}`}
-          data={chartData}
-          options={chartOptions}
-          redraw
-        />
+      <div className='performance-chart-wrapper' ref={chartFrameRef}>
+        {isChartFrameReady ? (
+          <Line data={chartData} options={chartOptions} />
+        ) : (
+          <span className='chart-mount-placeholder' aria-hidden='true' />
+        )}
       </div>
     </Card>
   )

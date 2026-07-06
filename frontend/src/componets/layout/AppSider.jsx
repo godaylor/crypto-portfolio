@@ -2,9 +2,12 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BarChartOutlined,
+  CloseOutlined,
   HomeOutlined,
   LineChartOutlined,
+  MenuFoldOutlined,
   MenuOutlined,
+  MenuUnfoldOutlined,
   SettingOutlined,
   StarOutlined,
   SwapOutlined,
@@ -89,9 +92,6 @@ function isMobileSiderViewport() {
 
 export default function AppSider() {
   const { userPortfolio, marketCoins } = useCrypto()
-  const [isResponsiveSider, setIsResponsiveSider] = useState(
-    isResponsiveSiderViewport
-  )
   const [isMobileSider, setIsMobileSider] = useState(isMobileSiderViewport)
   const [isSiderCollapsed, setIsSiderCollapsed] = useState(
     isResponsiveSiderViewport
@@ -156,7 +156,6 @@ export default function AppSider() {
       const isResponsive = responsiveMediaQuery.matches
       const isMobile = mobileMediaQuery.matches
 
-      setIsResponsiveSider(isResponsive)
       setIsMobileSider(isMobile)
       setIsSiderCollapsed(isResponsive)
     }
@@ -176,6 +175,18 @@ export default function AppSider() {
       setIsSiderCollapsed(true)
     }
   }
+
+  function handleSiderToggle() {
+    setIsSiderCollapsed((currentValue) => !currentValue)
+  }
+
+  const toggleIcon = isMobileSider ? (
+    <CloseOutlined />
+  ) : isSiderCollapsed ? (
+    <MenuUnfoldOutlined />
+  ) : (
+    <MenuFoldOutlined />
+  )
 
   return (
     <>
@@ -207,71 +218,87 @@ export default function AppSider() {
           isMobileSider ? 'portfolio-sider is-mobile-drawer' : 'portfolio-sider'
         }
         width={276}
-        collapsed={isResponsiveSider ? isSiderCollapsed : false}
+        collapsed={isSiderCollapsed}
         collapsedWidth={isMobileSider ? 0 : 72}
         trigger={null}
       >
-        <BrandLockup className='sidebar-brand' />
+        <div className='sider-topbar'>
+          <BrandLockup className='sidebar-brand' />
 
-        <div className='portfolio-sider-summary'>
-          <Typography.Text>Общая стоимость</Typography.Text>
-          <Typography.Title level={4}>{formatCurrency(portfolioBalance)}</Typography.Title>
-          <Tag color={getProfitType(portfolioProfit)}>
-            {portfolioProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}{' '}
-            {formatPercent(portfolioProfitPercent)}%
-          </Tag>
+          <button
+            className='portfolio-sider-toggle'
+            type='button'
+            aria-label={isSiderCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-expanded={!isSiderCollapsed}
+            onClick={handleSiderToggle}
+          >
+            {toggleIcon}
+          </button>
         </div>
 
-        <Space className='sider-navigation' direction='vertical' size={8}>
-          {navigationItems.map((navigationItem) => (
-            <Flex
-              className={
-                navigationItem.isActive
-                  ? 'sider-navigation-item is-active'
-                  : 'sider-navigation-item'
-              }
-              align='center'
-              gap={10}
-              key={navigationItem.label}
-              onClick={handleNavigationClick}
-            >
-              {navigationItem.icon}
-              <Typography.Text>{navigationItem.label}</Typography.Text>
-            </Flex>
-          ))}
-        </Space>
+        <div className='sider-scroll-region'>
+          <div className='portfolio-sider-summary'>
+            <Typography.Text>Общая стоимость</Typography.Text>
+            <Typography.Title level={4}>
+              {formatCurrency(portfolioBalance)}
+            </Typography.Title>
+            <Tag color={getProfitType(portfolioProfit)}>
+              {portfolioProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}{' '}
+              {formatPercent(portfolioProfitPercent)}%
+            </Tag>
+          </div>
 
-        <div className='sider-section-heading'>
-          <Typography.Text>Портфель</Typography.Text>
-          <span>{watchList.length}</span>
-        </div>
-
-        <Space className='sider-coin-list' direction='vertical' size={8}>
-          {watchList.map((portfolioCoin) => (
-            <div className='portfolio-coin-row' key={portfolioCoin.id}>
-              <Avatar
-                src={portfolioCoin.icon}
-                alt={portfolioCoin.name}
-                size={30}
+          <Space className='sider-navigation' direction='vertical' size={8}>
+            {navigationItems.map((navigationItem) => (
+              <Flex
+                className={
+                  navigationItem.isActive
+                    ? 'sider-navigation-item is-active'
+                    : 'sider-navigation-item'
+                }
+                align='center'
+                gap={10}
+                key={navigationItem.label}
+                onClick={handleNavigationClick}
               >
-                {portfolioCoin.symbol}
-              </Avatar>
+                {navigationItem.icon}
+                <Typography.Text>{navigationItem.label}</Typography.Text>
+              </Flex>
+            ))}
+          </Space>
 
-              <div className='portfolio-coin-meta'>
-                <Typography.Text>{portfolioCoin.name}</Typography.Text>
-                <Typography.Text>{portfolioCoin.symbol}</Typography.Text>
-              </div>
+          <div className='sider-section-heading'>
+            <Typography.Text>Портфель</Typography.Text>
+            <span>{watchList.length}</span>
+          </div>
 
-              <div className='portfolio-coin-result'>
-                <strong>{formatCurrency(portfolioCoin.totalAmount)}</strong>
-                <span className={portfolioCoin.grow ? 'is-positive' : 'is-negative'}>
-                  {portfolioCoin.grow ? '+' : '-'}
-                  {formatPercent(portfolioCoin.growPercent).replace('+', '')}%
-                </span>
+          <Space className='sider-coin-list' direction='vertical' size={8}>
+            {watchList.map((portfolioCoin) => (
+              <div className='portfolio-coin-row' key={portfolioCoin.id}>
+                <Avatar
+                  src={portfolioCoin.icon}
+                  alt={portfolioCoin.name}
+                  size={30}
+                >
+                  {portfolioCoin.symbol}
+                </Avatar>
+
+                <div className='portfolio-coin-meta'>
+                  <Typography.Text>{portfolioCoin.name}</Typography.Text>
+                  <Typography.Text>{portfolioCoin.symbol}</Typography.Text>
+                </div>
+
+                <div className='portfolio-coin-result'>
+                  <strong>{formatCurrency(portfolioCoin.totalAmount)}</strong>
+                  <span className={portfolioCoin.grow ? 'is-positive' : 'is-negative'}>
+                    {portfolioCoin.grow ? '+' : '-'}
+                    {formatPercent(portfolioCoin.growPercent).replace('+', '')}%
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </Space>
+            ))}
+          </Space>
+        </div>
 
         <div className='sider-profile-card'>
           <Avatar className='sider-profile-avatar'>M</Avatar>
