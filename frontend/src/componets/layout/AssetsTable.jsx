@@ -5,7 +5,7 @@ import { Avatar, Card, Space, Table, Tag, Typography } from 'antd'
 import { useCrypto } from '../../context/CryptoContext'
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -13,8 +13,16 @@ function formatCurrency(value) {
 }
 
 function formatCoinAmount(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 8,
+  }).format(value)
+}
+
+function formatPercent(value, options = {}) {
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+    signDisplay: options.signDisplay ?? 'auto',
   }).format(value)
 }
 
@@ -66,6 +74,11 @@ export default function AssetsTable() {
     [marketCoins, portfolioBalance, userPortfolio]
   )
 
+  const winnersCount = tableData.filter((coin) => coin.totalProfit > 0).length
+  const largestPosition = [...tableData].sort(
+    (firstCoin, secondCoin) => secondCoin.allocation - firstCoin.allocation
+  )[0]
+
   const columns = [
     {
       title: 'Монета',
@@ -109,7 +122,14 @@ export default function AssetsTable() {
       title: 'Доля',
       dataIndex: 'allocation',
       sorter: (a, b) => a.allocation - b.allocation,
-      render: (allocation) => `${allocation.toFixed(2)}%`,
+      render: (allocation) => (
+        <div className='asset-allocation-cell'>
+          <span>{formatPercent(allocation)}%</span>
+          <i>
+            <b style={{ width: `${Math.min(allocation, 100)}%` }} />
+          </i>
+        </div>
+      ),
     },
     {
       title: 'Стоимость',
@@ -126,36 +146,67 @@ export default function AssetsTable() {
       title: 'Прибыль / убыток',
       dataIndex: 'totalProfit',
       sorter: (a, b) => a.totalProfit - b.totalProfit,
-      render: (totalProfit, coin) => (
-        <Space className='asset-profit-cell' size={8}>
-          <Typography.Text
-            className='asset-profit-value'
-            type={
-              totalProfit > 0
-                ? 'success'
-                : totalProfit < 0
-                  ? 'danger'
-                  : 'warning'
-            }
-          >
-            {formatCurrency(totalProfit)}
-          </Typography.Text>
+      render: (totalProfit, coin) => {
+        const signedChange = totalProfit >= 0 ? coin.growPercent : -coin.growPercent
 
-          <Tag className='asset-change-tag' color={getChangeColor(totalProfit)}>
-            {coin.growPercent}%
-          </Tag>
-        </Space>
-      ),
+        return (
+          <Space className='asset-profit-cell' size={8}>
+            <Typography.Text
+              className='asset-profit-value'
+              type={
+                totalProfit > 0
+                  ? 'success'
+                  : totalProfit < 0
+                    ? 'danger'
+                    : 'warning'
+              }
+            >
+              {formatCurrency(totalProfit)}
+            </Typography.Text>
+
+            <Tag className='asset-change-tag' color={getChangeColor(totalProfit)}>
+              {formatPercent(signedChange, { signDisplay: 'exceptZero' })}%
+            </Tag>
+          </Space>
+        )
+      },
     },
   ]
 
   return (
     <Card className='dashboard-card holdings-card'>
-      <Typography.Title level={4}>Мои активы</Typography.Title>
+      <div className='card-section-heading holdings-heading'>
+        <div>
+          <Typography.Title level={4}>Мои активы</Typography.Title>
 
-      <Typography.Text>
-        Текущие позиции, стоимость и результат
-      </Typography.Text>
+          <Typography.Text>
+            Текущие позиции, стоимость и результат
+          </Typography.Text>
+        </div>
+
+        <span className='module-badge'>{tableData.length} позиции</span>
+      </div>
+
+      <div className='holdings-summary-strip'>
+        <div>
+          <span>Общая стоимость</span>
+          <strong>{formatCurrency(portfolioBalance)}</strong>
+        </div>
+        <div>
+          <span>В плюсе</span>
+          <strong>{winnersCount}/{tableData.length}</strong>
+        </div>
+        <div>
+          <span>Крупнейшая доля</span>
+          <strong>{largestPosition?.coinSymbol ?? '-'}</strong>
+        </div>
+        <div>
+          <span>Концентрация</span>
+          <strong>
+            {largestPosition ? `${formatPercent(largestPosition.allocation)}%` : '0%'}
+          </strong>
+        </div>
+      </div>
 
       <Table
         className='holdings-table'
@@ -163,6 +214,7 @@ export default function AssetsTable() {
         dataSource={tableData}
         pagination={false}
         rowKey='key'
+        size='middle'
         scroll={{ x: 760 }}
       />
     </Card>

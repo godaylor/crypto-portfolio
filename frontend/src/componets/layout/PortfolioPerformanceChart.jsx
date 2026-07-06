@@ -34,7 +34,7 @@ ChartJS.register(
 )
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -42,7 +42,7 @@ function formatCurrency(value) {
 }
 
 function formatCompactCurrency(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     notation: 'compact',
     style: 'currency',
     currency: 'USD',
@@ -51,7 +51,7 @@ function formatCompactCurrency(value) {
 }
 
 function formatPercent(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     signDisplay: 'exceptZero',
@@ -60,6 +60,9 @@ function formatPercent(value) {
 
 export default function PortfolioPerformanceChart({
   portfolioBalance,
+  portfolioDailyChange,
+  portfolioProfit,
+  portfolioProfitPercent,
   themeName,
 }) {
   const [range, setRange] = useState('1d')
@@ -81,6 +84,8 @@ export default function PortfolioPerformanceChart({
     ? ((currentValue - firstValue) / firstValue) * 100
     : 0
   const performanceStatus = performanceChange >= 0 ? 'positive' : 'negative'
+  const highValue = Math.max(...performanceSeries.map((point) => point.value))
+  const lowValue = Math.min(...performanceSeries.map((point) => point.value))
 
   const chartData = useMemo(
     () => ({
@@ -199,7 +204,7 @@ export default function PortfolioPerformanceChart({
 
   return (
     <Card className='dashboard-card performance-card'>
-      <div className='performance-card-header'>
+      <div className='card-section-heading performance-card-header'>
         <div>
           <Typography.Title level={4}>Динамика портфеля</Typography.Title>
 
@@ -226,6 +231,39 @@ export default function PortfolioPerformanceChart({
           {formatPercent(performanceChange)}%
         </span>
       </Space>
+
+      <div className='performance-stat-row'>
+        <div>
+          <span>High</span>
+          <strong>{formatCurrency(highValue)}</strong>
+        </div>
+        <div>
+          <span>Low</span>
+          <strong>{formatCurrency(lowValue)}</strong>
+        </div>
+        <div>
+          <span>P/L</span>
+          <strong className={portfolioProfit >= 0 ? 'is-positive' : 'is-negative'}>
+            {formatCurrency(portfolioProfit)}
+          </strong>
+        </div>
+        <div>
+          <span>24ч</span>
+          <strong
+            className={portfolioDailyChange >= 0 ? 'is-positive' : 'is-negative'}
+          >
+            {formatPercent(portfolioDailyChange)}%
+          </strong>
+        </div>
+        <div>
+          <span>ROI</span>
+          <strong
+            className={portfolioProfitPercent >= 0 ? 'is-positive' : 'is-negative'}
+          >
+            {formatPercent(portfolioProfitPercent)}%
+          </strong>
+        </div>
+      </div>
 
       <div className='performance-chart-wrapper'>
         <Line

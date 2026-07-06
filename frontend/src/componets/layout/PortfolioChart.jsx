@@ -14,15 +14,22 @@ import {
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
   }).format(value)
 }
 
+function formatPercent(value) {
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(value)
+}
+
 export default function PortfolioChart({ themeName }) {
-  const { userPortfolio } = useCrypto()
+  const { userPortfolio, marketCoins } = useCrypto()
 
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
 
@@ -33,17 +40,49 @@ export default function PortfolioChart({ themeName }) {
   const chartColors =
     chartColorPalettes[themeName] ?? chartColorPalettes['dark-modern']
 
+  const portfolioBalance = useMemo(
+    () =>
+      userPortfolio
+        .map((portfolioCoin) => portfolioCoin.totalAmount)
+        .reduce((totalBalance, value) => totalBalance + value, 0),
+    [userPortfolio]
+  )
+
+  const allocationRows = useMemo(
+    () =>
+      [...userPortfolio]
+        .sort(
+          (firstAsset, secondAsset) =>
+            secondAsset.totalAmount - firstAsset.totalAmount
+        )
+        .map((portfolioCoin, index) => {
+          const marketCoin = marketCoins.find(
+            (coin) => coin.id === portfolioCoin.id
+          )
+
+          return {
+            color: chartColors[index % chartColors.length],
+            icon: marketCoin?.icon,
+            name: portfolioCoin.name,
+            symbol: marketCoin?.symbol,
+            value: portfolioCoin.totalAmount,
+            percent: portfolioBalance
+              ? (portfolioCoin.totalAmount / portfolioBalance) * 100
+              : 0,
+          }
+        }),
+    [chartColors, marketCoins, portfolioBalance, userPortfolio]
+  )
+
   const chartData = useMemo(
     () => ({
-      labels: userPortfolio.map((portfolioCoin) => portfolioCoin.name),
+      labels: allocationRows.map((portfolioCoin) => portfolioCoin.name),
 
       datasets: [
         {
           label: '$',
-          data: userPortfolio.map(
-            (portfolioCoin) => portfolioCoin.totalAmount
-          ),
-          backgroundColor: chartColors,
+          data: allocationRows.map((portfolioCoin) => portfolioCoin.value),
+          backgroundColor: allocationRows.map((asset) => asset.color),
           borderColor: themeValues.surfaceCard,
           borderWidth: 5,
           borderRadius: 8,
@@ -52,7 +91,7 @@ export default function PortfolioChart({ themeName }) {
         },
       ],
     }),
-    [chartColors, themeValues.surfaceCard, userPortfolio]
+    [allocationRows, themeValues.surfaceCard]
   )
 
   const chartOptions = useMemo(
@@ -60,7 +99,7 @@ export default function PortfolioChart({ themeName }) {
       responsive: true,
       maintainAspectRatio: false,
       resizeDelay: 80,
-      cutout: '70%',
+      cutout: '71%',
       animation: {
         animateRotate: true,
         duration: 650,
@@ -82,40 +121,94 @@ export default function PortfolioChart({ themeName }) {
           },
         },
         legend: {
-          position: 'bottom',
-          labels: {
-            color: themeValues.textSecondary,
-            boxWidth: 10,
-            boxHeight: 10,
-            padding: 18,
-            usePointStyle: true,
-            pointStyle: 'circle',
-            font: {
-              size: 12,
-              weight: 600,
-            },
-          },
+          display: false,
         },
       },
     }),
     [themeValues]
   )
 
+  const topAsset = allocationRows[0]
+  const smallPositions = allocationRows.filter((asset) => asset.percent < 10)
+    .length
+
   return (
     <Card className='dashboard-card chart-card'>
-      <Typography.Title level={4}>Распределение активов</Typography.Title>
+      <div className='card-section-heading'>
+        <div>
+          <Typography.Title level={4}>Распределение активов</Typography.Title>
 
-      <Typography.Text>
-        Текущая стоимость по каждой монете
-      </Typography.Text>
+          <Typography.Text>Текущая стоимость по каждой монете</Typography.Text>
+        </div>
 
-      <div className='chart-wrapper' data-theme={themeName}>
-        <Doughnut
-          key={`${themeName}-${themeValues.surfaceCard}-${themeValues.textSecondary}`}
-          data={chartData}
-          options={chartOptions}
-          redraw
-        />
+        <span className='module-badge'>{allocationRows.length} активов</span>
+      </div>
+
+      <div className='allocation-card-layout'>
+        <div className='chart-wrapper allocation-chart-wrapper' data-theme={themeName}>
+          <Doughnut
+            key={`${themeName}-${themeValues.surfaceCard}-${themeValues.textSecondary}`}
+            data={chartData}
+            options={chartOptions}
+            redraw
+          />
+          <div className='allocation-center'>
+            <strong>{topAsset ? `${formatPercent(topAsset.percent)}%` : '0%'}</strong>
+            <span>{topAsset?.symbol ?? 'Asset'}</span>
+          </div>
+        </div>
+
+        <div className='allocation-list'>
+          {allocationRows.map((asset) => (
+            <div className='allocation-list-item' key={asset.name}>
+              <span
+                className='allocation-color-dot'
+                style={{ '--asset-color': asset.color }}
+              />
+
+              {asset.icon && (
+                <img
+                  className='allocation-asset-icon'
+                  src={asset.icon}
+                  alt={asset.name}
+                />
+              )}
+
+              <div className='allocation-asset-meta'>
+                <Typography.Text className='allocation-asset-name'>
+                  {asset.name}
+                </Typography.Text>
+                <Typography.Text className='allocation-asset-symbol'>
+                  {asset.symbol}
+                </Typography.Text>
+              </div>
+
+              <div className='allocation-asset-values'>
+                <Typography.Text className='allocation-asset-percent'>
+                  {formatPercent(asset.percent)}%
+                </Typography.Text>
+                <Typography.Text className='allocation-asset-value'>
+                  {formatCurrency(asset.value)}
+                </Typography.Text>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className='allocation-summary-grid'>
+          <div>
+            <span>Всего</span>
+            <strong>{formatCurrency(portfolioBalance)}</strong>
+          </div>
+          <div>
+            <span>Лидер</span>
+            <strong>{topAsset?.symbol ?? '-'}</strong>
+          </div>
+          <div>
+            <span>Малых долей</span>
+            <strong>{smallPositions}</strong>
+          </div>
+        </div>
       </div>
     </Card>
   )
