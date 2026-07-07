@@ -12,10 +12,11 @@ import {
   StarOutlined,
   SwapOutlined,
 } from '@ant-design/icons'
-import { Avatar, Flex, Layout, Space, Tag, Typography } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { Avatar, Button, Flex, Layout, Space, Tag, Tooltip, Typography } from 'antd'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
+import ThemeSwitcher from '../ThemeSwitcher'
 import BrandLockup from './BrandLockup'
 
 const navigationItems = [
@@ -90,8 +91,9 @@ function isMobileSiderViewport() {
   )
 }
 
-export default function AppSider() {
+export default function AppSider({ themeName, setThemeName }) {
   const { userPortfolio, marketCoins } = useCrypto()
+  const scrollRegionRef = useRef(null)
   const [isMobileSider, setIsMobileSider] = useState(isMobileSiderViewport)
   const [isSiderCollapsed, setIsSiderCollapsed] = useState(
     isResponsiveSiderViewport
@@ -170,6 +172,12 @@ export default function AppSider() {
     }
   }, [])
 
+  useEffect(() => {
+    if (isMobileSider && !isSiderCollapsed) {
+      scrollRegionRef.current?.scrollTo({ top: 0 })
+    }
+  }, [isMobileSider, isSiderCollapsed])
+
   function handleNavigationClick() {
     if (isMobileSider) {
       setIsSiderCollapsed(true)
@@ -197,9 +205,6 @@ export default function AppSider() {
           aria-label='Open menu'
           onClick={() => setIsSiderCollapsed(false)}
         >
-          <span className='mobile-menu-brand-mark' aria-hidden='true'>
-            <span className='brand-mark-core' />
-          </span>
           <MenuOutlined />
         </button>
       )}
@@ -236,7 +241,7 @@ export default function AppSider() {
           </button>
         </div>
 
-        <div className='sider-scroll-region'>
+        <div className='sider-scroll-region' ref={scrollRegionRef}>
           <div className='portfolio-sider-summary'>
             <Typography.Text>Общая стоимость</Typography.Text>
             <Typography.Title level={4}>
@@ -249,22 +254,37 @@ export default function AppSider() {
           </div>
 
           <Space className='sider-navigation' direction='vertical' size={8}>
-            {navigationItems.map((navigationItem) => (
-              <Flex
-                className={
-                  navigationItem.isActive
-                    ? 'sider-navigation-item is-active'
-                    : 'sider-navigation-item'
-                }
-                align='center'
-                gap={10}
-                key={navigationItem.label}
-                onClick={handleNavigationClick}
-              >
-                {navigationItem.icon}
-                <Typography.Text>{navigationItem.label}</Typography.Text>
-              </Flex>
-            ))}
+            {navigationItems.map((navigationItem) => {
+              const navigationNode = (
+                <Flex
+                  className={
+                    navigationItem.isActive
+                      ? 'sider-navigation-item is-active'
+                      : 'sider-navigation-item'
+                  }
+                  align='center'
+                  gap={10}
+                  onClick={handleNavigationClick}
+                >
+                  {navigationItem.icon}
+                  <Typography.Text>{navigationItem.label}</Typography.Text>
+                </Flex>
+              )
+
+              if (isSiderCollapsed && !isMobileSider) {
+                return (
+                  <Tooltip
+                    key={navigationItem.label}
+                    placement='right'
+                    title={navigationItem.label}
+                  >
+                    {navigationNode}
+                  </Tooltip>
+                )
+              }
+
+              return <div key={navigationItem.label}>{navigationNode}</div>
+            })}
           </Space>
 
           <div className='sider-section-heading'>
@@ -273,8 +293,11 @@ export default function AppSider() {
           </div>
 
           <Space className='sider-coin-list' direction='vertical' size={8}>
-            {watchList.map((portfolioCoin) => (
-              <div className='portfolio-coin-row' key={portfolioCoin.id}>
+            {watchList.map((portfolioCoin, index) => (
+              <div
+                className='portfolio-coin-row'
+                key={`${portfolioCoin.id}-${index}`}
+              >
                 <Avatar
                   src={portfolioCoin.icon}
                   alt={portfolioCoin.name}
@@ -300,11 +323,34 @@ export default function AppSider() {
           </Space>
         </div>
 
-        <div className='sider-profile-card'>
-          <Avatar className='sider-profile-avatar'>M</Avatar>
-          <div>
-            <Typography.Text strong>Максим</Typography.Text>
-            <Typography.Text>max@example.com</Typography.Text>
+        <div className='sider-bottom-area'>
+          <div className='sider-profile-card'>
+            <Avatar className='sider-profile-avatar'>M</Avatar>
+            <div className='sider-profile-copy'>
+              <Typography.Text strong>Максим</Typography.Text>
+              <Typography.Text>max@example.com</Typography.Text>
+              <span className='sider-profile-status'>
+                <span aria-hidden='true' />
+                Live demo
+              </span>
+            </div>
+          </div>
+
+          <div className='sider-bottom-actions'>
+            <ThemeSwitcher
+              className='sider-theme-switcher'
+              themeName={themeName}
+              setThemeName={setThemeName}
+              placement='topRight'
+              variant='sidebar'
+            />
+
+            <Button
+              className='sider-settings-button'
+              icon={<SettingOutlined />}
+              type='text'
+              aria-label='Settings'
+            />
           </div>
         </div>
       </Layout.Sider>

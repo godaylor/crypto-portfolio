@@ -14,7 +14,7 @@ export default function AppLayout({ themeName, setThemeName }) {
     <Layout className='app-shell' data-theme={themeName}>
       <AppHeader themeName={themeName} setThemeName={setThemeName} />
       <Layout className='app-body'>
-        <AppSider />
+        <AppSider themeName={themeName} setThemeName={setThemeName} />
         <AppContent themeName={themeName} />
       </Layout>
     </Layout>

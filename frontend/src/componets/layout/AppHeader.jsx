@@ -20,7 +20,6 @@ import {
 import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
 import ThemeSwitcher from '../ThemeSwitcher'
-import BrandLockup from './BrandLockup'
 
 import { useCrypto } from '../../context/CryptoContext'
 
@@ -127,8 +126,6 @@ export default function AppHeader({ themeName, setThemeName }) {
     <Layout.Header
       className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
     >
-      <BrandLockup className='header-brand' />
-
       <Select
         ref={searchSelectRef}
         className='coin-search-select'
