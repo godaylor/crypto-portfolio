@@ -4712,3 +4712,784 @@ body {
     padding-inline: 12px;
   }
 }
+
+.app-shell {
+  --shell-header-height: 68px;
+}
+
+.app-body {
+  align-items: stretch;
+  min-height: calc(100dvh - var(--shell-header-height));
+  overflow-x: clip;
+}
+
+.app-header {
+  z-index: 80;
+  isolation: isolate;
+}
+
+.coin-search-dropdown.ant-select-dropdown,
+.theme-switcher-dropdown.ant-dropdown {
+  z-index: 1900;
+}
+
+.coin-search-dropdown.ant-select-dropdown {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 98%, #ffffff 2%), var(--surface-shell)) !important;
+  border: 1px solid color-mix(in srgb, var(--border-strong) 90%, transparent);
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.app-shell[data-theme='dark-glass'] .coin-search-dropdown.ant-select-dropdown {
+  background:
+    linear-gradient(180deg, rgba(27, 31, 76, 0.98), rgba(13, 16, 39, 0.98)) !important;
+}
+
+.app-shell[data-theme='light-modern'] .coin-search-dropdown.ant-select-dropdown {
+  background: linear-gradient(180deg, #ffffff, #f8fbff) !important;
+  border-color: rgba(118, 141, 180, 0.28);
+}
+
+.theme-switcher-dropdown.ant-dropdown .ant-dropdown-menu {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 98%, #ffffff 2%), color-mix(in srgb, var(--surface-shell) 96%, #ffffff 4%)) !important;
+  border-color: color-mix(in srgb, var(--border-strong) 92%, transparent);
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.theme-switcher-dropdown .ant-dropdown-menu-item-selected .ant-typography,
+.theme-switcher-dropdown .ant-dropdown-menu-item-active .ant-typography {
+  color: var(--text-primary);
+}
+
+.theme-switcher-dropdown .ant-dropdown-menu-item-selected .ant-typography-secondary,
+.theme-switcher-dropdown .ant-dropdown-menu-item-active .ant-typography-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.add-coin-drawer-root {
+  z-index: 1600;
+}
+
+.coin-info-modal-root {
+  z-index: 1700;
+}
+
+@media (min-width: 921px) {
+  .app-header,
+  .app-header.is-compact {
+    height: var(--shell-header-height);
+    min-height: var(--shell-header-height);
+    display: flex;
+    padding: 10px 28px 10px calc(var(--shell-sidebar-width) + 28px);
+  }
+
+  .app-shell:has(.portfolio-sider.ant-layout-sider-collapsed) .app-header {
+    padding-left: calc(var(--shell-rail-width) + 28px);
+  }
+
+  .app-header .coin-search-select {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: min(720px, calc(100dvw - var(--shell-sidebar-width) - 390px));
+    min-width: 220px;
+  }
+
+  .app-shell:has(.portfolio-sider.ant-layout-sider-collapsed) .app-header .coin-search-select {
+    max-width: min(760px, calc(100dvw - var(--shell-rail-width) - 390px));
+  }
+
+  .portfolio-sider:not(.is-mobile-drawer) {
+    position: sticky !important;
+    top: var(--shell-header-height);
+    z-index: 50;
+    flex: 0 0 var(--shell-sidebar-width) !important;
+    width: var(--shell-sidebar-width) !important;
+    max-width: var(--shell-sidebar-width) !important;
+    min-width: var(--shell-sidebar-width) !important;
+    height: calc(100dvh - var(--shell-header-height));
+    align-self: flex-start;
+  }
+
+  .portfolio-sider:not(.is-mobile-drawer).ant-layout-sider-collapsed {
+    flex-basis: var(--shell-rail-width) !important;
+    width: var(--shell-rail-width) !important;
+    max-width: var(--shell-rail-width) !important;
+    min-width: var(--shell-rail-width) !important;
+  }
+
+  .portfolio-sider:not(.is-mobile-drawer) .ant-layout-sider-children {
+    height: 100%;
+  }
+
+  .dashboard-content {
+    padding: 22px 24px 30px;
+    transition: padding 0.2s ease;
+  }
+}
+
+@media (max-width: 1439px) and (min-width: 921px) {
+  .app-header,
+  .app-header.is-compact {
+    padding-left: calc(var(--shell-sidebar-width) + 20px);
+    padding-right: 20px;
+  }
+
+  .app-shell:has(.portfolio-sider.ant-layout-sider-collapsed) .app-header {
+    padding-left: calc(var(--shell-rail-width) + 20px);
+  }
+
+  .dashboard-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 1120px) and (min-width: 921px) {
+  .app-header .coin-search-select {
+    max-width: none;
+  }
+}
+
+@media (max-width: 920px) {
+  .app-shell {
+    --shell-header-height: 112px;
+  }
+
+  .app-body {
+    min-height: calc(100dvh - var(--shell-header-height));
+  }
+
+  .app-header,
+  .app-header.is-compact {
+    z-index: 80;
+    min-height: var(--shell-header-height);
+  }
+
+  .dashboard-content {
+    flex: 1 1 100%;
+    width: 100%;
+    padding-top: 18px;
+  }
+
+  .portfolio-sider.is-mobile-drawer {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 120;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--surface-sidebar) 98%, #ffffff 2%), var(--surface-shell)) !important;
+  }
+
+  .portfolio-sider.is-mobile-drawer .ant-layout-sider-children {
+    max-height: 100%;
+  }
+
+  .portfolio-sider.is-mobile-drawer .sider-scroll-region {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .portfolio-sider.is-mobile-drawer .sider-bottom-area {
+    flex: 0 0 auto;
+    margin-top: auto;
+  }
+
+  .portfolio-sider.is-mobile-drawer.ant-layout-sider-collapsed {
+    pointer-events: none;
+    transform: translateX(-104%);
+  }
+
+  .portfolio-sider-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: block;
+    border: 0;
+    background: rgba(3, 7, 18, 0.62);
+    backdrop-filter: blur(8px) saturate(120%);
+  }
+
+  .app-shell[data-theme='light-modern'] .portfolio-sider-backdrop {
+    background: rgba(8, 17, 32, 0.34);
+  }
+
+  .portfolio-mobile-menu-trigger {
+    position: fixed;
+    top: 12px;
+    left: 14px;
+    z-index: 130;
+    display: inline-grid;
+    place-items: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-header .header-actions {
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .app-header .coin-search-select .ant-select-selector {
+    min-height: 42px;
+  }
+
+  .app-header .coin-search-select .ant-select-selection-search-input,
+  .app-header .coin-search-select .ant-select-selection-placeholder,
+  .app-header .coin-search-select .ant-select-selection-item {
+    height: 40px !important;
+    line-height: 40px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-header,
+  .app-header.is-compact {
+    padding-inline: 56px 8px;
+  }
+
+  .portfolio-mobile-menu-trigger,
+  .app-header .add-coin-button {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+  }
+
+  .portfolio-mobile-menu-trigger {
+    top: 10px;
+    left: 8px;
+  }
+}
+
+/* P0 visual/layout fixes */
+body.is-mobile-drawer-open,
+body.is-add-asset-drawer-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.app-header,
+.app-header.is-compact {
+  justify-content: space-between;
+}
+
+.header-brand {
+  width: auto;
+  max-width: 210px;
+  min-width: 0;
+  display: inline-flex !important;
+  flex: 0 1 210px;
+}
+
+.header-brand .brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+}
+
+.header-brand .brand-wordmark.ant-typography {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-brand {
+  opacity: 0.82;
+}
+
+.portfolio-sider:not(.is-mobile-drawer) .sidebar-brand .brand-wordmark {
+  display: none;
+}
+
+.portfolio-sider-summary h4.ant-typography {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(17px, 1.7vw, 20px);
+  line-height: 1.12;
+}
+
+.portfolio-coin-result {
+  max-width: 86px;
+}
+
+.portfolio-coin-result strong {
+  max-width: 100%;
+  overflow: hidden;
+  display: block;
+  font-size: clamp(10px, 0.8vw, 11px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-header h2.ant-typography,
+.dashboard-hero-copy h3.ant-typography,
+.kpi-value.ant-typography,
+.brand-wordmark.ant-typography {
+  letter-spacing: 0;
+}
+
+.dashboard-title-stack {
+  width: 100%;
+}
+
+.dashboard-title-stack > .ant-typography {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-hero-card .ant-card-body {
+  grid-template-columns: minmax(280px, 0.84fr) minmax(0, 1.16fr);
+  align-items: stretch;
+}
+
+.dashboard-hero-copy {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+}
+
+.dashboard-hero-modules {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+}
+
+@media (min-width: 921px) {
+  .app-header .coin-search-select {
+    flex: 1 1 460px;
+    max-width: min(620px, calc(100dvw - var(--shell-sidebar-width) - 640px));
+  }
+
+  .app-shell:has(.portfolio-sider.ant-layout-sider-collapsed) .app-header .coin-search-select {
+    max-width: min(660px, calc(100dvw - var(--shell-rail-width) - 640px));
+  }
+}
+
+@media (max-width: 1199px) {
+  .dashboard-hero-card .ant-card-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-hero-copy,
+  .dashboard-hero-modules {
+    grid-column: 1;
+  }
+
+  .dashboard-hero-copy {
+    grid-row: 1;
+  }
+
+  .dashboard-hero-modules {
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 920px) {
+  .app-shell {
+    --shell-header-height: 114px;
+  }
+
+  .app-header,
+  .app-header.is-compact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    padding: 10px 14px 10px 68px;
+  }
+
+  .header-brand {
+    max-width: 190px;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .app-header .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .app-header .coin-search-select {
+    width: 100%;
+    max-width: none;
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .dashboard-content {
+    padding: 18px 14px 26px;
+  }
+
+  .portfolio-sider.is-mobile-drawer {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: min(306px, calc(100dvw - 18px)) !important;
+    max-width: min(306px, calc(100dvw - 18px)) !important;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .portfolio-sider.is-mobile-drawer .ant-layout-sider-children {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .portfolio-sider.is-mobile-drawer .sider-scroll-region {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-brand {
+    display: inline-flex !important;
+    max-width: 172px;
+  }
+
+  .header-brand .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-brand .brand-wordmark.ant-typography {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    --shell-header-height: 112px;
+  }
+
+  .app-header,
+  .app-header.is-compact {
+    padding: 9px 10px 9px 62px;
+  }
+
+  .header-brand {
+    max-width: 178px;
+  }
+
+  .header-brand .brand-wordmark.ant-typography {
+    display: inline !important;
+  }
+
+  .dashboard-content {
+    padding: 16px 10px 24px;
+  }
+
+  .dashboard-header,
+  .dashboard-title-stack {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .dashboard-header .dashboard-title-stack > span.ant-typography {
+    display: block !important;
+    width: min(100%, 320px) !important;
+    max-width: calc(100dvw - 20px);
+    margin-bottom: 2px;
+    overflow: visible !important;
+    overflow-wrap: anywhere;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 340px) {
+  .header-brand .brand-wordmark.ant-typography {
+    display: none;
+  }
+
+  .header-brand {
+    flex-basis: 40px;
+  }
+}
+
+/* P1 final visual/UX follow-up */
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 58%, #ffffff 18%);
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.6), transparent 18%),
+    linear-gradient(145deg, #58a6ff 0%, var(--accent) 38%, #6d5dfc 70%, #00d4ff 100%);
+  box-shadow:
+    0 9px 20px color-mix(in srgb, var(--accent) 24%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -12px 18px rgba(2, 6, 18, 0.24);
+}
+
+.brand-mark::before {
+  inset: 8px;
+  clip-path: polygon(26% 6%, 74% 6%, 100% 50%, 74% 94%, 26% 94%, 0 50%);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-shell) 88%, #030712 12%), color-mix(in srgb, var(--surface-muted) 90%, #030712 10%));
+  border-radius: 0;
+  transform: none;
+}
+
+.brand-mark::after {
+  inset: 5px;
+  clip-path: polygon(26% 5%, 74% 5%, 100% 50%, 74% 95%, 26% 95%, 0 50%);
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  border-radius: 0;
+  opacity: 0.58;
+}
+
+.brand-mark-core {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #ffffff, #9ed7ff 48%, #7c73ff);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--info) 48%, transparent),
+    0 0 2px rgba(255, 255, 255, 0.8);
+  transform: rotate(45deg);
+}
+
+.header-brand {
+  gap: 11px;
+  align-items: center;
+}
+
+.header-brand .brand-mark {
+  width: 36px;
+  height: 36px;
+}
+
+.header-brand .brand-wordmark.ant-typography {
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.sider-topbar-no-brand {
+  justify-content: flex-end;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.portfolio-sider:not(.is-mobile-drawer):not(.ant-layout-sider-collapsed) .sider-topbar-no-brand {
+  min-height: 44px;
+}
+
+.portfolio-sider.is-mobile-drawer .sider-topbar-no-brand {
+  justify-content: flex-end;
+}
+
+.portfolio-sider-summary {
+  padding: 13px 12px;
+}
+
+.portfolio-sider-summary h4.ant-typography {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+  color: var(--text-primary);
+  font-size: clamp(18px, 1.22vw, 22px);
+  line-height: 1.08;
+  overflow-wrap: normal;
+  text-wrap: balance;
+  white-space: nowrap;
+}
+
+.portfolio-coin-row {
+  grid-template-columns: 30px minmax(0, 1fr) minmax(76px, auto);
+}
+
+.portfolio-coin-result {
+  max-width: 96px;
+}
+
+.portfolio-coin-result strong {
+  font-size: 11px;
+}
+
+.add-coin-drawer-root {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1800;
+  pointer-events: none;
+}
+
+.add-coin-drawer-root .ant-drawer-mask,
+.add-coin-drawer-root .ant-drawer-content-wrapper {
+  position: fixed !important;
+  pointer-events: auto;
+}
+
+.add-coin-drawer-root .ant-drawer-content-wrapper {
+  top: 0 !important;
+  right: 0 !important;
+  height: 100dvh !important;
+  max-height: 100dvh;
+}
+
+.add-coin-drawer-root .ant-drawer-content {
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+.add-coin-drawer-root .ant-drawer-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.drawer-coin-dropdown.ant-select-dropdown {
+  z-index: 2100 !important;
+  min-width: min(420px, calc(100dvw - 28px)) !important;
+  pointer-events: auto;
+}
+
+.drawer-coin-dropdown .ant-select-item {
+  min-height: 42px;
+}
+
+.dashboard-inner {
+  max-width: min(1760px, 100%);
+}
+
+@media (min-width: 1920px) {
+  .dashboard-content {
+    padding-inline: clamp(28px, 3vw, 68px);
+  }
+
+  .dashboard-inner {
+    max-width: min(1880px, 100%);
+  }
+
+  .dashboard-main-grid {
+    grid-template-columns:
+      minmax(300px, 0.95fr)
+      minmax(390px, 1.1fr)
+      minmax(390px, 1.1fr)
+      minmax(330px, 0.98fr);
+  }
+}
+
+@media (min-width: 2200px) {
+  .dashboard-inner {
+    max-width: min(2060px, calc(100dvw - 160px));
+  }
+
+  .dashboard-main-grid {
+    grid-template-columns:
+      minmax(330px, 0.95fr)
+      minmax(470px, 1.14fr)
+      minmax(470px, 1.14fr)
+      minmax(360px, 0.98fr);
+  }
+}
+
+@media (min-width: 921px) and (max-width: 1319px) {
+  .dashboard-inner {
+    max-width: 100%;
+  }
+
+  .dashboard-board {
+    gap: 12px;
+  }
+
+  .dashboard-main-grid {
+    grid-template-areas:
+      "allocation performance"
+      "analytics performance"
+      "market modules"
+      "holdings holdings";
+    grid-template-columns: minmax(280px, 0.86fr) minmax(0, 1.14fr);
+    gap: 12px;
+  }
+
+  .dashboard-panel-performance .performance-card .ant-card-body {
+    min-height: clamp(390px, 44vw, 470px);
+  }
+
+  .allocation-chart-wrapper {
+    height: clamp(150px, 17vw, 176px);
+    min-height: 150px;
+    max-height: 176px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .kpi-card .ant-card-body {
+    padding: 16px 14px;
+  }
+
+  .kpi-card-content {
+    gap: 10px !important;
+  }
+
+  .kpi-value.ant-typography {
+    font-size: clamp(18px, 1.9vw, 23px);
+  }
+}
+
+@media (min-width: 1320px) and (max-width: 1599px) {
+  .dashboard-main-grid {
+    grid-template-areas:
+      "allocation performance analytics"
+      "market performance modules"
+      "holdings holdings holdings";
+    grid-template-columns:
+      minmax(240px, 0.86fr)
+      minmax(430px, 1.54fr)
+      minmax(260px, 0.94fr);
+  }
+}
+
+@media (max-width: 920px) {
+  .portfolio-sider.is-mobile-drawer .sider-topbar-no-brand {
+    min-height: 44px;
+    padding-bottom: 12px;
+  }
+
+  .add-coin-drawer-root .ant-drawer-content-wrapper {
+    width: min(100dvw, 560px) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .header-brand .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .add-coin-drawer-root .ant-drawer-header,
+  .add-coin-drawer-root .ant-drawer-body {
+    padding-inline: 18px;
+  }
+
+  .drawer-coin-dropdown.ant-select-dropdown {
+    left: 12px !important;
+    width: calc(100dvw - 24px) !important;
+  }
+}

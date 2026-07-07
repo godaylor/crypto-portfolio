@@ -22,6 +22,7 @@ import CoinInfoModal from '../CoinInfoModel'
 import ThemeSwitcher from '../ThemeSwitcher'
 
 import { useCrypto } from '../../context/CryptoContext'
+import BrandLockup from './BrandLockup'
 
 export default function AppHeader({ themeName, setThemeName }) {
   const { marketCoins } = useCrypto()
@@ -31,6 +32,7 @@ export default function AppHeader({ themeName, setThemeName }) {
 
   const [isHeaderCompact, setIsHeaderCompact] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [searchResetKey, setSearchResetKey] = useState(0)
   const [selectedSearchValue, setSelectedSearchValue] = useState(undefined)
   const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -86,6 +88,11 @@ export default function AppHeader({ themeName, setThemeName }) {
     })
   }
 
+  function resetGlobalSearchAfterSelect() {
+    clearGlobalSearch()
+    setSearchResetKey((currentKey) => currentKey + 1)
+  }
+
   function handleSelect(selectedCoinId) {
     const selectedCoin = marketCoins.find(
       (marketCoin) => marketCoin.id === selectedCoinId
@@ -98,7 +105,7 @@ export default function AppHeader({ themeName, setThemeName }) {
     }
 
     setCoin(selectedCoin)
-    clearGlobalSearch()
+    resetGlobalSearchAfterSelect()
     setIsSelectOpen(false)
     setIsModalOpen(true)
   }
@@ -106,6 +113,14 @@ export default function AppHeader({ themeName, setThemeName }) {
   function getOverlayContainer() {
     return document.querySelector('.app-shell') ?? document.body
   }
+
+  useEffect(() => {
+    document.body.classList.toggle('is-add-asset-drawer-open', isDrawerOpen)
+
+    return () => {
+      document.body.classList.remove('is-add-asset-drawer-open')
+    }
+  }, [isDrawerOpen])
 
   const addAssetDrawerTitle = (
     <Flex className='add-coin-drawer-title' align='center' gap={12}>
@@ -126,7 +141,10 @@ export default function AppHeader({ themeName, setThemeName }) {
     <Layout.Header
       className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
     >
+      <BrandLockup className='header-brand' />
+
       <Select
+        key={searchResetKey}
         ref={searchSelectRef}
         className='coin-search-select'
         popupClassName='coin-search-dropdown'
@@ -141,8 +159,6 @@ export default function AppHeader({ themeName, setThemeName }) {
         onSearch={setSearchValue}
         onSelect={handleSelect}
         onChange={(value) => {
-          setSelectedSearchValue(value)
-
           if (!value) {
             clearGlobalSearch()
           }
@@ -205,7 +221,7 @@ export default function AppHeader({ themeName, setThemeName }) {
         closeIcon={<CloseOutlined />}
         destroyOnClose
         getContainer={getOverlayContainer}
-        rootStyle={{ position: 'absolute' }}
+        rootStyle={{ position: 'fixed', inset: 0 }}
         onClose={() => setIsDrawerOpen(false)}
       >
         <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />
@@ -218,7 +234,7 @@ export default function AppHeader({ themeName, setThemeName }) {
         footer={null}
         centered
         destroyOnClose
-        getContainer={getOverlayContainer}
+        getContainer={() => document.querySelector('.app-shell') ?? document.body}
         afterClose={() => setCoin(null)}
         onCancel={() => {
           clearGlobalSearch()

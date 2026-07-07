@@ -17,7 +17,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
 import ThemeSwitcher from '../ThemeSwitcher'
-import BrandLockup from './BrandLockup'
 
 const navigationItems = [
   {
@@ -178,6 +177,16 @@ export default function AppSider({ themeName, setThemeName }) {
     }
   }, [isMobileSider, isSiderCollapsed])
 
+  useEffect(() => {
+    const shouldLockScroll = isMobileSider && !isSiderCollapsed
+
+    document.body.classList.toggle('is-mobile-drawer-open', shouldLockScroll)
+
+    return () => {
+      document.body.classList.remove('is-mobile-drawer-open')
+    }
+  }, [isMobileSider, isSiderCollapsed])
+
   function handleNavigationClick() {
     if (isMobileSider) {
       setIsSiderCollapsed(true)
@@ -227,9 +236,7 @@ export default function AppSider({ themeName, setThemeName }) {
         collapsedWidth={isMobileSider ? 0 : 72}
         trigger={null}
       >
-        <div className='sider-topbar'>
-          <BrandLockup className='sidebar-brand' />
-
+        <div className='sider-topbar sider-topbar-no-brand'>
           <button
             className='portfolio-sider-toggle'
             type='button'

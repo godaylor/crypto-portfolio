@@ -22,7 +22,10 @@ export default function SelectCoinForm({ setCoin }) {
   return (
     <Select
       className='drawer-coin-select'
-      popupClassName='coin-search-dropdown'
+      popupClassName='coin-search-dropdown drawer-coin-dropdown'
+      getPopupContainer={(triggerNode) =>
+        triggerNode?.closest('.add-coin-drawer-root') ?? document.body
+      }
       style={{ width: '100%' }}
       onChange={handleSelectChange}
       placeholder='Выберите монету'
