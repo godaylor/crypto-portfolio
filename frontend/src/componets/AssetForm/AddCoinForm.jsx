@@ -14,10 +14,10 @@ import {
   CalendarOutlined,
   DollarOutlined,
   FieldNumberOutlined,
+  RiseOutlined,
   WalletOutlined,
 } from '@ant-design/icons'
 
-import CoinInfo from '../CoinInfo'
 import CoinAddedMessage from './CoinAddedMessage'
 import SelectCoinForm from './SelectCoinForm'
 
@@ -51,7 +51,44 @@ function FormSection({ eyebrow, title, description, children }) {
   )
 }
 
-export default function AddCoinForm({ closeCoinDrawer }) {
+function formatCurrency(value) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function SelectedCoinSummary({ coin }) {
+  const changeStatus = coin.priceChange1d >= 0 ? 'positive' : 'negative'
+
+  return (
+    <Card className='selected-coin-card' bordered={false}>
+      <Flex className='selected-coin-summary' align='center' gap={14}>
+        <img className='selected-coin-icon' src={coin.icon} alt={coin.name} />
+
+        <div className='selected-coin-copy'>
+          <Typography.Text className='selected-coin-label'>
+            Selected coin
+          </Typography.Text>
+          <Typography.Title level={4}>{coin.name}</Typography.Title>
+          <Typography.Text type='secondary'>{coin.symbol}</Typography.Text>
+        </div>
+
+        <div className='selected-coin-market'>
+          <Typography.Text>{formatCurrency(coin.price)}</Typography.Text>
+          <span className={`selected-coin-change is-${changeStatus}`}>
+            <RiseOutlined />
+            {coin.priceChange1d >= 0 ? '+' : ''}
+            {coin.priceChange1d.toFixed(2)}%
+          </span>
+        </div>
+      </Flex>
+    </Card>
+  )
+}
+
+export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
   const [coin, setCoin] = useState(null)
   const [form] = Form.useForm()
 
@@ -125,6 +162,7 @@ export default function AddCoinForm({ closeCoinDrawer }) {
     setIsCoinAdded(true)
     resetFormFields()
     addCoinToPortfolio(coinToAdd)
+    onCoinAddedSuccess?.({ coin, coinToAdd })
   }
 
   return (
@@ -145,9 +183,7 @@ export default function AddCoinForm({ closeCoinDrawer }) {
       </FormSection>
 
       {coin && (
-        <Card className='selected-coin-card' bordered={false}>
-          <CoinInfo coin={coin} />
-        </Card>
+        <SelectedCoinSummary coin={coin} />
       )}
 
       {coin && (

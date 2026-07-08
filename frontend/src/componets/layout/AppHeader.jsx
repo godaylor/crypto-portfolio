@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import {
   BellOutlined,
+  CheckCircleOutlined,
   CloseOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -37,6 +38,7 @@ export default function AppHeader({ themeName, setThemeName }) {
   const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [successNotice, setSuccessNotice] = useState(null)
 
   useEffect(() => {
     function handleScroll() {
@@ -121,6 +123,27 @@ export default function AppHeader({ themeName, setThemeName }) {
       document.body.classList.remove('is-add-asset-drawer-open')
     }
   }, [isDrawerOpen])
+
+  useEffect(() => {
+    if (!successNotice) {
+      return undefined
+    }
+
+    const noticeTimer = window.setTimeout(() => {
+      setSuccessNotice(null)
+    }, 6500)
+
+    return () => {
+      window.clearTimeout(noticeTimer)
+    }
+  }, [successNotice])
+
+  function handleCoinAddedSuccess(successData) {
+    setSuccessNotice({
+      ...successData,
+      id: Date.now(),
+    })
+  }
 
   const addAssetDrawerTitle = (
     <Flex className='add-coin-drawer-title' align='center' gap={12}>
@@ -224,8 +247,34 @@ export default function AppHeader({ themeName, setThemeName }) {
         rootStyle={{ position: 'fixed', inset: 0 }}
         onClose={() => setIsDrawerOpen(false)}
       >
-        <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />
+        <AddCoinForm
+          closeCoinDrawer={() => setIsDrawerOpen(false)}
+          onCoinAddedSuccess={handleCoinAddedSuccess}
+        />
       </Drawer>
+
+      {successNotice && (
+        <div className='app-success-toast' role='status' aria-live='polite'>
+          <span className='app-success-toast-icon'>
+            <CheckCircleOutlined />
+          </span>
+
+          <Space direction='vertical' size={1}>
+            <Typography.Text strong>Purchase added</Typography.Text>
+            <Typography.Text type='secondary'>
+              {successNotice.coin.name} added to portfolio.
+            </Typography.Text>
+          </Space>
+
+          <Button
+            className='app-success-toast-close'
+            icon={<CloseOutlined />}
+            type='text'
+            aria-label='Close notification'
+            onClick={() => setSuccessNotice(null)}
+          />
+        </div>
+      )}
 
       <Modal
         className='coin-info-modal'
