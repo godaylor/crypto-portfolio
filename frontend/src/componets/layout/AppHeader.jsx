@@ -2,16 +2,23 @@ import { useEffect, useRef, useState } from 'react'
 
 import {
   BellOutlined,
+  CheckCircleOutlined,
   CloseOutlined,
+  LoginOutlined,
+  LogoutOutlined,
   PlusOutlined,
   SearchOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
 import {
+  Avatar,
+  Badge,
   Button,
   Drawer,
   Flex,
   Layout,
   Modal,
+  Popover,
   Select,
   Space,
   Typography,
@@ -19,11 +26,15 @@ import {
 
 import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
-import ThemeSwitcher from '../ThemeSwitcher'
 
 import { useCrypto } from '../../context/CryptoContext'
+import BrandLockup from './BrandLockup'
 
-export default function AppHeader({ themeName, setThemeName }) {
+export default function AppHeader({
+  isDrawerOpen,
+  onCloseDrawer,
+  onOpenDrawer,
+}) {
   const { marketCoins } = useCrypto()
 
   const [coin, setCoin] = useState(null)
@@ -31,10 +42,29 @@ export default function AppHeader({ themeName, setThemeName }) {
 
   const [isHeaderCompact, setIsHeaderCompact] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [searchResetKey, setSearchResetKey] = useState(0)
   const [selectedSearchValue, setSelectedSearchValue] = useState(undefined)
   const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [successNotice, setSuccessNotice] = useState(null)
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [isAccountOpen, setIsAccountOpen] = useState(false)
+  const [isMockSignedIn, setIsMockSignedIn] = useState(true)
+
+  const notifications = [
+    {
+      title: 'BTC выше целевого уровня',
+      detail: 'Цена Bitcoin обновила локальный максимум в демо-ленте.',
+    },
+    {
+      title: 'Портфель пересчитан',
+      detail: 'Доходность и аллокация обновлены после последних операций.',
+    },
+    {
+      title: 'Риск в норме',
+      detail: 'Концентрация крупнейшей позиции остается в рабочем диапазоне.',
+    },
+  ]
 
   useEffect(() => {
     function handleScroll() {
@@ -49,7 +79,6 @@ export default function AppHeader({ themeName, setThemeName }) {
     }
   }, [])
 
-  // Горячая клавиша открывает или закрывает поиск монет.
   useEffect(() => {
     const handleKeyPress = (event) => {
       const target = event.target
@@ -86,6 +115,11 @@ export default function AppHeader({ themeName, setThemeName }) {
     })
   }
 
+  function resetGlobalSearchAfterSelect() {
+    clearGlobalSearch()
+    setSearchResetKey((currentKey) => currentKey + 1)
+  }
+
   function handleSelect(selectedCoinId) {
     const selectedCoin = marketCoins.find(
       (marketCoin) => marketCoin.id === selectedCoinId
@@ -98,13 +132,48 @@ export default function AppHeader({ themeName, setThemeName }) {
     }
 
     setCoin(selectedCoin)
-    clearGlobalSearch()
+    resetGlobalSearchAfterSelect()
     setIsSelectOpen(false)
     setIsModalOpen(true)
   }
 
-  function getOverlayContainer() {
+  function getAppShellContainer() {
     return document.querySelector('.app-shell') ?? document.body
+  }
+
+  function handleOpenDrawer() {
+    setIsNotificationsOpen(false)
+    setIsAccountOpen(false)
+    onOpenDrawer()
+  }
+
+  useEffect(() => {
+    document.body.classList.toggle('is-add-asset-drawer-open', isDrawerOpen)
+
+    return () => {
+      document.body.classList.remove('is-add-asset-drawer-open')
+    }
+  }, [isDrawerOpen])
+
+  useEffect(() => {
+    if (!successNotice) {
+      return undefined
+    }
+
+    const noticeTimer = window.setTimeout(() => {
+      setSuccessNotice(null)
+    }, 6500)
+
+    return () => {
+      window.clearTimeout(noticeTimer)
+    }
+  }, [successNotice])
+
+  function handleCoinAddedSuccess(successData) {
+    setSuccessNotice({
+      ...successData,
+      id: Date.now(),
+    })
   }
 
   const addAssetDrawerTitle = (
@@ -114,24 +183,93 @@ export default function AppHeader({ themeName, setThemeName }) {
       </span>
 
       <Space direction='vertical' size={1}>
-        <Typography.Text strong>Добавление актива</Typography.Text>
+        <Typography.Text strong>Добавить актив</Typography.Text>
         <Typography.Text type='secondary'>
-          Новая покупка для портфеля
+          Запишите новую покупку в портфель
         </Typography.Text>
       </Space>
     </Flex>
+  )
+
+  const notificationsPanel = (
+    <div className='header-popover-panel notifications-panel'>
+      <div className='header-popover-title'>
+        <Typography.Text strong>Уведомления</Typography.Text>
+        <span>{notifications.length}</span>
+      </div>
+
+      <div className='notification-list'>
+        {notifications.map((notification) => (
+          <div className='notification-row' key={notification.title}>
+            <span className='notification-dot' aria-hidden='true' />
+            <div>
+              <Typography.Text strong>{notification.title}</Typography.Text>
+              <Typography.Text type='secondary'>
+                {notification.detail}
+              </Typography.Text>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Button
+        block
+        type='text'
+        onClick={() => setIsNotificationsOpen(false)}
+      >
+        Закрыть
+      </Button>
+    </div>
+  )
+
+  const accountPanel = (
+    <div className='header-popover-panel account-panel'>
+      <div className='account-panel-head'>
+        <Avatar className='header-user-avatar'>
+          {isMockSignedIn ? 'M' : <UserOutlined />}
+        </Avatar>
+        <div>
+          <Typography.Text strong>
+            {isMockSignedIn ? 'Макс' : 'Гость'}
+          </Typography.Text>
+          <Typography.Text type='secondary'>
+            {isMockSignedIn ? 'Демо-аккаунт Pro' : 'Демо-вход выключен'}
+          </Typography.Text>
+        </div>
+      </div>
+
+      <div className='account-panel-meta'>
+        <span>Статус</span>
+        <strong>{isMockSignedIn ? 'Активен' : 'Гость'}</strong>
+      </div>
+
+      <Button
+        block
+        icon={isMockSignedIn ? <LogoutOutlined /> : <LoginOutlined />}
+        type={isMockSignedIn ? 'default' : 'primary'}
+        onClick={() => {
+          setIsMockSignedIn((currentValue) => !currentValue)
+          setIsAccountOpen(false)
+        }}
+      >
+        {isMockSignedIn ? 'Выйти из демо' : 'Войти в демо'}
+      </Button>
+    </div>
   )
 
   return (
     <Layout.Header
       className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
     >
+      <BrandLockup className='header-brand' />
+
       <Select
+        key={searchResetKey}
         ref={searchSelectRef}
         className='coin-search-select'
         popupClassName='coin-search-dropdown'
         open={isSelectOpen}
-        placeholder='Поиск монеты, например BTC'
+        placeholder='Поиск активов, рынков, токенов...'
         suffixIcon={<SearchOutlined />}
         searchValue={searchValue}
         showSearch
@@ -141,8 +279,6 @@ export default function AppHeader({ themeName, setThemeName }) {
         onSearch={setSearchValue}
         onSelect={handleSelect}
         onChange={(value) => {
-          setSelectedSearchValue(value)
-
           if (!value) {
             clearGlobalSearch()
           }
@@ -177,24 +313,80 @@ export default function AppHeader({ themeName, setThemeName }) {
       />
 
       <Flex className='header-actions' align='center' gap={10}>
-        <ThemeSwitcher themeName={themeName} setThemeName={setThemeName} />
+        <span className='shortcut-hint'>/</span>
 
-        <Button
-          className='header-icon-button'
-          icon={<BellOutlined />}
-          type='text'
-          aria-label='Уведомления'
-        />
+        <Popover
+          arrow={false}
+          content={notificationsPanel}
+          open={isNotificationsOpen}
+          overlayClassName='header-popover'
+          placement='bottomRight'
+          trigger='click'
+          onOpenChange={(open) => {
+            setIsNotificationsOpen(open)
+            if (open) {
+              setIsAccountOpen(false)
+            }
+          }}
+        >
+          <Badge count={notifications.length} size='small' offset={[-3, 4]}>
+            <Button
+              className='header-icon-button'
+              icon={<BellOutlined />}
+              type='text'
+              aria-label='Уведомления'
+              aria-expanded={isNotificationsOpen}
+            />
+          </Badge>
+        </Popover>
+
+        <Popover
+          arrow={false}
+          content={accountPanel}
+          open={isAccountOpen}
+          overlayClassName='header-popover'
+          placement='bottomRight'
+          trigger='click'
+          onOpenChange={(open) => {
+            setIsAccountOpen(open)
+            if (open) {
+              setIsNotificationsOpen(false)
+            }
+          }}
+        >
+          <button
+            className='header-user-chip'
+            type='button'
+            aria-label='Открыть меню аккаунта'
+            aria-expanded={isAccountOpen}
+          >
+            <Avatar className='header-user-avatar'>
+              {isMockSignedIn ? 'M' : <UserOutlined />}
+            </Avatar>
+            <span>
+              <strong>{isMockSignedIn ? 'Макс' : 'Гость'}</strong>
+              <small>{isMockSignedIn ? 'Демо Pro' : 'Войти'}</small>
+            </span>
+          </button>
+        </Popover>
 
         <Button
           className='add-coin-button'
           icon={<PlusOutlined />}
           type='primary'
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={handleOpenDrawer}
         >
           Добавить актив
         </Button>
       </Flex>
+
+      <Button
+        className='mobile-add-coin-button'
+        icon={<PlusOutlined />}
+        type='primary'
+        aria-label='Добавить актив'
+        onClick={handleOpenDrawer}
+      />
 
       <Drawer
         className='add-coin-drawer'
@@ -204,12 +396,36 @@ export default function AppHeader({ themeName, setThemeName }) {
         open={isDrawerOpen}
         closeIcon={<CloseOutlined />}
         destroyOnClose
-        getContainer={getOverlayContainer}
-        rootStyle={{ position: 'absolute' }}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={onCloseDrawer}
       >
-        <AddCoinForm closeCoinDrawer={() => setIsDrawerOpen(false)} />
+        <AddCoinForm
+          closeCoinDrawer={onCloseDrawer}
+          onCoinAddedSuccess={handleCoinAddedSuccess}
+        />
       </Drawer>
+
+      {successNotice && (
+        <div className='app-success-toast' role='status' aria-live='polite'>
+          <span className='app-success-toast-icon'>
+            <CheckCircleOutlined />
+          </span>
+
+          <Space direction='vertical' size={1}>
+            <Typography.Text strong>Актив добавлен</Typography.Text>
+            <Typography.Text type='secondary'>
+              {successNotice.coin.name} теперь есть в вашем портфеле.
+            </Typography.Text>
+          </Space>
+
+          <Button
+            className='app-success-toast-close'
+            icon={<CloseOutlined />}
+            type='text'
+            aria-label='Закрыть уведомление'
+            onClick={() => setSuccessNotice(null)}
+          />
+        </div>
+      )}
 
       <Modal
         className='coin-info-modal'
@@ -218,7 +434,7 @@ export default function AppHeader({ themeName, setThemeName }) {
         footer={null}
         centered
         destroyOnClose
-        getContainer={getOverlayContainer}
+        getContainer={getAppShellContainer}
         afterClose={() => setCoin(null)}
         onCancel={() => {
           clearGlobalSearch()

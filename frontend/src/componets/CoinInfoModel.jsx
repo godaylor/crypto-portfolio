@@ -17,7 +17,7 @@ function formatLargeNumber(value) {
 }
 
 function getChangeColor(value) {
-  return value > 0 ? 'green' : 'red'
+  return value >= 0 ? 'green' : 'red'
 }
 
 export default function CoinInfoModal({ coin }) {
@@ -32,21 +32,19 @@ export default function CoinInfoModal({ coin }) {
       <Divider />
 
       <Card className='coin-info-card'>
-        <Typography.Text type='secondary'>
-          Динамика цены
-        </Typography.Text>
+        <Typography.Text type='secondary'>Динамика цены</Typography.Text>
 
         <Flex gap={10} wrap='wrap' style={{ marginTop: 12 }}>
           <Tag color={getChangeColor(coin.priceChange1h)}>
-            1 час: {coin.priceChange1h}%
+            1 ч: {coin.priceChange1h}%
           </Tag>
 
           <Tag color={getChangeColor(coin.priceChange1d)}>
-            1 день: {coin.priceChange1d}%
+            24 ч: {coin.priceChange1d}%
           </Tag>
 
           <Tag color={getChangeColor(coin.priceChange1w)}>
-            1 неделя: {coin.priceChange1w}%
+            7 д: {coin.priceChange1w}%
           </Tag>
         </Flex>
       </Card>
@@ -70,9 +68,7 @@ export default function CoinInfoModal({ coin }) {
 
         {coin.marketCap && (
           <Flex justify='space-between' gap={24}>
-            <Typography.Text type='secondary'>
-              Рыночная капитализация
-            </Typography.Text>
+            <Typography.Text type='secondary'>Капитализация</Typography.Text>
             <Typography.Text strong>
               ${formatLargeNumber(coin.marketCap)}
             </Typography.Text>
@@ -81,9 +77,7 @@ export default function CoinInfoModal({ coin }) {
 
         {coin.contractAddress && (
           <Space direction='vertical' size={4}>
-            <Typography.Text type='secondary'>
-              Контракт
-            </Typography.Text>
+            <Typography.Text type='secondary'>Контракт</Typography.Text>
             <Typography.Text copyable className='contract-address'>
               {coin.contractAddress}
             </Typography.Text>

@@ -1,25 +1,23 @@
 export const chartColorPalettes = {
-  'dark-modern': ['#ff9f1a', '#6380f6', '#21d6a3', '#3b82f6', '#14f195'],
-  'dark-glass': ['#ffb020', '#6d5dfc', '#2ed3aa', '#38c6ff', '#8b5cf6'],
-  'light-modern': ['#ff9f1a', '#4f7cff', '#16b981', '#2563eb', '#7c3aed'],
+  'dark-modern': ['#f59e0b', '#8b5cf6', '#3b82f6', '#22d3ee', '#94a3b8'],
 }
 
 export const defaultThemeValues = {
-  surfaceCard: '#111c30',
-  surfaceElevated: '#101a2c',
-  surfaceMuted: '#0b1628',
-  borderSubtle: 'rgba(126, 153, 205, 0.24)',
-  borderStrong: '#25344d',
+  surfaceCard: '#0f172a',
+  surfaceElevated: '#111c33',
+  surfaceMuted: '#0b1020',
+  borderSubtle: 'rgba(148, 163, 184, 0.16)',
+  borderStrong: 'rgba(148, 163, 184, 0.28)',
   textPrimary: '#f8fafc',
   textSecondary: '#cbd5e1',
-  textMuted: '#71829f',
-  accent: '#3478f6',
-  accent2: '#6d5dfc',
-  accentSoft: 'rgba(52, 120, 246, 0.16)',
-  success: '#20d486',
-  danger: '#ff4d5e',
-  warning: '#ff9f1a',
-  info: '#39c6ff',
+  textMuted: '#94a3b8',
+  accent: '#3b82f6',
+  accent2: '#22d3ee',
+  accentSoft: 'rgba(59, 130, 246, 0.16)',
+  success: '#22c55e',
+  danger: '#ef4444',
+  warning: '#f59e0b',
+  info: '#22d3ee',
 }
 
 function getThemeValue(name, fallback) {
@@ -60,13 +58,13 @@ export function readChartThemeValues() {
       defaultThemeValues.textSecondary
     ),
     textMuted: getThemeValue('--text-muted', defaultThemeValues.textMuted),
-    accent: getThemeValue('--accent', defaultThemeValues.accent),
-    accent2: getThemeValue('--accent-2', defaultThemeValues.accent2),
+    accent: getThemeValue('--accent-blue', defaultThemeValues.accent),
+    accent2: getThemeValue('--accent-cyan', defaultThemeValues.accent2),
     accentSoft: getThemeValue('--accent-soft', defaultThemeValues.accentSoft),
-    success: getThemeValue('--success', defaultThemeValues.success),
-    danger: getThemeValue('--danger', defaultThemeValues.danger),
+    success: getThemeValue('--positive', defaultThemeValues.success),
+    danger: getThemeValue('--negative', defaultThemeValues.danger),
     warning: getThemeValue('--warning', defaultThemeValues.warning),
-    info: getThemeValue('--info', defaultThemeValues.info),
+    info: getThemeValue('--accent-cyan', defaultThemeValues.info),
   }
 }
 

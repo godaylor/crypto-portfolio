@@ -29,7 +29,7 @@ export default function CoinAddedMessage({
         icon={<CheckCircleOutlined />}
         status='success'
         title='Актив добавлен'
-        subTitle='Покупка сохранена в портфеле и уже учтена в текущей сводке.'
+        subTitle='Покупка сохранена в портфеле и уже отражена в показателях.'
       />
 
       <div className='coin-added-summary'>
