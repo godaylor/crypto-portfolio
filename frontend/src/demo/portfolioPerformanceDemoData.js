@@ -1,8 +1,8 @@
 export const performanceRangeOptions = [
-  { label: '1D', value: '1d' },
-  { label: '7D', value: '7d' },
-  { label: '30D', value: '30d' },
-  { label: 'All', value: 'all' },
+  { label: '1Д', value: '1d' },
+  { label: '7Д', value: '7d' },
+  { label: '30Д', value: '30d' },
+  { label: 'Все', value: 'all' },
 ]
 
 // Demo-only portfolio history. Replace this module with real historical
@@ -24,13 +24,13 @@ const portfolioPerformanceDemoData = {
     ['24:00', 1.03],
   ],
   '7d': [
-    ['Mon', 0.925],
-    ['Tue', 0.948],
-    ['Wed', 0.936],
-    ['Thu', 0.972],
-    ['Fri', 0.988],
-    ['Sat', 1.016],
-    ['Sun', 1.03],
+    ['Пн', 0.925],
+    ['Вт', 0.948],
+    ['Ср', 0.936],
+    ['Чт', 0.972],
+    ['Пт', 0.988],
+    ['Сб', 1.016],
+    ['Вс', 1.03],
   ],
   '30d': [
     ['1', 0.88],
@@ -42,13 +42,13 @@ const portfolioPerformanceDemoData = {
     ['30', 1.03],
   ],
   all: [
-    ['Jan', 0.72],
-    ['Feb', 0.768],
-    ['Mar', 0.746],
-    ['Apr', 0.804],
-    ['May', 0.858],
-    ['Jun', 0.921],
-    ['Jul', 1.03],
+    ['Янв', 0.72],
+    ['Фев', 0.768],
+    ['Мар', 0.746],
+    ['Апр', 0.804],
+    ['Май', 0.858],
+    ['Июн', 0.921],
+    ['Июл', 1.03],
   ],
 }
 

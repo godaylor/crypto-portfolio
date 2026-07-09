@@ -77,7 +77,6 @@ export default function AppLayout() {
         <AppContent
           currentSection={currentSection}
           onNavigate={handleNavigate}
-          onOpenAddAsset={() => setIsAddAssetDrawerOpen(true)}
           themeName={dashboardThemeName}
         />
       </Layout>

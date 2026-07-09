@@ -34,7 +34,7 @@ ChartJS.register(
 )
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -42,7 +42,7 @@ function formatCurrency(value) {
 }
 
 function formatCompactCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     notation: 'compact',
     style: 'currency',
     currency: 'USD',
@@ -51,7 +51,7 @@ function formatCompactCurrency(value) {
 }
 
 function formatPercent(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     signDisplay: 'exceptZero',
@@ -146,7 +146,7 @@ export default function PortfolioPerformanceChart({
       labels: performanceSeries.map((point) => point.label),
       datasets: [
         {
-          label: 'Portfolio value',
+          label: 'Стоимость портфеля',
           data: performanceSeries.map((point) => point.value),
           borderColor: themeValues.accent,
           backgroundColor: (context) => {
@@ -262,10 +262,10 @@ export default function PortfolioPerformanceChart({
     <Card className='dashboard-card performance-card'>
       <div className='card-section-heading performance-card-header'>
         <div>
-          <Typography.Title level={4}>Performance</Typography.Title>
+          <Typography.Title level={4}>Динамика</Typography.Title>
 
           <Typography.Text>
-            Demo value curve based on the current portfolio balance
+            Демо-график стоимости на основе текущего баланса
           </Typography.Text>
         </div>
 
@@ -279,7 +279,7 @@ export default function PortfolioPerformanceChart({
 
       <Space className='performance-summary' size={16} wrap>
         <Space direction='vertical' size={0}>
-          <Typography.Text>Current value</Typography.Text>
+          <Typography.Text>Текущая стоимость</Typography.Text>
           <Typography.Title level={3}>{formatCurrency(currentValue)}</Typography.Title>
         </Space>
 
@@ -298,11 +298,11 @@ export default function PortfolioPerformanceChart({
 
       <div className='performance-stat-row'>
         <div>
-          <span>High</span>
+          <span>Максимум</span>
           <strong>{formatCurrency(highValue)}</strong>
         </div>
         <div>
-          <span>Low</span>
+          <span>Минимум</span>
           <strong>{formatCurrency(lowValue)}</strong>
         </div>
         <div>
@@ -312,7 +312,7 @@ export default function PortfolioPerformanceChart({
           </strong>
         </div>
         <div>
-          <span>24h</span>
+          <span>24 ч</span>
           <strong
             className={portfolioDailyChange >= 0 ? 'is-positive' : 'is-negative'}
           >

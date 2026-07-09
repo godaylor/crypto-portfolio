@@ -2,7 +2,7 @@ import { CheckCircleOutlined } from '@ant-design/icons'
 import { Button, Flex, Result, Space, Typography } from 'antd'
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -28,8 +28,8 @@ export default function CoinAddedMessage({
       <Result
         icon={<CheckCircleOutlined />}
         status='success'
-        title='Asset added'
-        subTitle='The purchase is saved in your portfolio and reflected in the dashboard.'
+        title='Актив добавлен'
+        subTitle='Покупка сохранена в портфеле и уже отражена в показателях.'
       />
 
       <div className='coin-added-summary'>
@@ -48,31 +48,31 @@ export default function CoinAddedMessage({
 
         <div className='coin-added-summary-grid'>
           <Space direction='vertical' size={2}>
-            <Typography.Text type='secondary'>Amount</Typography.Text>
+            <Typography.Text type='secondary'>Количество</Typography.Text>
             <Typography.Text strong>
               {coinToAdd.amount} {coin.symbol}
             </Typography.Text>
           </Space>
 
           <Space direction='vertical' size={2}>
-            <Typography.Text type='secondary'>Buy price</Typography.Text>
+            <Typography.Text type='secondary'>Цена покупки</Typography.Text>
             <Typography.Text strong>
               {formatCurrency(coinToAdd.price)}
             </Typography.Text>
           </Space>
 
           <Space direction='vertical' size={2}>
-            <Typography.Text type='secondary'>Total</Typography.Text>
+            <Typography.Text type='secondary'>Итого</Typography.Text>
             <Typography.Text strong>{formatCurrency(total)}</Typography.Text>
           </Space>
         </div>
       </div>
 
       <Flex className='coin-added-actions' justify='flex-end' gap={12}>
-        <Button onClick={addAnotherCoin}>Add another</Button>
+        <Button onClick={addAnotherCoin}>Добавить еще</Button>
 
         <Button type='primary' onClick={closeCoinDrawer}>
-          Close
+          Закрыть
         </Button>
       </Flex>
     </div>

@@ -1,5 +1,5 @@
 import { ConfigProvider, theme } from 'antd'
-import enUS from 'antd/locale/en_US'
+import ruRU from 'antd/locale/ru_RU'
 
 import AppLayout from './componets/layout/AppLayout'
 import { CryptoContextProvider } from './context/CryptoContext'
@@ -53,10 +53,12 @@ const appTheme = {
 export default function App() {
   return (
     <ConfigProvider
-      locale={enUS}
+      locale={ruRU}
       theme={appTheme}
       getPopupContainer={(triggerNode) =>
-        triggerNode?.closest?.('.app-shell') ?? document.body
+        triggerNode?.closest?.('.ant-drawer') ??
+        triggerNode?.closest?.('.app-shell') ??
+        document.body
       }
     >
       <CryptoContextProvider>

@@ -10,7 +10,22 @@ const CryptoContext = createContext({
   userPortfolio: [],
   marketCoins: [],
   loading: false,
+  addCoinToPortfolio: () => {},
+  removeCoinFromPortfolio: () => {},
 })
+
+function getPortfolioEntryId(portfolioCoin, index) {
+  if (portfolioCoin.entryId) {
+    return portfolioCoin.entryId
+  }
+
+  const dateValue =
+    portfolioCoin.date instanceof Date
+      ? portfolioCoin.date.toISOString()
+      : portfolioCoin.date ?? 'no-date'
+
+  return `${portfolioCoin.id}-${dateValue}-${index}`
+}
 
 export function CryptoContextProvider({ children }) {
   const [loading, setLoading] = useState(false)
@@ -19,12 +34,25 @@ export function CryptoContextProvider({ children }) {
 
   // Combine portfolio entries with current market data and derived metrics.
   function preparePortfolio(userPortfolio, marketCoins) {
-    return userPortfolio.map((portfolioCoin) => {
+    return userPortfolio.map((portfolioCoin, index) => {
       const marketCoin = marketCoins.find(
         (marketCoin) => marketCoin.id === portfolioCoin.id
       )
 
+      if (!marketCoin) {
+        return {
+          ...portfolioCoin,
+          entryId: getPortfolioEntryId(portfolioCoin, index),
+          grow: false,
+          growPercent: 0,
+          name: portfolioCoin.name ?? portfolioCoin.id,
+          totalAmount: portfolioCoin.amount * portfolioCoin.price,
+          totalProfit: 0,
+        }
+      }
+
       return {
+        entryId: getPortfolioEntryId(portfolioCoin, index),
         grow: portfolioCoin.price < marketCoin.price,
         growPercent: percentDifference(
           portfolioCoin.price,
@@ -66,8 +94,24 @@ export function CryptoContextProvider({ children }) {
   function addCoinToPortfolio(newPortfolioCoin) {
     setUserPortfolio((previousPortfolio) =>
       preparePortfolio(
-        [...previousPortfolio, newPortfolioCoin],
+        [
+          ...previousPortfolio,
+          {
+            ...newPortfolioCoin,
+            entryId:
+              newPortfolioCoin.entryId ??
+              `${newPortfolioCoin.id}-${Date.now()}`,
+          },
+        ],
         marketCoins
+      )
+    )
+  }
+
+  function removeCoinFromPortfolio(entryId) {
+    setUserPortfolio((previousPortfolio) =>
+      previousPortfolio.filter(
+        (portfolioCoin) => portfolioCoin.entryId !== entryId
       )
     )
   }
@@ -79,6 +123,7 @@ export function CryptoContextProvider({ children }) {
         marketCoins,
         userPortfolio,
         addCoinToPortfolio,
+        removeCoinFromPortfolio,
       }}
     >
       {children}

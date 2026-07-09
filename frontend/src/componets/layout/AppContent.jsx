@@ -6,12 +6,12 @@ import {
   BankOutlined,
   ClockCircleOutlined,
   DatabaseOutlined,
+  DeleteOutlined,
   FireOutlined,
   FundOutlined,
   GlobalOutlined,
   LineChartOutlined,
   PieChartOutlined,
-  PlusOutlined,
   SafetyCertificateOutlined,
   SearchOutlined,
   SlidersOutlined,
@@ -21,7 +21,7 @@ import {
   TrophyOutlined,
   WalletOutlined,
 } from '@ant-design/icons'
-import { Button, Card, Flex, Layout, Typography } from 'antd'
+import { Button, Card, Flex, Layout, Popconfirm, Tooltip, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
@@ -44,7 +44,7 @@ function getValueStatus(value) {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -53,7 +53,7 @@ function formatCurrency(value) {
 }
 
 function formatCompactCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     notation: 'compact',
     style: 'currency',
     currency: 'USD',
@@ -62,7 +62,7 @@ function formatCompactCurrency(value) {
 }
 
 function formatPercent(value, options = {}) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     signDisplay: options.signDisplay ?? 'auto',
@@ -70,7 +70,7 @@ function formatPercent(value, options = {}) {
 }
 
 function formatAmount(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 6,
   }).format(Number.isFinite(value) ? value : 0)
 }
@@ -78,7 +78,7 @@ function formatAmount(value) {
 function formatDate(value) {
   const date = value instanceof Date ? value : new Date(value)
 
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('ru-RU', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -193,7 +193,7 @@ function buildPortfolioSnapshot(userPortfolio, marketCoins) {
     .map((asset) => ({
       ...asset,
       entryValue: asset.amount * asset.price,
-      type: 'Buy',
+      type: 'Покупка',
     }))
 
   return {
@@ -328,11 +328,11 @@ function MarketPulse({ marketCoins, onNavigate }) {
     <Card className='dashboard-card market-pulse-card'>
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Market pulse</Typography.Title>
-          <Typography.Text>Top assets and 24h movement</Typography.Text>
+          <Typography.Title level={4}>Пульс рынка</Typography.Title>
+          <Typography.Text>Крупные активы и движение за 24 ч</Typography.Text>
         </div>
 
-        <ModuleAction onClick={() => onNavigate('markets')}>Open</ModuleAction>
+        <ModuleAction onClick={() => onNavigate('markets')}>Открыть</ModuleAction>
       </div>
 
       <div className='market-pulse-list'>
@@ -372,7 +372,7 @@ function MarketPulse({ marketCoins, onNavigate }) {
         {!marketRows.length && (
           <div className='empty-card-state'>
             <Typography.Text type='secondary'>
-              Market rows will appear after demo data loads.
+              Рыночные строки появятся после загрузки демо-данных.
             </Typography.Text>
           </div>
         )}
@@ -380,9 +380,9 @@ function MarketPulse({ marketCoins, onNavigate }) {
 
       <div className='market-pulse-footer'>
         <span className='module-badge is-positive'>
-          {positiveCoins}/{marketRows.length} up
+          {positiveCoins}/{marketRows.length} растут
         </span>
-        <span>Ranked by market cap</span>
+        <span>По капитализации</span>
       </div>
     </Card>
   )
@@ -399,29 +399,29 @@ function RiskHealthCard({
 }) {
   const healthRows = [
     {
-      label: 'Best asset',
-      value: bestAsset?.name ?? 'No data',
+      label: 'Лучший актив',
+      value: bestAsset?.name ?? 'Нет данных',
       detail: bestAsset
         ? `${formatPercent(bestAsset.signedChange, {
             signDisplay: 'exceptZero',
-          })}% since entry`
-        : 'Add assets to compare',
+          })}% с момента входа`
+        : 'Добавьте активы для сравнения',
       icon: <TrophyOutlined />,
       status: bestAsset ? getValueStatus(bestAsset.signedChange) : 'neutral',
     },
     {
-      label: 'Stable share',
+      label: 'Доля стейблов',
       value: `${formatPercent(stableShare)}%`,
       detail: 'USDT, USDC, DAI',
       icon: <SafetyCertificateOutlined />,
       status: stableShare > 0 ? 'positive' : 'neutral',
     },
     {
-      label: 'Portfolio ROI',
+      label: 'ROI портфеля',
       value: `${formatPercent(portfolioProfitPercent, {
         signDisplay: 'exceptZero',
       })}%`,
-      detail: 'Compared with entry price',
+      detail: 'Относительно цены входа',
       icon: <LineChartOutlined />,
       status: getValueStatus(portfolioProfitPercent),
     },
@@ -431,13 +431,13 @@ function RiskHealthCard({
     <Card className='dashboard-card risk-health-card'>
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Risk & health</Typography.Title>
-          <Typography.Text>Exposure and portfolio quality</Typography.Text>
+          <Typography.Title level={4}>Риск и здоровье</Typography.Title>
+          <Typography.Text>Экспозиция и качество портфеля</Typography.Text>
         </div>
 
         {onNavigate ? (
           <ModuleAction onClick={() => onNavigate('analytics')}>
-            Review
+            Проверить
           </ModuleAction>
         ) : (
           <span className={`module-badge is-${riskScore < 70 ? 'positive' : 'warning'}`}>
@@ -449,10 +449,14 @@ function RiskHealthCard({
       <div className='risk-score-block'>
         <span className='risk-orbit' style={{ '--risk-score': `${riskScore}%` }} />
         <div>
-          <Typography.Text>Risk score</Typography.Text>
+          <Typography.Text>Оценка риска</Typography.Text>
           <Typography.Title level={3}>{riskScore}</Typography.Title>
           <Typography.Text type='secondary'>
-            {riskScore < 45 ? 'Balanced' : riskScore < 70 ? 'Moderate' : 'Concentrated'}
+            {riskScore < 45
+              ? 'Сбалансировано'
+              : riskScore < 70
+                ? 'Умеренно'
+                : 'Концентрировано'}
           </Typography.Text>
         </div>
       </div>
@@ -474,14 +478,14 @@ function RiskHealthCard({
 
       <div className='risk-bars'>
         <div>
-          <span>Largest position</span>
+          <span>Крупнейшая позиция</span>
           <strong>{formatPercent(concentration)}%</strong>
         </div>
         <div className='risk-bar-track'>
           <span style={{ width: `${Math.min(concentration, 100)}%` }} />
         </div>
         <div>
-          <span>Positions</span>
+          <span>Позиции</span>
           <strong>{userPortfolio.length}</strong>
         </div>
       </div>
@@ -501,12 +505,12 @@ function RecentActivity({ onNavigate, userPortfolio }) {
     <Card className='dashboard-card recent-activity-card'>
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Recent activity</Typography.Title>
-          <Typography.Text>Latest portfolio entries</Typography.Text>
+          <Typography.Title level={4}>Недавняя активность</Typography.Title>
+          <Typography.Text>Последние записи портфеля</Typography.Text>
         </div>
 
         <ModuleAction onClick={() => onNavigate('transactions')}>
-          View all
+          Все операции
         </ModuleAction>
       </div>
 
@@ -523,10 +527,10 @@ function RecentActivity({ onNavigate, userPortfolio }) {
 
               <div>
                 <Typography.Text className='activity-title'>
-                  Bought {asset.name}
+                  Покупка {asset.name}
                 </Typography.Text>
                 <Typography.Text className='activity-subtitle'>
-                  {formatAmount(asset.amount)} {asset.symbol ?? ''} at{' '}
+                  {formatAmount(asset.amount)} {asset.symbol ?? ''} по{' '}
                   {formatCurrency(asset.price)}
                 </Typography.Text>
               </div>
@@ -534,7 +538,7 @@ function RecentActivity({ onNavigate, userPortfolio }) {
               <div className='activity-value'>
                 <strong>{formatCurrency(value)}</strong>
                 <span>
-                  {new Intl.DateTimeFormat('en-US', {
+                  {new Intl.DateTimeFormat('ru-RU', {
                     month: 'short',
                     day: 'numeric',
                   }).format(date)}
@@ -547,7 +551,7 @@ function RecentActivity({ onNavigate, userPortfolio }) {
         {!activityRows.length && (
           <div className='empty-card-state'>
             <Typography.Text type='secondary'>
-              New purchases will appear here.
+              Новые покупки появятся здесь.
             </Typography.Text>
           </div>
         )}
@@ -570,28 +574,31 @@ function DashboardView({
     <>
       <div className='dashboard-header'>
         <div className='dashboard-title-stack'>
-          <span className='dashboard-eyebrow'>Crypto Portfolio</span>
-          <Typography.Title level={2}>Dashboard</Typography.Title>
+          <span className='dashboard-eyebrow'>Криптопортфель</span>
+          <Typography.Title level={2}>Обзор</Typography.Title>
 
           <Typography.Text>
-            Premium overview of value, performance, holdings, and portfolio
-            exposure.
+            Краткая сводка по стоимости, доходности, позициям и риску.
           </Typography.Text>
         </div>
 
         <div className='dashboard-header-metrics'>
           <HeaderMetric
-            label='Balance'
+            label='Баланс'
             value={formatCompactCurrency(snapshot.portfolioBalance)}
           />
           <HeaderMetric
-            label='24h'
+            label='24 ч'
             value={`${formatPercent(snapshot.portfolioDailyChange, {
               signDisplay: 'exceptZero',
             })}%`}
             status={getValueStatus(snapshot.portfolioDailyChange)}
           />
-          <HeaderMetric label='Risk' value={`${snapshot.riskScore}/100`} status='accent' />
+          <HeaderMetric
+            label='Риск'
+            value={`${snapshot.riskScore}/100`}
+            status='accent'
+          />
         </div>
       </div>
 
@@ -599,13 +606,13 @@ function DashboardView({
         <div className='dashboard-command-grid'>
           <Card className='dashboard-card dashboard-hero-card'>
             <div className='dashboard-hero-copy'>
-              <span className='dashboard-hero-kicker'>Total Portfolio Value</span>
+              <span className='dashboard-hero-kicker'>Стоимость портфеля</span>
               <Typography.Title level={3}>
                 {formatCurrency(snapshot.portfolioBalance)}
               </Typography.Title>
               <Typography.Text>
-                {snapshot.positiveCoinsCount} of {userPortfolio.length} positions are
-                in profit. Current ROI is{' '}
+                {snapshot.positiveCoinsCount} из {userPortfolio.length} позиций
+                в прибыли. Текущий ROI:{' '}
                 {formatPercent(snapshot.portfolioProfitPercent, {
                   signDisplay: 'exceptZero',
                 })}
@@ -616,17 +623,17 @@ function DashboardView({
             <div className='dashboard-hero-modules'>
               <div className='hero-module'>
                 <FireOutlined />
-                <span>Best asset</span>
-                <strong>{snapshot.bestAsset?.name ?? 'No data'}</strong>
+                <span>Лучший актив</span>
+                <strong>{snapshot.bestAsset?.name ?? 'Нет данных'}</strong>
               </div>
               <div className='hero-module'>
                 <ClockCircleOutlined />
-                <span>Updated</span>
-                <strong>Live demo</strong>
+                <span>Обновлено</span>
+                <strong>Демо-данные</strong>
               </div>
               <div className='hero-module'>
                 <SwapOutlined />
-                <span>24h movement</span>
+                <span>Движение 24 ч</span>
                 <strong>
                   {formatPercent(snapshot.portfolioDailyChange, {
                     signDisplay: 'exceptZero',
@@ -638,43 +645,43 @@ function DashboardView({
           </Card>
 
           <KpiCard
-            title='Total balance'
+            title='Баланс'
             value={formatCurrency(snapshot.portfolioBalance)}
             trend={`${formatPercent(snapshot.portfolioDailyChange, {
               signDisplay: 'exceptZero',
-            })}% 24h`}
-            detail='Current market value'
+            })}% за 24 ч`}
+            detail='Текущая рыночная стоимость'
             icon={<WalletOutlined />}
             status={getValueStatus(snapshot.portfolioDailyChange)}
           />
 
           <KpiCard
-            title='24h change'
+            title='Изменение 24 ч'
             value={formatCurrency(snapshot.portfolioDailyChangeValue)}
             trend={`${formatPercent(snapshot.portfolioDailyChange, {
               signDisplay: 'exceptZero',
             })}%`}
-            detail='Weighted by holdings'
+            detail='Взвешено по позициям'
             icon={<LineChartOutlined />}
             status={getValueStatus(snapshot.portfolioDailyChange)}
           />
 
           <KpiCard
-            title='Total P/L'
+            title='Общая P/L'
             value={formatCurrency(snapshot.portfolioProfit)}
             trend={`${formatPercent(snapshot.portfolioProfitPercent, {
               signDisplay: 'exceptZero',
             })}%`}
-            detail='Since entry'
+            detail='С момента входа'
             icon={profitIcon}
             status={getValueStatus(snapshot.portfolioProfit)}
           />
 
           <KpiCard
-            title='Assets count'
+            title='Активы'
             value={userPortfolio.length}
-            trend={`${snapshot.positiveCoinsCount} positive`}
-            detail='Across tracked positions'
+            trend={`${snapshot.positiveCoinsCount} в плюсе`}
+            detail='По всем позициям'
             icon={<FundOutlined />}
             status={snapshot.positiveCoinsCount ? 'positive' : 'neutral'}
           />
@@ -692,7 +699,11 @@ function DashboardView({
           </div>
 
           <div className='dashboard-panel dashboard-panel-allocation'>
-            <PortfolioChart onNavigate={onNavigate} themeName={themeName} />
+            <PortfolioChart
+              compact
+              onNavigate={onNavigate}
+              themeName={themeName}
+            />
           </div>
 
           <div className='dashboard-panel dashboard-panel-holdings'>
@@ -717,7 +728,8 @@ function DashboardView({
   )
 }
 
-function AssetsPage({ onOpenAddAsset, snapshot }) {
+function AssetsPage({ snapshot }) {
+  const { removeCoinFromPortfolio } = useCrypto()
   const [query, setQuery] = useState('')
   const filteredHoldings = snapshot.sortedHoldings.filter((asset) => {
     const searchText = `${asset.name} ${asset.symbol}`.toLowerCase()
@@ -726,44 +738,34 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
 
   return (
     <SectionPage
-      eyebrow='Portfolio'
-      title='Assets'
-      description='Positions, allocations, entry prices, and current unrealized performance.'
-      actions={
-        <Button
-          className='page-primary-action'
-          icon={<PlusOutlined />}
-          type='primary'
-          onClick={onOpenAddAsset}
-        >
-          Add Asset
-        </Button>
-      }
+      eyebrow='Портфель'
+      title='Активы'
+      description='Позиции, аллокация, цены входа и текущий нереализованный результат.'
     >
       <div className='summary-tile-grid'>
         <SummaryTile
           icon={<WalletOutlined />}
-          label='Current value'
+          label='Текущая стоимость'
           value={formatCurrency(snapshot.portfolioBalance)}
-          detail='Across all holdings'
+          detail='По всем позициям'
           status='accent'
         />
         <SummaryTile
           icon={<BankOutlined />}
-          label='Invested'
+          label='Инвестировано'
           value={formatCurrency(snapshot.portfolioInvested)}
-          detail='Entry cost basis'
+          detail='Сумма входа'
         />
         <SummaryTile
           icon={<PieChartOutlined />}
-          label='Largest position'
+          label='Крупнейшая позиция'
           value={`${formatPercent(snapshot.largestAssetShare)}%`}
-          detail={snapshot.sortedHoldings[0]?.symbol ?? 'No assets'}
+          detail={snapshot.sortedHoldings[0]?.symbol ?? 'Нет активов'}
           status={snapshot.largestAssetShare > 45 ? 'warning' : 'positive'}
         />
         <SummaryTile
           icon={<LineChartOutlined />}
-          label='Unrealized P/L'
+          label='Нереализ. P/L'
           value={formatCurrency(snapshot.portfolioProfit)}
           detail={`${formatPercent(snapshot.portfolioProfitPercent, {
             signDisplay: 'exceptZero',
@@ -775,25 +777,26 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
       <Card className='dashboard-card product-table-card'>
         <div className='product-card-header'>
           <div>
-            <Typography.Title level={4}>Holdings</Typography.Title>
-            <Typography.Text>Search and scan every tracked position.</Typography.Text>
+            <Typography.Title level={4}>Позиции</Typography.Title>
+            <Typography.Text>Поиск и просмотр всех активов портфеля.</Typography.Text>
           </div>
 
           <SearchControl
             value={query}
             onChange={setQuery}
-            placeholder='Search holdings...'
+            placeholder='Поиск по позициям...'
           />
         </div>
 
         <div className='product-table asset-table'>
           <div className='product-table-head'>
-            <span>Asset</span>
-            <span>Holdings</span>
-            <span>Allocation</span>
-            <span>Value</span>
+            <span>Актив</span>
+            <span>Позиция</span>
+            <span>Доля</span>
+            <span>Стоимость</span>
             <span>P/L</span>
-            <span>24h</span>
+            <span>24 ч</span>
+            <span>Действие</span>
           </div>
 
           {filteredHoldings.map((asset) => {
@@ -814,7 +817,7 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
                   <strong>
                     {formatAmount(asset.amount)} {asset.symbol}
                   </strong>
-                  <span>Entry {formatCurrency(asset.price)}</span>
+                  <span>Вход {formatCurrency(asset.price)}</span>
                 </div>
 
                 <div className='allocation-cell'>
@@ -826,7 +829,7 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
 
                 <div>
                   <strong>{formatCurrency(asset.totalAmount)}</strong>
-                  <span>{formatCurrency(asset.currentPrice)} spot</span>
+                  <span>{formatCurrency(asset.currentPrice)} спот</span>
                 </div>
 
                 <div>
@@ -848,7 +851,28 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
                     })}
                     %
                   </strong>
-                  <span>Rank #{asset.rank ?? '-'}</span>
+                  <span>Ранг #{asset.rank ?? '-'}</span>
+                </div>
+
+                <div className='asset-actions-cell'>
+                  <Popconfirm
+                    title='Удалить актив?'
+                    description={`Позиция ${asset.name} будет удалена из портфеля.`}
+                    okText='Удалить'
+                    cancelText='Отмена'
+                    placement='left'
+                    onConfirm={() => removeCoinFromPortfolio(asset.entryId)}
+                  >
+                    <Tooltip title='Удалить'>
+                      <Button
+                        className='asset-delete-button'
+                        danger
+                        icon={<DeleteOutlined />}
+                        type='text'
+                        aria-label={`Удалить ${asset.name}`}
+                      />
+                    </Tooltip>
+                  </Popconfirm>
                 </div>
               </div>
             )
@@ -857,7 +881,7 @@ function AssetsPage({ onOpenAddAsset, snapshot }) {
           {!filteredHoldings.length && (
             <div className='empty-card-state'>
               <Typography.Text type='secondary'>
-                No holdings match this search.
+                Позиции не найдены.
               </Typography.Text>
             </div>
           )}
@@ -872,8 +896,8 @@ function PositionReturnList({ holdings }) {
     <Card className='dashboard-card position-return-card'>
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Position returns</Typography.Title>
-          <Typography.Text>Unrealized contribution by holding</Typography.Text>
+          <Typography.Title level={4}>Доходность позиций</Typography.Title>
+          <Typography.Text>Нереализованный вклад каждой позиции</Typography.Text>
         </div>
       </div>
 
@@ -924,9 +948,9 @@ function PositionReturnList({ holdings }) {
 function AnalyticsPage({ snapshot, themeName, userPortfolio }) {
   return (
     <SectionPage
-      eyebrow='Insights'
-      title='Analytics'
-      description='Performance, ROI, allocation, and risk signals for the portfolio.'
+      eyebrow='Инсайты'
+      title='Аналитика'
+      description='Динамика, ROI, аллокация и риск-сигналы портфеля.'
     >
       <div className='summary-tile-grid'>
         <SummaryTile
@@ -935,28 +959,28 @@ function AnalyticsPage({ snapshot, themeName, userPortfolio }) {
           value={`${formatPercent(snapshot.portfolioProfitPercent, {
             signDisplay: 'exceptZero',
           })}%`}
-          detail='Since entry'
+          detail='С момента входа'
           status={getValueStatus(snapshot.portfolioProfitPercent)}
         />
         <SummaryTile
           icon={<ArrowUpOutlined />}
-          label='24h move'
+          label='Движение 24 ч'
           value={formatCurrency(snapshot.portfolioDailyChangeValue)}
           detail={`${formatPercent(snapshot.portfolioDailyChange, {
             signDisplay: 'exceptZero',
-          })}% weighted`}
+          })}% взвешенно`}
           status={getValueStatus(snapshot.portfolioDailyChange)}
         />
         <SummaryTile
           icon={<SafetyCertificateOutlined />}
-          label='Risk score'
+          label='Оценка риска'
           value={`${snapshot.riskScore}/100`}
-          detail={snapshot.riskScore < 70 ? 'Healthy range' : 'Concentrated'}
+          detail={snapshot.riskScore < 70 ? 'Норма' : 'Концентрация'}
           status={snapshot.riskScore < 70 ? 'positive' : 'warning'}
         />
         <SummaryTile
           icon={<SlidersOutlined />}
-          label='Stable share'
+          label='Доля стейблов'
           value={`${formatPercent(snapshot.stableShare)}%`}
           detail='USDT, USDC, DAI'
           status={snapshot.stableShare > 0 ? 'positive' : 'neutral'}
@@ -997,7 +1021,7 @@ function MarketMiniList({ coins, title }) {
       <div className='card-section-heading'>
         <div>
           <Typography.Title level={4}>{title}</Typography.Title>
-          <Typography.Text>24h movement</Typography.Text>
+          <Typography.Text>Движение за 24 ч</Typography.Text>
         </div>
       </div>
 
@@ -1028,7 +1052,7 @@ function MarketMiniList({ coins, title }) {
   )
 }
 
-function MarketsPage({ marketCoins, onOpenAddAsset, snapshot }) {
+function MarketsPage({ marketCoins, snapshot }) {
   const [query, setQuery] = useState('')
   const filteredCoins = marketCoins
     .filter((coin) => {
@@ -1049,84 +1073,73 @@ function MarketsPage({ marketCoins, onOpenAddAsset, snapshot }) {
 
   return (
     <SectionPage
-      eyebrow='Discovery'
-      title='Markets'
-      description='Market context for the assets you track, without turning the app into an exchange.'
-      actions={
-        <Button
-          className='page-primary-action'
-          icon={<PlusOutlined />}
-          type='primary'
-          onClick={onOpenAddAsset}
-        >
-          Add Asset
-        </Button>
-      }
+      eyebrow='Поиск'
+      title='Рынки'
+      description='Рыночный контекст для отслеживаемых активов без превращения приложения в биржу.'
     >
       <div className='summary-tile-grid'>
         <SummaryTile
           icon={<GlobalOutlined />}
-          label='Tracked market'
+          label='Активов в ленте'
           value={`${marketCoins.length}`}
-          detail='Demo assets'
+          detail='Демо-активы'
           status='accent'
         />
         <SummaryTile
           icon={<StockOutlined />}
-          label='Top 10 volume'
+          label='Объем топ-10'
           value={formatCompactCurrency(topVolume)}
-          detail='Reported market volume'
+          detail='Заявленный объем'
         />
         <SummaryTile
           icon={<WalletOutlined />}
-          label='In portfolio'
+          label='В портфеле'
           value={snapshot.sortedHoldings.length}
-          detail='Current holdings'
+          detail='Текущие позиции'
           status='positive'
         />
         <SummaryTile
           icon={<FireOutlined />}
-          label='Best mover'
+          label='Лучший рост'
           value={topGainers[0]?.symbol ?? '-'}
           detail={
             topGainers[0]
               ? `${formatPercent(topGainers[0].priceChange1d, {
                   signDisplay: 'exceptZero',
-                })}% 24h`
-              : 'No data'
+                })}% за 24 ч`
+              : 'Нет данных'
           }
           status='positive'
         />
       </div>
 
       <div className='markets-grid'>
-        <MarketMiniList coins={topGainers} title='Top movers' />
-        <MarketMiniList coins={topLosers} title='Pullbacks' />
+        <MarketMiniList coins={topGainers} title='Лидеры роста' />
+        <MarketMiniList coins={topLosers} title='Просадки' />
       </div>
 
       <Card className='dashboard-card product-table-card'>
         <div className='product-card-header'>
           <div>
-            <Typography.Title level={4}>Market list</Typography.Title>
-            <Typography.Text>Ranked crypto assets from the demo feed.</Typography.Text>
+            <Typography.Title level={4}>Список рынков</Typography.Title>
+            <Typography.Text>Криптоактивы из демо-ленты по рангу.</Typography.Text>
           </div>
 
           <SearchControl
             value={query}
             onChange={setQuery}
-            placeholder='Search markets...'
+            placeholder='Поиск по рынкам...'
           />
         </div>
 
         <div className='product-table market-table'>
           <div className='product-table-head'>
-            <span>Asset</span>
-            <span>Price</span>
-            <span>1h</span>
-            <span>24h</span>
-            <span>7d</span>
-            <span>Market cap</span>
-            <span />
+            <span>Актив</span>
+            <span>Цена</span>
+            <span>1 ч</span>
+            <span>24 ч</span>
+            <span>7 д</span>
+            <span>Капитализация</span>
           </div>
 
           {filteredCoins.slice(0, 12).map((coin) => (
@@ -1151,9 +1164,6 @@ function MarketsPage({ marketCoins, onOpenAddAsset, snapshot }) {
                 {formatPercent(coin.priceChange1w, { signDisplay: 'exceptZero' })}%
               </strong>
               <strong>{formatCompactCurrency(coin.marketCap)}</strong>
-              <Button size='small' type='text' onClick={onOpenAddAsset}>
-                Add
-              </Button>
             </div>
           ))}
         </div>
@@ -1162,46 +1172,36 @@ function MarketsPage({ marketCoins, onOpenAddAsset, snapshot }) {
   )
 }
 
-function TransactionsPage({ onOpenAddAsset, snapshot }) {
+function TransactionsPage({ snapshot }) {
   return (
     <SectionPage
-      eyebrow='Activity'
-      title='Transactions'
-      description='A frontend-only ledger of portfolio purchases and their current unrealized result.'
-      actions={
-        <Button
-          className='page-primary-action'
-          icon={<PlusOutlined />}
-          type='primary'
-          onClick={onOpenAddAsset}
-        >
-          Add Asset
-        </Button>
-      }
+      eyebrow='История'
+      title='Операции'
+      description='Фронтенд-журнал покупок и их текущего нереализованного результата.'
     >
       <div className='summary-tile-grid'>
         <SummaryTile
           icon={<SwapOutlined />}
-          label='Entries'
+          label='Записи'
           value={snapshot.transactions.length}
-          detail='Recorded purchases'
+          detail='Сохраненные покупки'
           status='accent'
         />
         <SummaryTile
           icon={<BankOutlined />}
-          label='Cost basis'
+          label='Сумма входа'
           value={formatCurrency(snapshot.portfolioInvested)}
-          detail='Total invested'
+          detail='Всего инвестировано'
         />
         <SummaryTile
           icon={<WalletOutlined />}
-          label='Current value'
+          label='Текущая стоимость'
           value={formatCurrency(snapshot.portfolioBalance)}
-          detail='Market value'
+          detail='Рыночная стоимость'
         />
         <SummaryTile
           icon={<LineChartOutlined />}
-          label='Unrealized P/L'
+          label='Нереализ. P/L'
           value={formatCurrency(snapshot.portfolioProfit)}
           detail={`${formatPercent(snapshot.portfolioProfitPercent, {
             signDisplay: 'exceptZero',
@@ -1213,19 +1213,19 @@ function TransactionsPage({ onOpenAddAsset, snapshot }) {
       <Card className='dashboard-card product-table-card'>
         <div className='product-card-header'>
           <div>
-            <Typography.Title level={4}>Transaction history</Typography.Title>
-            <Typography.Text>Purchases added through the portfolio drawer.</Typography.Text>
+            <Typography.Title level={4}>История операций</Typography.Title>
+            <Typography.Text>Покупки, добавленные через форму портфеля.</Typography.Text>
           </div>
         </div>
 
         <div className='product-table transaction-table'>
           <div className='product-table-head'>
-            <span>Date</span>
-            <span>Type</span>
-            <span>Asset</span>
-            <span>Amount</span>
-            <span>Entry</span>
-            <span>Current value</span>
+            <span>Дата</span>
+            <span>Тип</span>
+            <span>Актив</span>
+            <span>Кол-во</span>
+            <span>Вход</span>
+            <span>Стоимость</span>
             <span>P/L</span>
           </div>
 
@@ -1236,7 +1236,7 @@ function TransactionsPage({ onOpenAddAsset, snapshot }) {
               <div className='product-table-row' key={transaction.key}>
                 <div>
                   <strong>{formatDate(transaction.date)}</strong>
-                  <span>Portfolio</span>
+                  <span>Портфель</span>
                 </div>
                 <span className='transaction-type-pill'>{transaction.type}</span>
                 <div className='asset-cell'>
@@ -1269,7 +1269,7 @@ function TransactionsPage({ onOpenAddAsset, snapshot }) {
           {!snapshot.transactions.length && (
             <div className='empty-card-state'>
               <Typography.Text type='secondary'>
-                Add an asset to create the first transaction.
+                Добавьте актив, чтобы создать первую операцию.
               </Typography.Text>
             </div>
           )}
@@ -1282,19 +1282,19 @@ function TransactionsPage({ onOpenAddAsset, snapshot }) {
 function SettingsPage() {
   return (
     <SectionPage
-      eyebrow='Workspace'
-      title='Settings'
-      description='Frontend workspace preferences and product status for this portfolio shell.'
+      eyebrow='Рабочая область'
+      title='Настройки'
+      description='Фронтенд-настройки и статус демо-продукта.'
     >
       <div className='settings-grid'>
         <Card className='dashboard-card settings-card'>
           <span className='settings-icon'>
             <DatabaseOutlined />
           </span>
-          <Typography.Title level={4}>Demo data mode</Typography.Title>
+          <Typography.Title level={4}>Режим демо-данных</Typography.Title>
           <Typography.Text>
-            Portfolio, markets, and transactions are powered by local frontend
-            data until a backend phase is started.
+            Портфель, рынки и операции работают на локальных фронтенд-данных до
+            этапа backend.
           </Typography.Text>
         </Card>
 
@@ -1302,10 +1302,10 @@ function SettingsPage() {
           <span className='settings-icon'>
             <SafetyCertificateOutlined />
           </span>
-          <Typography.Title level={4}>Dark product theme</Typography.Title>
+          <Typography.Title level={4}>Темная продуктовая тема</Typography.Title>
           <Typography.Text>
-            The interface is locked to the premium dark system from the target
-            pack for visual consistency.
+            Интерфейс закреплен в премиальной темной системе для визуальной
+            согласованности.
           </Typography.Text>
         </Card>
 
@@ -1313,10 +1313,10 @@ function SettingsPage() {
           <span className='settings-icon'>
             <TableOutlined />
           </span>
-          <Typography.Title level={4}>Product sections</Typography.Title>
+          <Typography.Title level={4}>Разделы продукта</Typography.Title>
           <Typography.Text>
-            Dashboard, Assets, Analytics, Markets, and Transactions are active
-            frontend sections.
+            Обзор, Активы, Аналитика, Рынки и Операции работают как активные
+            фронтенд-разделы.
           </Typography.Text>
         </Card>
       </div>
@@ -1327,7 +1327,6 @@ function SettingsPage() {
 export default function AppContent({
   currentSection,
   onNavigate,
-  onOpenAddAsset,
   themeName,
 }) {
   const { userPortfolio, marketCoins } = useCrypto()
@@ -1347,9 +1346,7 @@ export default function AppContent({
         userPortfolio={userPortfolio}
       />
     ),
-    assets: (
-      <AssetsPage onOpenAddAsset={onOpenAddAsset} snapshot={snapshot} />
-    ),
+    assets: <AssetsPage snapshot={snapshot} />,
     analytics: (
       <AnalyticsPage
         snapshot={snapshot}
@@ -1360,16 +1357,10 @@ export default function AppContent({
     markets: (
       <MarketsPage
         marketCoins={marketCoins}
-        onOpenAddAsset={onOpenAddAsset}
         snapshot={snapshot}
       />
     ),
-    transactions: (
-      <TransactionsPage
-        onOpenAddAsset={onOpenAddAsset}
-        snapshot={snapshot}
-      />
-    ),
+    transactions: <TransactionsPage snapshot={snapshot} />,
     settings: <SettingsPage />,
   }
 

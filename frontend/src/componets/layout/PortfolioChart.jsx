@@ -14,7 +14,7 @@ import {
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -22,7 +22,7 @@ function formatCurrency(value) {
 }
 
 function formatPercent(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   }).format(value)
@@ -81,7 +81,7 @@ function useMeasuredChartFrame() {
   return [frameRef, isFrameReady]
 }
 
-export default function PortfolioChart({ onNavigate, themeName }) {
+export default function PortfolioChart({ compact = false, onNavigate, themeName }) {
   const { userPortfolio, marketCoins } = useCrypto()
 
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
@@ -185,23 +185,41 @@ export default function PortfolioChart({ onNavigate, themeName }) {
   const topAsset = allocationRows[0]
   const smallPositions = allocationRows.filter((asset) => asset.percent < 10)
     .length
+  const visibleAllocationRows = compact
+    ? allocationRows.slice(0, 4)
+    : allocationRows
+  const hiddenPositionsCount = allocationRows.length - visibleAllocationRows.length
 
   return (
-    <Card className='dashboard-card chart-card'>
+    <Card
+      className={
+        compact
+          ? 'dashboard-card chart-card is-compact-allocation'
+          : 'dashboard-card chart-card is-deep-allocation'
+      }
+    >
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Allocation</Typography.Title>
+          <Typography.Title level={4}>
+            {compact ? 'Структура портфеля' : 'Аллокация'}
+          </Typography.Title>
 
-          <Typography.Text>Current market value by asset</Typography.Text>
+          <Typography.Text>
+            {compact
+              ? 'Краткая сводка по крупнейшим позициям'
+              : 'Распределение текущей стоимости по активам'}
+          </Typography.Text>
         </div>
 
-        <button
-          className='module-link-button'
-          type='button'
-          onClick={() => onNavigate?.('analytics')}
-        >
-          Analyze
-        </button>
+        {onNavigate && (
+          <button
+            className='module-link-button'
+            type='button'
+            onClick={() => onNavigate('analytics')}
+          >
+            Подробнее
+          </button>
+        )}
       </div>
 
       <div className='allocation-card-layout'>
@@ -217,12 +235,12 @@ export default function PortfolioChart({ onNavigate, themeName }) {
           )}
           <div className='allocation-center'>
             <strong>{topAsset ? `${formatPercent(topAsset.percent)}%` : '0%'}</strong>
-            <span>{topAsset?.symbol ?? 'Asset'}</span>
+            <span>{topAsset?.symbol ?? 'Актив'}</span>
           </div>
         </div>
 
         <div className='allocation-list'>
-          {allocationRows.map((asset) => (
+          {visibleAllocationRows.map((asset) => (
             <div className='allocation-list-item' key={asset.name}>
               <span
                 className='allocation-color-dot'
@@ -256,22 +274,30 @@ export default function PortfolioChart({ onNavigate, themeName }) {
               </div>
             </div>
           ))}
+
+          {compact && hiddenPositionsCount > 0 && (
+            <div className='allocation-more-row'>
+              Еще {hiddenPositionsCount} поз.
+            </div>
+          )}
         </div>
 
-        <div className='allocation-summary-grid'>
-          <div>
-            <span>Total</span>
-            <strong>{formatCurrency(portfolioBalance)}</strong>
+        {!compact && (
+          <div className='allocation-summary-grid'>
+            <div>
+              <span>Итого</span>
+              <strong>{formatCurrency(portfolioBalance)}</strong>
+            </div>
+            <div>
+              <span>Лидер</span>
+              <strong>{topAsset?.symbol ?? '-'}</strong>
+            </div>
+            <div>
+              <span>Малые позиции</span>
+              <strong>{smallPositions}</strong>
+            </div>
           </div>
-          <div>
-            <span>Leader</span>
-            <strong>{topAsset?.symbol ?? '-'}</strong>
-          </div>
-          <div>
-            <span>Small positions</span>
-            <strong>{smallPositions}</strong>
-          </div>
-        </div>
+        )}
       </div>
     </Card>
   )

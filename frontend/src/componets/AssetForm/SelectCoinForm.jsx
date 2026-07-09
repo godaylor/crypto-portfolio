@@ -3,6 +3,10 @@ import { Select, Space, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
+function getDrawerPopupContainer(triggerNode) {
+  return triggerNode?.closest?.('.ant-drawer-content') ?? document.body
+}
+
 export default function SelectCoinForm({ setCoin }) {
   const { marketCoins } = useCrypto()
 
@@ -23,15 +27,14 @@ export default function SelectCoinForm({ setCoin }) {
     <Select
       className='drawer-coin-select'
       popupClassName='coin-search-dropdown drawer-coin-dropdown'
-      getPopupContainer={(triggerNode) =>
-        triggerNode?.closest('.add-coin-drawer-root') ?? document.body
-      }
+      getPopupContainer={getDrawerPopupContainer}
       style={{ width: '100%' }}
       onChange={handleSelectChange}
-      placeholder='Select asset'
+      placeholder='Выберите актив'
       suffixIcon={<SearchOutlined />}
       showSearch
       optionFilterProp='label'
+      notFoundContent='Ничего не найдено'
       options={marketCoins.map((coin) => ({
         label: coin.name,
         value: coin.id,

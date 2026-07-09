@@ -15,43 +15,42 @@ import { Avatar, Flex, Layout, Space, Tooltip, Typography } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
-import BrandLockup from './BrandLockup'
 
 const navigationItems = [
   {
     key: 'dashboard',
-    label: 'Dashboard',
+    label: 'Обзор',
     icon: <HomeOutlined />,
   },
   {
     key: 'assets',
-    label: 'Assets',
+    label: 'Активы',
     icon: <WalletOutlined />,
   },
   {
     key: 'analytics',
-    label: 'Analytics',
+    label: 'Аналитика',
     icon: <LineChartOutlined />,
   },
   {
     key: 'markets',
-    label: 'Markets',
+    label: 'Рынки',
     icon: <BarChartOutlined />,
   },
   {
     key: 'transactions',
-    label: 'Transactions',
+    label: 'Операции',
     icon: <SwapOutlined />,
   },
   {
     key: 'settings',
-    label: 'Settings',
+    label: 'Настройки',
     icon: <SettingOutlined />,
   },
 ]
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -59,7 +58,7 @@ function formatCurrency(value) {
 }
 
 function formatPercent(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 2,
     signDisplay: 'exceptZero',
   }).format(value)
@@ -211,7 +210,7 @@ export default function AppSider({ currentSection, onNavigate }) {
         <button
           className='portfolio-mobile-menu-trigger'
           type='button'
-          aria-label='Open menu'
+          aria-label='Открыть меню'
           onClick={() => setIsSiderCollapsed(false)}
         >
           <MenuOutlined />
@@ -222,7 +221,7 @@ export default function AppSider({ currentSection, onNavigate }) {
         <button
           className='portfolio-sider-backdrop'
           type='button'
-          aria-label='Close menu'
+          aria-label='Закрыть меню'
           onClick={() => setIsSiderCollapsed(true)}
         />
       )}
@@ -237,12 +236,16 @@ export default function AppSider({ currentSection, onNavigate }) {
         trigger={null}
       >
         <div className='sider-topbar'>
-          <BrandLockup className='sidebar-brand' />
+          <Typography.Text className='sider-menu-label'>
+            Навигация
+          </Typography.Text>
 
           <button
             className='portfolio-sider-toggle'
             type='button'
-            aria-label={isSiderCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={
+              isSiderCollapsed ? 'Развернуть меню' : 'Свернуть меню'
+            }
             aria-expanded={!isSiderCollapsed}
             onClick={handleSiderToggle}
           >
@@ -251,16 +254,6 @@ export default function AppSider({ currentSection, onNavigate }) {
         </div>
 
         <div className='sider-scroll-region' ref={scrollRegionRef}>
-          <div className='portfolio-sider-summary'>
-            <Typography.Text>Total portfolio value</Typography.Text>
-            <Typography.Title level={4}>
-              {formatCurrency(portfolioBalance)}
-            </Typography.Title>
-            <span className={`status-pill is-${profitStatus}`}>
-              {formatPercent(portfolioProfitPercent)}% ROI
-            </span>
-          </div>
-
           <Space className='sider-navigation' direction='vertical' size={8}>
             {navigationItems.map((navigationItem) => {
               const navigationNode = (
@@ -294,8 +287,18 @@ export default function AppSider({ currentSection, onNavigate }) {
             })}
           </Space>
 
+          <div className='portfolio-sider-summary'>
+            <Typography.Text>Стоимость портфеля</Typography.Text>
+            <Typography.Title level={4}>
+              {formatCurrency(portfolioBalance)}
+            </Typography.Title>
+            <span className={`status-pill is-${profitStatus}`}>
+              {formatPercent(portfolioProfitPercent)}% доходность
+            </span>
+          </div>
+
           <div className='sider-section-heading'>
-            <Typography.Text>Top holdings</Typography.Text>
+            <Typography.Text>Крупные позиции</Typography.Text>
             <span>{watchList.length}</span>
           </div>
 
@@ -334,11 +337,11 @@ export default function AppSider({ currentSection, onNavigate }) {
           <div className='sider-profile-card'>
             <Avatar className='sider-profile-avatar'>M</Avatar>
             <div className='sider-profile-copy'>
-              <Typography.Text strong>Max Portfolio</Typography.Text>
-              <Typography.Text>Demo workspace</Typography.Text>
+              <Typography.Text strong>Портфель Макса</Typography.Text>
+              <Typography.Text>Демо-пространство</Typography.Text>
               <span className='sider-profile-status'>
                 <span aria-hidden='true' />
-                Synced
+                Синхронизировано
               </span>
             </div>
           </div>
@@ -346,8 +349,8 @@ export default function AppSider({ currentSection, onNavigate }) {
           <div className='market-status-card'>
             <GlobalOutlined />
             <div>
-              <Typography.Text>Market status</Typography.Text>
-              <strong>All systems operational</strong>
+              <Typography.Text>Статус рынков</Typography.Text>
+              <strong>Демо-данные активны</strong>
             </div>
           </div>
         </div>

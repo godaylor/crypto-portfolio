@@ -5,7 +5,7 @@ import { Avatar, Card, Typography } from 'antd'
 import { useCrypto } from '../../context/CryptoContext'
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
@@ -13,7 +13,7 @@ function formatCurrency(value) {
 }
 
 function formatPercent(value, options = {}) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-RU', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     signDisplay: options.signDisplay ?? 'auto',
@@ -69,9 +69,9 @@ export default function AssetsTable({ onNavigate }) {
     <Card className='dashboard-card holdings-card'>
       <div className='card-section-heading holdings-heading'>
         <div>
-          <Typography.Title level={4}>Top holdings</Typography.Title>
+          <Typography.Title level={4}>Крупные позиции</Typography.Title>
 
-          <Typography.Text>Largest positions in your portfolio</Typography.Text>
+          <Typography.Text>Самые весомые активы в портфеле</Typography.Text>
         </div>
 
         <button
@@ -79,7 +79,7 @@ export default function AssetsTable({ onNavigate }) {
           type='button'
           onClick={() => onNavigate?.('assets')}
         >
-          View assets
+          Все активы
         </button>
       </div>
 
@@ -132,7 +132,7 @@ export default function AssetsTable({ onNavigate }) {
         {!holdingRows.length && (
           <div className='empty-card-state'>
             <Typography.Text type='secondary'>
-              Add your first asset to see holdings here.
+              Добавьте первый актив, чтобы увидеть позиции.
             </Typography.Text>
           </div>
         )}
