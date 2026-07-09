@@ -1,0 +1,13 @@
+
+# Codex / Chrome QA temp artifacts
+chrome-*-profile/
+qa-phase*/
+qa-*/
+
+
+# Codex / Chrome QA temp artifacts
+.chrome-*-profile/
+chrome-*-profile/
+qa-phase*/
+qa-*/
+

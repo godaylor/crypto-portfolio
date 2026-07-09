@@ -8,6 +8,8 @@ import {
   SearchOutlined,
 } from '@ant-design/icons'
 import {
+  Avatar,
+  Badge,
   Button,
   Drawer,
   Flex,
@@ -20,12 +22,15 @@ import {
 
 import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
-import ThemeSwitcher from '../ThemeSwitcher'
 
 import { useCrypto } from '../../context/CryptoContext'
 import BrandLockup from './BrandLockup'
 
-export default function AppHeader({ themeName, setThemeName }) {
+export default function AppHeader({
+  isDrawerOpen,
+  onCloseDrawer,
+  onOpenDrawer,
+}) {
   const { marketCoins } = useCrypto()
 
   const [coin, setCoin] = useState(null)
@@ -37,7 +42,6 @@ export default function AppHeader({ themeName, setThemeName }) {
   const [selectedSearchValue, setSelectedSearchValue] = useState(undefined)
   const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [successNotice, setSuccessNotice] = useState(null)
 
   useEffect(() => {
@@ -53,7 +57,6 @@ export default function AppHeader({ themeName, setThemeName }) {
     }
   }, [])
 
-  // Горячая клавиша открывает или закрывает поиск монет.
   useEffect(() => {
     const handleKeyPress = (event) => {
       const target = event.target
@@ -152,9 +155,9 @@ export default function AppHeader({ themeName, setThemeName }) {
       </span>
 
       <Space direction='vertical' size={1}>
-        <Typography.Text strong>Добавление актива</Typography.Text>
+        <Typography.Text strong>Add asset</Typography.Text>
         <Typography.Text type='secondary'>
-          Новая покупка для портфеля
+          Record a new portfolio purchase
         </Typography.Text>
       </Space>
     </Flex>
@@ -172,7 +175,7 @@ export default function AppHeader({ themeName, setThemeName }) {
         className='coin-search-select'
         popupClassName='coin-search-dropdown'
         open={isSelectOpen}
-        placeholder='Поиск монеты, например BTC'
+        placeholder='Search assets, markets, tokens...'
         suffixIcon={<SearchOutlined />}
         searchValue={searchValue}
         showSearch
@@ -216,22 +219,32 @@ export default function AppHeader({ themeName, setThemeName }) {
       />
 
       <Flex className='header-actions' align='center' gap={10}>
-        <ThemeSwitcher themeName={themeName} setThemeName={setThemeName} />
+        <span className='shortcut-hint'>/</span>
 
-        <Button
-          className='header-icon-button'
-          icon={<BellOutlined />}
-          type='text'
-          aria-label='Уведомления'
-        />
+        <Badge count={3} size='small' offset={[-3, 4]}>
+          <Button
+            className='header-icon-button'
+            icon={<BellOutlined />}
+            type='text'
+            aria-label='Notifications'
+          />
+        </Badge>
+
+        <div className='header-user-chip'>
+          <Avatar className='header-user-avatar'>M</Avatar>
+          <span>
+            <strong>Max</strong>
+            <small>Pro Plan</small>
+          </span>
+        </div>
 
         <Button
           className='add-coin-button'
           icon={<PlusOutlined />}
           type='primary'
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={onOpenDrawer}
         >
-          Добавить актив
+          Add Asset
         </Button>
       </Flex>
 
@@ -245,10 +258,10 @@ export default function AppHeader({ themeName, setThemeName }) {
         destroyOnClose
         getContainer={getOverlayContainer}
         rootStyle={{ position: 'fixed', inset: 0 }}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={onCloseDrawer}
       >
         <AddCoinForm
-          closeCoinDrawer={() => setIsDrawerOpen(false)}
+          closeCoinDrawer={onCloseDrawer}
           onCoinAddedSuccess={handleCoinAddedSuccess}
         />
       </Drawer>
@@ -260,9 +273,9 @@ export default function AppHeader({ themeName, setThemeName }) {
           </span>
 
           <Space direction='vertical' size={1}>
-            <Typography.Text strong>Purchase added</Typography.Text>
+            <Typography.Text strong>Asset added</Typography.Text>
             <Typography.Text type='secondary'>
-              {successNotice.coin.name} added to portfolio.
+              {successNotice.coin.name} is now included in your portfolio.
             </Typography.Text>
           </Space>
 

@@ -17,9 +17,7 @@ export function CryptoContextProvider({ children }) {
   const [marketCoins, setMarketCoins] = useState([])
   const [userPortfolio, setUserPortfolio] = useState([])
 
-  // Объединяем данные портфеля
-  // с текущими рыночными ценами
-  // и рассчитываем дополнительные показатели.
+  // Combine portfolio entries with current market data and derived metrics.
   function preparePortfolio(userPortfolio, marketCoins) {
     return userPortfolio.map((portfolioCoin) => {
       const marketCoin = marketCoins.find(
@@ -42,8 +40,7 @@ export function CryptoContextProvider({ children }) {
     })
   }
 
-  // Загружаем данные
-  // при первом открытии приложения.
+  // Load demo data on the first application render.
   useEffect(() => {
     async function loadInitialData() {
       setLoading(true)
@@ -65,8 +62,7 @@ export function CryptoContextProvider({ children }) {
     loadInitialData()
   }, [])
 
-  // Добавляем новую покупку
-  // в портфель пользователя.
+  // Add a new purchase to the current portfolio state.
   function addCoinToPortfolio(newPortfolioCoin) {
     setUserPortfolio((previousPortfolio) =>
       preparePortfolio(

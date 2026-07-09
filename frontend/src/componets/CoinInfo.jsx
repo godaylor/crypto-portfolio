@@ -18,7 +18,7 @@ export default function CoinInfo({ coin, withSymbol }) {
 
         {coin.symbol !== coin.name && withSymbol && (
           <Typography.Text type='secondary'>
-            Тикер: {coin.symbol}
+            Ticker: {coin.symbol}
           </Typography.Text>
         )}
       </Space>

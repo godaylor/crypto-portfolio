@@ -3,13 +3,31 @@ export const userPortfolio = [
     id: 'bitcoin',
     amount: 0.02,
     price: 26244,
-    date: new Date(),
+    date: new Date('2026-02-12T10:30:00'),
   },
   {
     id: 'ethereum',
     amount: 5,
     price: 2400,
-    date: new Date(),
+    date: new Date('2026-03-18T14:15:00'),
+  },
+  {
+    id: 'solana',
+    amount: 36,
+    price: 72.5,
+    date: new Date('2026-05-09T09:45:00'),
+  },
+  {
+    id: 'chainlink',
+    amount: 180,
+    price: 11.2,
+    date: new Date('2026-06-17T16:20:00'),
+  },
+  {
+    id: 'usd-coin',
+    amount: 4500,
+    price: 1,
+    date: new Date('2026-06-29T11:05:00'),
   },
 ]
 

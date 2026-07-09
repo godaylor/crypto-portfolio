@@ -7,9 +7,12 @@ export default function BrandLockup({ className = '' }) {
         <span className='brand-mark-core' />
       </span>
 
-      <Typography.Text className='brand-wordmark' strong>
-        Crypto Portfolio
-      </Typography.Text>
+      <span className='brand-copy'>
+        <Typography.Text className='brand-wordmark' strong>
+          Crypto
+        </Typography.Text>
+        <Typography.Text className='brand-submark'>Portfolio</Typography.Text>
+      </span>
     </div>
   )
 }

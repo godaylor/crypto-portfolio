@@ -18,18 +18,17 @@ import {
   WalletOutlined,
 } from '@ant-design/icons'
 
+import { useCrypto } from '../../context/CryptoContext'
 import CoinAddedMessage from './CoinAddedMessage'
 import SelectCoinForm from './SelectCoinForm'
 
-import { useCrypto } from '../../context/CryptoContext'
-
 const validateMessages = {
-  required: 'Поле "${label}" обязательно для заполнения',
+  required: '${label} is required',
   types: {
-    number: 'Поле "${label}" должно быть числом',
+    number: '${label} must be a number',
   },
   number: {
-    range: 'Поле "${label}" должно быть от ${min} до ${max}',
+    range: '${label} must be greater than ${min}',
   },
 }
 
@@ -69,7 +68,7 @@ function SelectedCoinSummary({ coin }) {
 
         <div className='selected-coin-copy'>
           <Typography.Text className='selected-coin-label'>
-            Selected coin
+            Selected asset
           </Typography.Text>
           <Typography.Title level={4}>{coin.name}</Typography.Title>
           <Typography.Text type='secondary'>{coin.symbol}</Typography.Text>
@@ -112,10 +111,13 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
 
     const currentAmount = form.getFieldValue('amount')
     const currentCoinPrice = +coin.price.toFixed(2)
+    const total = Number.isFinite(currentAmount)
+      ? +(currentAmount * currentCoinPrice).toFixed(2)
+      : null
 
     form.setFieldsValue({
       price: currentCoinPrice,
-      total: +(currentAmount * currentCoinPrice).toFixed(2),
+      total,
     })
   }, [coin, form])
 
@@ -127,7 +129,7 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
       return
     }
 
-    const total = amount >= 0 ? +(amount * price).toFixed(2) : null
+    const total = amount > 0 && price > 0 ? +(amount * price).toFixed(2) : null
 
     form.setFieldsValue({
       total,
@@ -168,29 +170,28 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
   return (
     <Space className='add-coin-form-wrapper' direction='vertical' size={18}>
       <Space className='add-coin-form-intro' direction='vertical' size={5}>
-        <Typography.Title level={4}>Новая покупка</Typography.Title>
+        <Typography.Title level={4}>New purchase</Typography.Title>
         <Typography.Text type='secondary'>
-          Выберите монету и укажите параметры сделки.
+          Choose an asset, enter the purchase details, and the dashboard will
+          update immediately.
         </Typography.Text>
       </Space>
 
       <FormSection
-        eyebrow='Шаг 1'
-        title='Актив'
-        description='Начните с монеты, которую хотите добавить в портфель.'
+        eyebrow='Step 1'
+        title='Asset'
+        description='Start with the coin or token you want to add to this portfolio.'
       >
         <SelectCoinForm setCoin={setCoin} />
       </FormSection>
 
-      {coin && (
-        <SelectedCoinSummary coin={coin} />
-      )}
+      {coin && <SelectedCoinSummary coin={coin} />}
 
       {coin && (
         <FormSection
-          eyebrow='Шаг 2'
-          title='Параметры сделки'
-          description='Поля цены и суммы сохраняют текущую логику расчета.'
+          eyebrow='Step 2'
+          title='Purchase details'
+          description='The current market price is prefilled, but you can adjust it to match your entry.'
         >
           <Form
             className='add-coin-form'
@@ -202,12 +203,13 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
           >
             <div className='asset-form-grid'>
               <Form.Item
-                label='Количество'
+                label='Amount'
                 name='amount'
-                rules={[{ required: true, type: 'number', min: 0 }]}
+                rules={[{ required: true, type: 'number', min: 0.00000001 }]}
               >
                 <InputNumber
-                  placeholder='Введите количество'
+                  min={0.00000001}
+                  placeholder='Enter amount'
                   style={{ width: '100%' }}
                   addonBefore={<FieldNumberOutlined />}
                   addonAfter={coin.symbol}
@@ -215,21 +217,22 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
               </Form.Item>
 
               <Form.Item
-                label='Цена за монету'
+                label='Buy price'
                 name='price'
-                rules={[{ required: true, type: 'number' }]}
+                rules={[{ required: true, type: 'number', min: 0.00000001 }]}
               >
                 <InputNumber
-                  placeholder='Введите цену покупки'
+                  min={0.00000001}
+                  placeholder='Enter buy price'
                   style={{ width: '100%' }}
                   addonBefore={<DollarOutlined />}
                   addonAfter='USD'
                 />
               </Form.Item>
 
-              <Form.Item label='Дата и время' name='date'>
+              <Form.Item label='Date and time' name='date'>
                 <DatePicker
-                  placeholder='Выберите дату и время'
+                  placeholder='Select date and time'
                   showTime={{ format: 'HH:mm' }}
                   format='YYYY-MM-DD HH:mm'
                   style={{ width: '100%' }}
@@ -237,7 +240,7 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
                 />
               </Form.Item>
 
-              <Form.Item label='Итого' name='total'>
+              <Form.Item label='Estimated value' name='total'>
                 <InputNumber
                   disabled
                   style={{ width: '100%' }}
@@ -248,21 +251,21 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
             </div>
 
             <div className='asset-total-preview'>
-              <Typography.Text type='secondary'>Расчет сделки</Typography.Text>
+              <Typography.Text type='secondary'>Transaction value</Typography.Text>
               <Typography.Title level={4}>
                 {Number.isFinite(amount) && Number.isFinite(price)
-                  ? `$${(amount * price).toFixed(2)}`
-                  : 'Заполните количество и цену'}
+                  ? formatCurrency(amount * price)
+                  : 'Enter amount and price'}
               </Typography.Title>
             </div>
 
             <Flex className='asset-form-actions' justify='flex-end' gap={12}>
               <Button htmlType='button' onClick={resetFormFields}>
-                Сбросить
+                Reset
               </Button>
 
               <Button type='primary' htmlType='submit'>
-                Добавить монету
+                Add to portfolio
               </Button>
             </Flex>
           </Form>
@@ -273,7 +276,7 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
         <div className='asset-form-empty-state'>
           <WalletOutlined />
           <Typography.Text type='secondary'>
-            После выбора актива здесь появятся поля сделки и итоговая сумма.
+            Purchase fields will appear here after you select an asset.
           </Typography.Text>
         </div>
       )}

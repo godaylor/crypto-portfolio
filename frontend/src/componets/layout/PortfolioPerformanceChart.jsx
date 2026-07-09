@@ -118,7 +118,7 @@ export default function PortfolioPerformanceChart({
   portfolioProfitPercent,
   themeName,
 }) {
-  const [range, setRange] = useState('1d')
+  const [range, setRange] = useState('30d')
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
   const [chartFrameRef, isChartFrameReady] = useMeasuredChartFrame()
 
@@ -146,7 +146,7 @@ export default function PortfolioPerformanceChart({
       labels: performanceSeries.map((point) => point.label),
       datasets: [
         {
-          label: 'Стоимость портфеля',
+          label: 'Portfolio value',
           data: performanceSeries.map((point) => point.value),
           borderColor: themeValues.accent,
           backgroundColor: (context) => {
@@ -220,7 +220,7 @@ export default function PortfolioPerformanceChart({
             display: false,
           },
           grid: {
-            color: withAlpha(themeValues.textMuted, 0.16),
+            color: withAlpha(themeValues.textMuted, 0.12),
             drawTicks: false,
           },
           ticks: {
@@ -233,11 +233,13 @@ export default function PortfolioPerformanceChart({
           },
         },
         y: {
+          min: lowValue * 0.985,
+          max: highValue * 1.015,
           border: {
             display: false,
           },
           grid: {
-            color: withAlpha(themeValues.textMuted, 0.18),
+            color: withAlpha(themeValues.textMuted, 0.16),
             drawTicks: false,
           },
           ticks: {
@@ -253,17 +255,17 @@ export default function PortfolioPerformanceChart({
         },
       },
     }),
-    [themeValues]
+    [highValue, lowValue, themeValues]
   )
 
   return (
     <Card className='dashboard-card performance-card'>
       <div className='card-section-heading performance-card-header'>
         <div>
-          <Typography.Title level={4}>Динамика портфеля</Typography.Title>
+          <Typography.Title level={4}>Performance</Typography.Title>
 
           <Typography.Text>
-            Демо-график стоимости на основе текущего баланса
+            Demo value curve based on the current portfolio balance
           </Typography.Text>
         </div>
 
@@ -277,7 +279,7 @@ export default function PortfolioPerformanceChart({
 
       <Space className='performance-summary' size={16} wrap>
         <Space direction='vertical' size={0}>
-          <Typography.Text>Текущая оценка</Typography.Text>
+          <Typography.Text>Current value</Typography.Text>
           <Typography.Title level={3}>{formatCurrency(currentValue)}</Typography.Title>
         </Space>
 
@@ -285,6 +287,14 @@ export default function PortfolioPerformanceChart({
           {formatPercent(performanceChange)}%
         </span>
       </Space>
+
+      <div className='performance-chart-wrapper' ref={chartFrameRef}>
+        {isChartFrameReady ? (
+          <Line data={chartData} options={chartOptions} />
+        ) : (
+          <span className='chart-mount-placeholder' aria-hidden='true' />
+        )}
+      </div>
 
       <div className='performance-stat-row'>
         <div>
@@ -302,7 +312,7 @@ export default function PortfolioPerformanceChart({
           </strong>
         </div>
         <div>
-          <span>24ч</span>
+          <span>24h</span>
           <strong
             className={portfolioDailyChange >= 0 ? 'is-positive' : 'is-negative'}
           >
@@ -317,14 +327,6 @@ export default function PortfolioPerformanceChart({
             {formatPercent(portfolioProfitPercent)}%
           </strong>
         </div>
-      </div>
-
-      <div className='performance-chart-wrapper' ref={chartFrameRef}>
-        {isChartFrameReady ? (
-          <Line data={chartData} options={chartOptions} />
-        ) : (
-          <span className='chart-mount-placeholder' aria-hidden='true' />
-        )}
       </div>
     </Card>
   )

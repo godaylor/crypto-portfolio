@@ -1,62 +1,54 @@
 import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
   BarChartOutlined,
   CloseOutlined,
+  GlobalOutlined,
   HomeOutlined,
   LineChartOutlined,
   MenuFoldOutlined,
   MenuOutlined,
   MenuUnfoldOutlined,
   SettingOutlined,
-  StarOutlined,
   SwapOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, Flex, Layout, Space, Tag, Tooltip, Typography } from 'antd'
+import { Avatar, Flex, Layout, Space, Tooltip, Typography } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
-import ThemeSwitcher from '../ThemeSwitcher'
+import BrandLockup from './BrandLockup'
 
 const navigationItems = [
   {
-    label: 'Обзор',
+    key: 'dashboard',
+    label: 'Dashboard',
     icon: <HomeOutlined />,
-    isActive: true,
   },
   {
-    label: 'Избранное',
-    icon: <StarOutlined />,
+    key: 'assets',
+    label: 'Assets',
+    icon: <WalletOutlined />,
   },
   {
-    label: 'Рынки',
-    icon: <BarChartOutlined />,
-  },
-  {
-    label: 'Транзакции',
-    icon: <SwapOutlined />,
-  },
-  {
-    label: 'Аналитика',
+    key: 'analytics',
+    label: 'Analytics',
     icon: <LineChartOutlined />,
   },
   {
-    label: 'Настройки',
+    key: 'markets',
+    label: 'Markets',
+    icon: <BarChartOutlined />,
+  },
+  {
+    key: 'transactions',
+    label: 'Transactions',
+    icon: <SwapOutlined />,
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
     icon: <SettingOutlined />,
   },
 ]
-
-function getProfitType(value) {
-  if (value > 0) {
-    return 'success'
-  }
-
-  if (value < 0) {
-    return 'danger'
-  }
-
-  return 'warning'
-}
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('en-US', {
@@ -73,8 +65,8 @@ function formatPercent(value) {
   }).format(value)
 }
 
-const RESPONSIVE_SIDER_QUERY = '(max-width: 1439px)'
-const MOBILE_SIDER_QUERY = '(max-width: 920px)'
+const RESPONSIVE_SIDER_QUERY = '(max-width: 1150px)'
+const MOBILE_SIDER_QUERY = '(max-width: 720px)'
 
 function isResponsiveSiderViewport() {
   return (
@@ -90,7 +82,7 @@ function isMobileSiderViewport() {
   )
 }
 
-export default function AppSider({ themeName, setThemeName }) {
+export default function AppSider({ currentSection, onNavigate }) {
   const { userPortfolio, marketCoins } = useCrypto()
   const scrollRegionRef = useRef(null)
   const [isMobileSider, setIsMobileSider] = useState(isMobileSiderViewport)
@@ -107,6 +99,7 @@ export default function AppSider({ themeName, setThemeName }) {
       ),
     [userPortfolio]
   )
+
   const portfolioProfit = useMemo(
     () =>
       userPortfolio.reduce(
@@ -115,6 +108,7 @@ export default function AppSider({ themeName, setThemeName }) {
       ),
     [userPortfolio]
   )
+
   const portfolioInvested = useMemo(
     () =>
       userPortfolio.reduce(
@@ -124,6 +118,7 @@ export default function AppSider({ themeName, setThemeName }) {
       ),
     [userPortfolio]
   )
+
   const portfolioProfitPercent = portfolioInvested
     ? (portfolioProfit / portfolioInvested) * 100
     : 0
@@ -135,6 +130,7 @@ export default function AppSider({ themeName, setThemeName }) {
           (firstCoin, secondCoin) =>
             secondCoin.totalAmount - firstCoin.totalAmount
         )
+        .slice(0, 5)
         .map((portfolioCoin) => {
           const marketCoin = marketCoins.find(
             (coin) => coin.id === portfolioCoin.id
@@ -187,7 +183,9 @@ export default function AppSider({ themeName, setThemeName }) {
     }
   }, [isMobileSider, isSiderCollapsed])
 
-  function handleNavigationClick() {
+  function handleNavigationClick(sectionKey) {
+    onNavigate(sectionKey)
+
     if (isMobileSider) {
       setIsSiderCollapsed(true)
     }
@@ -204,6 +202,8 @@ export default function AppSider({ themeName, setThemeName }) {
   ) : (
     <MenuFoldOutlined />
   )
+
+  const profitStatus = portfolioProfit >= 0 ? 'positive' : 'negative'
 
   return (
     <>
@@ -231,12 +231,14 @@ export default function AppSider({ themeName, setThemeName }) {
         className={
           isMobileSider ? 'portfolio-sider is-mobile-drawer' : 'portfolio-sider'
         }
-        width={276}
+        width={264}
         collapsed={isSiderCollapsed}
         collapsedWidth={isMobileSider ? 0 : 72}
         trigger={null}
       >
-        <div className='sider-topbar sider-topbar-no-brand'>
+        <div className='sider-topbar'>
+          <BrandLockup className='sidebar-brand' />
+
           <button
             className='portfolio-sider-toggle'
             type='button'
@@ -250,38 +252,36 @@ export default function AppSider({ themeName, setThemeName }) {
 
         <div className='sider-scroll-region' ref={scrollRegionRef}>
           <div className='portfolio-sider-summary'>
-            <Typography.Text>Общая стоимость</Typography.Text>
+            <Typography.Text>Total portfolio value</Typography.Text>
             <Typography.Title level={4}>
               {formatCurrency(portfolioBalance)}
             </Typography.Title>
-            <Tag color={getProfitType(portfolioProfit)}>
-              {portfolioProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}{' '}
-              {formatPercent(portfolioProfitPercent)}%
-            </Tag>
+            <span className={`status-pill is-${profitStatus}`}>
+              {formatPercent(portfolioProfitPercent)}% ROI
+            </span>
           </div>
 
           <Space className='sider-navigation' direction='vertical' size={8}>
             {navigationItems.map((navigationItem) => {
               const navigationNode = (
-                <Flex
+                <button
                   className={
-                    navigationItem.isActive
+                    navigationItem.key === currentSection
                       ? 'sider-navigation-item is-active'
                       : 'sider-navigation-item'
                   }
-                  align='center'
-                  gap={10}
-                  onClick={handleNavigationClick}
+                  type='button'
+                  onClick={() => handleNavigationClick(navigationItem.key)}
                 >
                   {navigationItem.icon}
                   <Typography.Text>{navigationItem.label}</Typography.Text>
-                </Flex>
+                </button>
               )
 
               if (isSiderCollapsed && !isMobileSider) {
                 return (
                   <Tooltip
-                    key={navigationItem.label}
+                    key={navigationItem.key}
                     placement='right'
                     title={navigationItem.label}
                   >
@@ -290,12 +290,12 @@ export default function AppSider({ themeName, setThemeName }) {
                 )
               }
 
-              return <div key={navigationItem.label}>{navigationNode}</div>
+              return <div key={navigationItem.key}>{navigationNode}</div>
             })}
           </Space>
 
           <div className='sider-section-heading'>
-            <Typography.Text>Портфель</Typography.Text>
+            <Typography.Text>Top holdings</Typography.Text>
             <span>{watchList.length}</span>
           </div>
 
@@ -322,7 +322,7 @@ export default function AppSider({ themeName, setThemeName }) {
                   <strong>{formatCurrency(portfolioCoin.totalAmount)}</strong>
                   <span className={portfolioCoin.grow ? 'is-positive' : 'is-negative'}>
                     {portfolioCoin.grow ? '+' : '-'}
-                    {formatPercent(portfolioCoin.growPercent).replace('+', '')}%
+                    {portfolioCoin.growPercent.toFixed(2)}%
                   </span>
                 </div>
               </div>
@@ -334,30 +334,21 @@ export default function AppSider({ themeName, setThemeName }) {
           <div className='sider-profile-card'>
             <Avatar className='sider-profile-avatar'>M</Avatar>
             <div className='sider-profile-copy'>
-              <Typography.Text strong>Максим</Typography.Text>
-              <Typography.Text>max@example.com</Typography.Text>
+              <Typography.Text strong>Max Portfolio</Typography.Text>
+              <Typography.Text>Demo workspace</Typography.Text>
               <span className='sider-profile-status'>
                 <span aria-hidden='true' />
-                Live demo
+                Synced
               </span>
             </div>
           </div>
 
-          <div className='sider-bottom-actions'>
-            <ThemeSwitcher
-              className='sider-theme-switcher'
-              themeName={themeName}
-              setThemeName={setThemeName}
-              placement='topRight'
-              variant='sidebar'
-            />
-
-            <Button
-              className='sider-settings-button'
-              icon={<SettingOutlined />}
-              type='text'
-              aria-label='Settings'
-            />
+          <div className='market-status-card'>
+            <GlobalOutlined />
+            <div>
+              <Typography.Text>Market status</Typography.Text>
+              <strong>All systems operational</strong>
+            </div>
           </div>
         </div>
       </Layout.Sider>

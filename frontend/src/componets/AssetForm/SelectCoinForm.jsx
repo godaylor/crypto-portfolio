@@ -28,7 +28,7 @@ export default function SelectCoinForm({ setCoin }) {
       }
       style={{ width: '100%' }}
       onChange={handleSelectChange}
-      placeholder='Выберите монету'
+      placeholder='Select asset'
       suffixIcon={<SearchOutlined />}
       showSearch
       optionFilterProp='label'

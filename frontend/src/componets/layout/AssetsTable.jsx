@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { Avatar, Card, Space, Table, Tag, Typography } from 'antd'
+import { Avatar, Card, Typography } from 'antd'
 
 import { useCrypto } from '../../context/CryptoContext'
 
@@ -12,12 +12,6 @@ function formatCurrency(value) {
   }).format(value)
 }
 
-function formatCoinAmount(value) {
-  return new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 8,
-  }).format(value)
-}
-
 function formatPercent(value, options = {}) {
   return new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2,
@@ -26,19 +20,11 @@ function formatPercent(value, options = {}) {
   }).format(value)
 }
 
-function getChangeColor(value) {
-  if (value > 0) {
-    return 'green'
-  }
-
-  if (value < 0) {
-    return 'red'
-  }
-
-  return 'gold'
+function getSignedChange(asset) {
+  return asset.grow ? asset.growPercent : -asset.growPercent
 }
 
-export default function AssetsTable() {
+export default function AssetsTable({ onNavigate }) {
   const { userPortfolio, marketCoins } = useCrypto()
 
   const portfolioBalance = useMemo(
@@ -49,174 +35,108 @@ export default function AssetsTable() {
     [userPortfolio]
   )
 
-  const tableData = useMemo(
+  const holdingRows = useMemo(
     () =>
-      [...userPortfolio].map((portfolioCoin, index) => {
-        const marketCoin = marketCoins.find(
-          (coin) => coin.id === portfolioCoin.id
+      [...userPortfolio]
+        .sort(
+          (firstCoin, secondCoin) =>
+            secondCoin.totalAmount - firstCoin.totalAmount
         )
-
-        return {
-          key: `${portfolioCoin.id}-${portfolioCoin.date?.getTime?.() ?? index}-${index}`,
-          coinName: portfolioCoin.name,
-          coinSymbol: marketCoin?.symbol,
-          coinIcon: marketCoin?.icon,
-          currentPrice: marketCoin?.price ?? portfolioCoin.price,
-          amount: portfolioCoin.amount,
-          allocation: portfolioBalance
+        .slice(0, 5)
+        .map((portfolioCoin, index) => {
+          const marketCoin = marketCoins.find(
+            (coin) => coin.id === portfolioCoin.id
+          )
+          const allocation = portfolioBalance
             ? (portfolioCoin.totalAmount / portfolioBalance) * 100
-            : 0,
-          totalAmount: portfolioCoin.totalAmount,
-          totalProfit: portfolioCoin.totalProfit,
-          growPercent: portfolioCoin.growPercent,
-        }
-      }),
+            : 0
+
+          return {
+            key: `${portfolioCoin.id}-${portfolioCoin.date?.getTime?.() ?? index}-${index}`,
+            allocation,
+            coinIcon: marketCoin?.icon,
+            coinName: portfolioCoin.name,
+            coinSymbol: marketCoin?.symbol,
+            totalAmount: portfolioCoin.totalAmount,
+            totalProfit: portfolioCoin.totalProfit,
+            growPercent: getSignedChange(portfolioCoin),
+          }
+        }),
     [marketCoins, portfolioBalance, userPortfolio]
   )
-
-  const winnersCount = tableData.filter((coin) => coin.totalProfit > 0).length
-  const largestPosition = [...tableData].sort(
-    (firstCoin, secondCoin) => secondCoin.allocation - firstCoin.allocation
-  )[0]
-
-  const columns = [
-    {
-      title: 'Монета',
-      dataIndex: 'coinName',
-      sorter: (a, b) => a.coinName.localeCompare(b.coinName),
-      render: (_, coin) => (
-        <Space className='asset-cell asset-cell-coin'>
-          <Avatar
-            className='asset-token-icon'
-            src={coin.coinIcon}
-            alt={coin.coinName}
-            size={34}
-          >
-            {coin.coinSymbol}
-          </Avatar>
-
-          <Space direction='vertical' size={0}>
-            <Typography.Text className='asset-name' strong>
-              {coin.coinName}
-            </Typography.Text>
-            <Typography.Text className='asset-symbol' type='secondary'>
-              {coin.coinSymbol}
-            </Typography.Text>
-          </Space>
-        </Space>
-      ),
-    },
-    {
-      title: 'Цена',
-      dataIndex: 'currentPrice',
-      sorter: (a, b) => a.currentPrice - b.currentPrice,
-      render: (price) => formatCurrency(price),
-    },
-    {
-      title: 'Количество',
-      dataIndex: 'amount',
-      sorter: (a, b) => a.amount - b.amount,
-      render: (amount) => formatCoinAmount(amount),
-    },
-    {
-      title: 'Доля',
-      dataIndex: 'allocation',
-      sorter: (a, b) => a.allocation - b.allocation,
-      render: (allocation) => (
-        <div className='asset-allocation-cell'>
-          <span>{formatPercent(allocation)}%</span>
-          <i>
-            <b style={{ width: `${Math.min(allocation, 100)}%` }} />
-          </i>
-        </div>
-      ),
-    },
-    {
-      title: 'Стоимость',
-      dataIndex: 'totalAmount',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.totalAmount - b.totalAmount,
-      render: (totalAmount) => (
-        <Typography.Text className='asset-amount' strong>
-          {formatCurrency(totalAmount)}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Прибыль / убыток',
-      dataIndex: 'totalProfit',
-      sorter: (a, b) => a.totalProfit - b.totalProfit,
-      render: (totalProfit, coin) => {
-        const signedChange = totalProfit >= 0 ? coin.growPercent : -coin.growPercent
-
-        return (
-          <Space className='asset-profit-cell' size={8}>
-            <Typography.Text
-              className='asset-profit-value'
-              type={
-                totalProfit > 0
-                  ? 'success'
-                  : totalProfit < 0
-                    ? 'danger'
-                    : 'warning'
-              }
-            >
-              {formatCurrency(totalProfit)}
-            </Typography.Text>
-
-            <Tag className='asset-change-tag' color={getChangeColor(totalProfit)}>
-              {formatPercent(signedChange, { signDisplay: 'exceptZero' })}%
-            </Tag>
-          </Space>
-        )
-      },
-    },
-  ]
 
   return (
     <Card className='dashboard-card holdings-card'>
       <div className='card-section-heading holdings-heading'>
         <div>
-          <Typography.Title level={4}>Мои активы</Typography.Title>
+          <Typography.Title level={4}>Top holdings</Typography.Title>
 
-          <Typography.Text>
-            Текущие позиции, стоимость и результат
-          </Typography.Text>
+          <Typography.Text>Largest positions in your portfolio</Typography.Text>
         </div>
 
-        <span className='module-badge'>{tableData.length} позиции</span>
+        <button
+          className='module-link-button'
+          type='button'
+          onClick={() => onNavigate?.('assets')}
+        >
+          View assets
+        </button>
       </div>
 
-      <div className='holdings-summary-strip'>
-        <div>
-          <span>Общая стоимость</span>
-          <strong>{formatCurrency(portfolioBalance)}</strong>
-        </div>
-        <div>
-          <span>В плюсе</span>
-          <strong>{winnersCount}/{tableData.length}</strong>
-        </div>
-        <div>
-          <span>Крупнейшая доля</span>
-          <strong>{largestPosition?.coinSymbol ?? '-'}</strong>
-        </div>
-        <div>
-          <span>Концентрация</span>
-          <strong>
-            {largestPosition ? `${formatPercent(largestPosition.allocation)}%` : '0%'}
-          </strong>
-        </div>
-      </div>
+      <div className='holdings-preview-list'>
+        {holdingRows.map((coin) => {
+          const status = coin.totalProfit >= 0 ? 'positive' : 'negative'
 
-      <Table
-        className='holdings-table'
-        columns={columns}
-        dataSource={tableData}
-        pagination={false}
-        rowKey='key'
-        size='middle'
-        scroll={{ x: 760 }}
-      />
+          return (
+            <div className='holding-preview-row' key={coin.key}>
+              <div className='holding-asset'>
+                <Avatar
+                  className='asset-token-icon'
+                  src={coin.coinIcon}
+                  alt={coin.coinName}
+                  size={34}
+                >
+                  {coin.coinSymbol}
+                </Avatar>
+
+                <div>
+                  <Typography.Text className='asset-name' strong>
+                    {coin.coinName}
+                  </Typography.Text>
+                  <Typography.Text className='asset-symbol' type='secondary'>
+                    {coin.coinSymbol}
+                  </Typography.Text>
+                </div>
+              </div>
+
+              <div className='holding-allocation'>
+                <span>{formatPercent(coin.allocation)}%</span>
+                <i>
+                  <b style={{ width: `${Math.min(coin.allocation, 100)}%` }} />
+                </i>
+              </div>
+
+              <div className='holding-value'>
+                <strong>{formatCurrency(coin.totalAmount)}</strong>
+                <span className={`is-${status}`}>
+                  {formatPercent(coin.growPercent, {
+                    signDisplay: 'exceptZero',
+                  })}
+                  %
+                </span>
+              </div>
+            </div>
+          )
+        })}
+
+        {!holdingRows.length && (
+          <div className='empty-card-state'>
+            <Typography.Text type='secondary'>
+              Add your first asset to see holdings here.
+            </Typography.Text>
+          </div>
+        )}
+      </div>
     </Card>
   )
 }

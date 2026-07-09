@@ -81,7 +81,7 @@ function useMeasuredChartFrame() {
   return [frameRef, isFrameReady]
 }
 
-export default function PortfolioChart({ themeName }) {
+export default function PortfolioChart({ onNavigate, themeName }) {
   const { userPortfolio, marketCoins } = useCrypto()
 
   const [themeValues, setThemeValues] = useState(defaultThemeValues)
@@ -190,12 +190,18 @@ export default function PortfolioChart({ themeName }) {
     <Card className='dashboard-card chart-card'>
       <div className='card-section-heading'>
         <div>
-          <Typography.Title level={4}>Распределение активов</Typography.Title>
+          <Typography.Title level={4}>Allocation</Typography.Title>
 
-          <Typography.Text>Текущая стоимость по каждой монете</Typography.Text>
+          <Typography.Text>Current market value by asset</Typography.Text>
         </div>
 
-        <span className='module-badge'>{allocationRows.length} активов</span>
+        <button
+          className='module-link-button'
+          type='button'
+          onClick={() => onNavigate?.('analytics')}
+        >
+          Analyze
+        </button>
       </div>
 
       <div className='allocation-card-layout'>
@@ -254,15 +260,15 @@ export default function PortfolioChart({ themeName }) {
 
         <div className='allocation-summary-grid'>
           <div>
-            <span>Всего</span>
+            <span>Total</span>
             <strong>{formatCurrency(portfolioBalance)}</strong>
           </div>
           <div>
-            <span>Лидер</span>
+            <span>Leader</span>
             <strong>{topAsset?.symbol ?? '-'}</strong>
           </div>
           <div>
-            <span>Малых долей</span>
+            <span>Small positions</span>
             <strong>{smallPositions}</strong>
           </div>
         </div>
