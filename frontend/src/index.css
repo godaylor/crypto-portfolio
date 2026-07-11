@@ -3771,3 +3771,240 @@ html[data-theme='ios-glass'] :where(
 ) {
   backdrop-filter: blur(14px) saturate(114%);
 }
+
+/* Pass 2C: reviewable, theme-aware brand mark exploration. */
+button.brand-lockup {
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  appearance: none;
+  cursor: pointer;
+}
+
+button.brand-lockup:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+.brand-mark {
+  --brand-primary: var(--accent-blue);
+  --brand-secondary: var(--accent-cyan);
+  --brand-tertiary: var(--accent-violet);
+  background: var(--surface-control);
+  border-color: var(--border-strong);
+  box-shadow:
+    0 10px 24px color-mix(in srgb, var(--accent-blue) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent);
+}
+
+.brand-mark-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand-geo-frame {
+  fill: color-mix(in srgb, var(--surface-overlay) 90%, var(--brand-primary) 10%);
+  stroke: color-mix(in srgb, var(--brand-primary) 46%, var(--border-strong));
+  stroke-width: 1.2;
+}
+
+.brand-geo-segment {
+  stroke: color-mix(in srgb, var(--surface-overlay) 86%, transparent);
+  stroke-linejoin: round;
+  stroke-width: 1.15;
+}
+
+.brand-geo-segment-primary {
+  fill: var(--brand-primary);
+}
+
+.brand-geo-segment-secondary {
+  fill: var(--brand-secondary);
+}
+
+.brand-geo-segment-tertiary {
+  fill: var(--brand-tertiary);
+}
+
+.brand-geo-core {
+  fill: #ffffff;
+  stroke: color-mix(in srgb, var(--brand-primary) 42%, transparent);
+  stroke-width: 1.4;
+}
+
+.brand-mark[data-brand-variant='liquid'] {
+  background: color-mix(in srgb, var(--surface-glass) 88%, transparent);
+  backdrop-filter: blur(10px) saturate(112%);
+}
+
+.brand-liquid-surface {
+  fill: color-mix(in srgb, var(--surface-overlay) 62%, transparent);
+  stroke: color-mix(in srgb, var(--border-strong) 86%, transparent);
+  stroke-width: 1.1;
+}
+
+.brand-liquid-blob {
+  mix-blend-mode: normal;
+}
+
+.brand-liquid-blob-primary {
+  fill: var(--brand-primary);
+  opacity: 0.78;
+}
+
+.brand-liquid-blob-secondary {
+  fill: var(--brand-secondary);
+  opacity: 0.58;
+}
+
+.brand-liquid-highlight,
+.brand-liquid-orbit {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.84);
+  stroke-linecap: round;
+  stroke-width: 1.45;
+}
+
+.brand-liquid-orbit {
+  stroke: color-mix(in srgb, #ffffff 68%, var(--brand-tertiary));
+  opacity: 0.8;
+}
+
+.brand-liquid-core {
+  fill: #ffffff;
+  opacity: 0.94;
+}
+
+.brand-mark[data-brand-variant='monogram'] {
+  background: var(--accent-gradient);
+  border-color: color-mix(in srgb, var(--brand-primary) 54%, var(--border-strong));
+}
+
+.brand-mono-surface {
+  fill: color-mix(in srgb, var(--surface-overlay) 16%, transparent);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1;
+}
+
+.brand-mono-letter,
+.brand-mono-accent {
+  fill: none;
+  stroke: #ffffff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.65;
+}
+
+.brand-mono-accent {
+  stroke: color-mix(in srgb, #ffffff 72%, var(--brand-secondary));
+  stroke-width: 2;
+}
+
+.brand-preview-popover .ant-popover-inner {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.brand-preview-panel {
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px;
+}
+
+.brand-preview-heading {
+  display: grid;
+  gap: 3px;
+  padding: 2px 3px 12px;
+}
+
+.brand-preview-heading strong {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.brand-preview-heading span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.brand-preview-list {
+  display: grid;
+  gap: 7px;
+}
+
+.brand-preview-option {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 9px;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 13px;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.brand-preview-option:hover,
+.brand-preview-option.is-active {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-blue) 38%, var(--border-subtle));
+}
+
+.brand-preview-option:hover {
+  transform: translateY(-1px);
+}
+
+.brand-preview-option .brand-mark {
+  width: 40px;
+  height: 40px;
+}
+
+.brand-preview-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.brand-preview-copy strong,
+.brand-preview-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-preview-copy strong {
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.brand-preview-copy small {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.brand-preview-option > .anticon {
+  color: var(--accent-blue);
+}
+
+@media (max-width: 720px) {
+  .brand-preview-popover {
+    max-width: calc(100vw - 16px);
+  }
+}
