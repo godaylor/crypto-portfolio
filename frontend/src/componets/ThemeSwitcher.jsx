@@ -1,12 +1,32 @@
-import { CheckOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons'
+import {
+  BankOutlined,
+  CheckOutlined,
+  CloudOutlined,
+  CodeOutlined,
+  ExperimentOutlined,
+  MessageOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from '@ant-design/icons'
 import { Button, Dropdown, Space, Typography } from 'antd'
 
 import { appThemes } from '../theme'
 
-const themeOptions = [
-  { key: 'premium-dark', icon: <MoonOutlined /> },
-  { key: 'apple-light', icon: <SunOutlined /> },
-].map((option) => ({ ...option, ...appThemes[option.key] }))
+const themeIcons = {
+  'premium-dark': <MoonOutlined />,
+  'apple-light': <SunOutlined />,
+  'blue-fintech': <BankOutlined />,
+  'dark-glass': <ExperimentOutlined />,
+  'chatgpt-dark': <MessageOutlined />,
+  'mocha-code': <CodeOutlined />,
+  'ios-glass': <CloudOutlined />,
+}
+
+const themeOptions = Object.entries(appThemes).map(([key, theme]) => ({
+  key,
+  icon: themeIcons[key],
+  ...theme,
+}))
 
 export default function ThemeSwitcher({
   themeName,

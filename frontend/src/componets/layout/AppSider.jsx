@@ -364,7 +364,7 @@ export default function AppSider({
             className='sider-theme-switcher'
             themeName={themeName}
             setThemeName={setThemeName}
-            placement='topRight'
+            placement='topLeft'
             showLabel={!isSiderCollapsed}
           />
         </div>

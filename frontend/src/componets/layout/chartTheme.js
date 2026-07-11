@@ -1,6 +1,11 @@
 export const chartColorPalettes = {
   'premium-dark': ['#d99a3d', '#7890c2', '#4c78bd', '#45a783', '#8d78ad'],
   'apple-light': ['#b77b2c', '#6b7fa8', '#3569b5', '#277d60', '#756390'],
+  'blue-fintech': ['#2bc7e6', '#377ef2', '#7657d8', '#2fbf8f', '#dca047'],
+  'dark-glass': ['#50b9d5', '#776ce8', '#a06fc2', '#36bc8c', '#dca14c'],
+  'chatgpt-dark': ['#10a37f', '#739c90', '#7f8b87', '#a58b62', '#6c7980'],
+  'mocha-code': ['#d4a574', '#c98252', '#9b725a', '#8eaf78', '#c6b09a'],
+  'ios-glass': ['#4f8fc8', '#3478f6', '#788fb7', '#2f8c6b', '#bf8740'],
 }
 
 export const defaultThemeValues = {
