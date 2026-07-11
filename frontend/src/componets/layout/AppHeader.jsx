@@ -26,6 +26,7 @@ import {
 
 import AddCoinForm from '../AssetForm/AddCoinForm'
 import CoinInfoModal from '../CoinInfoModel'
+import ThemeSwitcher from '../ThemeSwitcher'
 
 import { useCrypto } from '../../context/CryptoContext'
 import BrandLockup from './BrandLockup'
@@ -34,6 +35,8 @@ export default function AppHeader({
   isDrawerOpen,
   onCloseDrawer,
   onOpenDrawer,
+  setThemeName,
+  themeName,
 }) {
   const { marketCoins } = useCrypto()
 
@@ -313,6 +316,12 @@ export default function AppHeader({
       />
 
       <Flex className='header-actions' align='center' gap={10}>
+        <ThemeSwitcher
+          className='header-theme-switcher'
+          themeName={themeName}
+          setThemeName={setThemeName}
+        />
+
         <span className='shortcut-hint'>/</span>
 
         <Popover

@@ -241,7 +241,7 @@ export default function AddCoinForm({ closeCoinDrawer, onCoinAddedSuccess }) {
               <Form.Item label='Дата и время' name='date'>
                 <DatePicker
                   getPopupContainer={getDrawerPopupContainer}
-                  popupClassName='dark-date-picker-dropdown'
+                  popupClassName='themed-date-picker-dropdown'
                   placeholder='Выберите дату и время'
                   showTime={{ format: 'HH:mm' }}
                   format='YYYY-MM-DD HH:mm'

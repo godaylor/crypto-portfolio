@@ -15,6 +15,7 @@ import { Avatar, Flex, Layout, Space, Tooltip, Typography } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useCrypto } from '../../context/CryptoContext'
+import ThemeSwitcher from '../ThemeSwitcher'
 
 const navigationItems = [
   {
@@ -81,7 +82,12 @@ function isMobileSiderViewport() {
   )
 }
 
-export default function AppSider({ currentSection, onNavigate }) {
+export default function AppSider({
+  currentSection,
+  onNavigate,
+  setThemeName,
+  themeName,
+}) {
   const { userPortfolio, marketCoins } = useCrypto()
   const scrollRegionRef = useRef(null)
   const [isMobileSider, setIsMobileSider] = useState(isMobileSiderViewport)
@@ -353,6 +359,14 @@ export default function AppSider({ currentSection, onNavigate }) {
               <strong>Демо-данные активны</strong>
             </div>
           </div>
+
+          <ThemeSwitcher
+            className='sider-theme-switcher'
+            themeName={themeName}
+            setThemeName={setThemeName}
+            placement='topRight'
+            showLabel={!isSiderCollapsed}
+          />
         </div>
       </Layout.Sider>
     </>

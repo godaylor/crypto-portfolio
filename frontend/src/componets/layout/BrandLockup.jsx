@@ -5,9 +5,9 @@ export default function BrandLockup({ className = '' }) {
         <svg viewBox='0 0 44 44' focusable='false'>
           <defs>
             <linearGradient id='brand-mark-gradient' x1='7' x2='37' y1='6' y2='38'>
-              <stop offset='0' stopColor='#22d3ee' />
-              <stop offset='0.52' stopColor='#3b82f6' />
-              <stop offset='1' stopColor='#8b5cf6' />
+              <stop offset='0' stopColor='#6d9ee8' />
+              <stop offset='0.52' stopColor='#5b82d6' />
+              <stop offset='1' stopColor='#8292b8' />
             </linearGradient>
           </defs>
           <path

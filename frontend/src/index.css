@@ -2052,7 +2052,7 @@ select {
 }
 
 .app-shell .ant-picker-dropdown .ant-picker-panel-container,
-.dark-date-picker-dropdown .ant-picker-panel-container {
+.themed-date-picker-dropdown .ant-picker-panel-container {
   color: var(--text-primary);
   background: rgba(15, 23, 42, 0.98);
   border: 1px solid var(--border-subtle);
@@ -2063,35 +2063,35 @@ select {
 .app-shell .ant-picker-dropdown .ant-picker-header,
 .app-shell .ant-picker-dropdown .ant-picker-cell,
 .app-shell .ant-picker-dropdown .ant-picker-time-panel-cell-inner,
-.dark-date-picker-dropdown .ant-picker-header,
-.dark-date-picker-dropdown .ant-picker-cell,
-.dark-date-picker-dropdown .ant-picker-time-panel-cell-inner {
+.themed-date-picker-dropdown .ant-picker-header,
+.themed-date-picker-dropdown .ant-picker-cell,
+.themed-date-picker-dropdown .ant-picker-time-panel-cell-inner {
   color: var(--text-secondary);
 }
 
 .app-shell .ant-picker-dropdown .ant-picker-content th,
 .app-shell .ant-picker-dropdown .ant-picker-header button,
 .app-shell .ant-picker-dropdown .ant-picker-now-btn,
-.dark-date-picker-dropdown .ant-picker-content th,
-.dark-date-picker-dropdown .ant-picker-header button,
-.dark-date-picker-dropdown .ant-picker-now-btn {
+.themed-date-picker-dropdown .ant-picker-content th,
+.themed-date-picker-dropdown .ant-picker-header button,
+.themed-date-picker-dropdown .ant-picker-now-btn {
   color: var(--text-primary);
 }
 
 .app-shell .ant-picker-dropdown .ant-picker-cell-in-view,
-.dark-date-picker-dropdown .ant-picker-cell-in-view {
+.themed-date-picker-dropdown .ant-picker-cell-in-view {
   color: var(--text-primary);
 }
 
 .app-shell .ant-picker-dropdown .ant-picker-cell-inner,
-.dark-date-picker-dropdown .ant-picker-cell-inner {
+.themed-date-picker-dropdown .ant-picker-cell-inner {
   border-radius: 8px;
 }
 
 .app-shell .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
 .app-shell .ant-picker-dropdown .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner,
-.dark-date-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
-.dark-date-picker-dropdown .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+.themed-date-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+.themed-date-picker-dropdown .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
   color: #ffffff;
   background: var(--accent-blue);
 }
@@ -2507,6 +2507,367 @@ select {
   .app-success-toast {
     right: 12px;
     bottom: 12px;
+  }
+}
+
+/* Pass 2A: theme tokens. Appearance only; existing layout rules remain authoritative. */
+html[data-theme='premium-dark'],
+.app-shell[data-theme='premium-dark'] {
+  --bg-app: #080d15;
+  --bg-shell: #0b111b;
+  --surface-1: #111925;
+  --surface-2: #151f2c;
+  --surface-3: #1a2635;
+  --surface-card: #111925;
+  --surface-elevated: #151f2c;
+  --surface-muted: #0d1520;
+  --surface-glass: rgba(17, 25, 37, 0.82);
+  --surface-header: rgba(8, 13, 21, 0.88);
+  --surface-sidebar: rgba(11, 17, 27, 0.94);
+  --surface-control: rgba(13, 21, 32, 0.92);
+  --surface-panel: rgba(17, 25, 37, 0.76);
+  --surface-subtle: rgba(5, 10, 17, 0.28);
+  --surface-overlay: rgba(17, 25, 37, 0.98);
+  --surface-hover: rgba(26, 38, 53, 0.94);
+  --overlay-mask: rgba(2, 6, 12, 0.68);
+  --border-subtle: rgba(132, 149, 172, 0.16);
+  --border-strong: rgba(136, 155, 181, 0.3);
+  --text-primary: #f3f6fa;
+  --text-secondary: #aab5c4;
+  --text-muted: #7d8999;
+  --text-soft: #687587;
+  --accent-cyan: #6d9ee8;
+  --accent-blue: #5b82d6;
+  --accent-violet: #8292b8;
+  --accent-soft: rgba(91, 130, 214, 0.15);
+  --positive: #34b982;
+  --negative: #e45e6b;
+  --warning: #d99a3d;
+  --shadow-card: 0 16px 42px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  --accent-gradient: linear-gradient(135deg, #5279c7, #6f83af);
+  --accent-gradient-hover: linear-gradient(135deg, #6289d6, #7f91b9);
+}
+
+html[data-theme='apple-light'],
+.app-shell[data-theme='apple-light'] {
+  --bg-app: #f2f4f7;
+  --bg-shell: #eceff3;
+  --surface-1: #ffffff;
+  --surface-2: #fbfcfd;
+  --surface-3: #eef1f5;
+  --surface-card: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-muted: #f5f6f8;
+  --surface-glass: rgba(255, 255, 255, 0.82);
+  --surface-header: rgba(248, 249, 251, 0.9);
+  --surface-sidebar: rgba(247, 248, 250, 0.94);
+  --surface-control: #f5f6f8;
+  --surface-panel: rgba(255, 255, 255, 0.78);
+  --surface-subtle: rgba(74, 82, 94, 0.055);
+  --surface-overlay: rgba(255, 255, 255, 0.98);
+  --surface-hover: #eef1f5;
+  --overlay-mask: rgba(25, 30, 38, 0.28);
+  --border-subtle: rgba(72, 79, 90, 0.13);
+  --border-strong: rgba(72, 79, 90, 0.23);
+  --text-primary: #1d1d1f;
+  --text-secondary: #5d626a;
+  --text-muted: #7b818a;
+  --text-soft: #959ba4;
+  --accent-cyan: #3d71bd;
+  --accent-blue: #2864c7;
+  --accent-violet: #6c7da5;
+  --accent-soft: rgba(40, 100, 199, 0.1);
+  --positive: #18805a;
+  --negative: #d44755;
+  --warning: #ad6d1a;
+  --shadow-card: 0 12px 34px rgba(45, 55, 72, 0.08);
+  --shadow-glow: 0 8px 24px rgba(45, 55, 72, 0.08);
+  --accent-gradient: linear-gradient(135deg, #2864c7, #5c75a7);
+  --accent-gradient-hover: linear-gradient(135deg, #3471d3, #6a82b0);
+}
+
+html[data-theme='premium-dark'] {
+  background: #080d15;
+  color-scheme: dark;
+}
+
+html[data-theme='apple-light'] {
+  background: #f2f4f7;
+  color-scheme: light;
+}
+
+html[data-theme] body {
+  color: var(--text-primary);
+  background: var(--bg-app);
+}
+
+.app-shell[data-theme] {
+  background:
+    radial-gradient(circle at 18% -10%, color-mix(in srgb, var(--accent-blue) 10%, transparent), transparent 30%),
+    linear-gradient(145deg, var(--bg-app), var(--bg-shell));
+}
+
+.app-shell[data-theme] .app-header {
+  background: var(--surface-header);
+  border-color: var(--border-subtle);
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--text-primary) 9%, transparent);
+}
+
+.app-shell[data-theme] .portfolio-sider {
+  background: var(--surface-sidebar) !important;
+  border-color: var(--border-subtle);
+  box-shadow: inset -1px 0 0 color-mix(in srgb, var(--border-subtle) 60%, transparent);
+}
+
+.app-shell[data-theme] :where(
+  .shortcut-hint,
+  .header-icon-button,
+  .header-user-chip,
+  .portfolio-sider-toggle,
+  .module-link-button,
+  .product-filter-control
+) {
+  color: var(--text-secondary);
+  background: var(--surface-control);
+  border-color: var(--border-subtle);
+}
+
+.app-shell[data-theme] :where(
+  .header-icon-button,
+  .header-user-chip,
+  .portfolio-sider-toggle,
+  .module-link-button
+):hover {
+  color: var(--text-primary) !important;
+  background: var(--surface-hover) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.app-shell[data-theme] :where(
+  .coin-search-select .ant-select-selector,
+  .drawer-coin-select .ant-select-selector,
+  .add-coin-form .ant-input-number,
+  .add-coin-form .ant-picker,
+  .add-coin-form .ant-input-number-group-addon
+) {
+  color: var(--text-primary) !important;
+  background: var(--surface-control) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.app-shell[data-theme] :where(
+  .dashboard-card,
+  .coin-info-modal .ant-modal-content,
+  .add-coin-drawer.ant-drawer-content,
+  .add-coin-drawer .ant-drawer-content,
+  .add-coin-drawer-root .ant-drawer-content
+) {
+  color: var(--text-primary);
+  background-color: var(--surface-card) !important;
+  background-image: linear-gradient(180deg, var(--surface-2), var(--surface-1)) !important;
+  border-color: var(--border-subtle) !important;
+  box-shadow: var(--shadow-card);
+}
+
+.app-shell[data-theme] .dashboard-card::before {
+  background: linear-gradient(135deg, color-mix(in srgb, #ffffff 4%, transparent), transparent 38%);
+}
+
+.app-shell[data-theme] :where(
+  .dashboard-header-metric,
+  .hero-module,
+  .portfolio-sider-summary,
+  .portfolio-coin-row,
+  .sider-profile-card,
+  .market-status-card,
+  .notification-row,
+  .performance-range-control,
+  .performance-stat-row > div,
+  .allocation-list-item,
+  .allocation-empty-row,
+  .holding-preview-row,
+  .risk-module,
+  .empty-card-state,
+  .asset-form-section,
+  .asset-form-empty-state,
+  .coin-added-summary,
+  .coin-added-summary-grid > .ant-space,
+  .coin-info-card,
+  .product-empty-state,
+  .product-table-row,
+  .market-page-row,
+  .transaction-row
+) {
+  background: var(--surface-subtle) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+.app-shell[data-theme] :where(
+  .sider-navigation-item:hover,
+  .sider-navigation-item.is-active,
+  .product-table-row:hover
+) {
+  background: var(--accent-soft) !important;
+  border-color: color-mix(in srgb, var(--accent-blue) 34%, transparent) !important;
+}
+
+.app-shell[data-theme] :where(
+  .add-coin-button,
+  .mobile-add-coin-button,
+  .header-user-avatar,
+  .performance-range-control .ant-segmented-item-selected
+) {
+  background: var(--accent-gradient) !important;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent-blue) 22%, transparent);
+}
+
+.app-shell[data-theme] :where(.add-coin-button, .mobile-add-coin-button):hover {
+  background: var(--accent-gradient-hover) !important;
+}
+
+.app-shell[data-theme] .selected-coin-card {
+  background: linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--surface-card) 92%, transparent)) !important;
+  border-color: color-mix(in srgb, var(--accent-blue) 22%, transparent) !important;
+}
+
+.app-shell[data-theme] :where(.asset-total-preview, .activity-icon) {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-blue) 22%, transparent);
+}
+
+.app-shell[data-theme] :where(.asset-form-actions, .coin-added-actions) {
+  background: color-mix(in srgb, var(--surface-overlay) 94%, transparent);
+  border-color: var(--border-subtle);
+}
+
+.app-shell[data-theme] .app-success-toast {
+  color: var(--text-primary);
+  background: var(--surface-overlay);
+  border-color: color-mix(in srgb, var(--positive) 28%, transparent);
+  box-shadow: var(--shadow-card);
+}
+
+.app-shell[data-theme] :where(.add-coin-drawer-root .ant-drawer-mask, .coin-info-modal-root .ant-modal-mask),
+html[data-theme] :where(.add-coin-drawer-root .ant-drawer-mask, .coin-info-modal-root .ant-modal-mask) {
+  background: var(--overlay-mask) !important;
+}
+
+html[data-theme] :where(
+  .ant-dropdown-menu,
+  .ant-select-dropdown,
+  .ant-picker-panel-container,
+  .ant-popover-inner,
+  .ant-notification-notice,
+  .ant-message-notice-content
+),
+.app-shell[data-theme] :where(
+  .ant-dropdown-menu,
+  .ant-select-dropdown,
+  .ant-picker-panel-container,
+  .ant-popover-inner,
+  .ant-notification-notice,
+  .ant-message-notice-content
+) {
+  color: var(--text-primary);
+  background: var(--surface-overlay) !important;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+html[data-theme] :where(
+  .ant-popover-title,
+  .ant-popconfirm-title,
+  .ant-notification-notice-message,
+  .ant-message-notice-content
+) {
+  color: var(--text-primary) !important;
+}
+
+html[data-theme] :where(
+  .ant-popover-inner-content,
+  .ant-popconfirm-description,
+  .ant-notification-notice-description
+) {
+  color: var(--text-secondary) !important;
+}
+
+html[data-theme] .ant-popover-arrow::before,
+html[data-theme] .ant-popover-arrow::after {
+  background: var(--surface-overlay) !important;
+}
+
+.theme-switcher {
+  min-width: 42px;
+  height: 42px;
+  color: var(--text-secondary);
+  background: var(--surface-control);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.theme-switcher:hover {
+  color: var(--text-primary) !important;
+  background: var(--surface-hover) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.theme-switcher-dropdown .ant-dropdown-menu {
+  min-width: 264px;
+  padding: 8px;
+  border-radius: 16px;
+}
+
+.theme-switcher-dropdown .ant-dropdown-menu-item {
+  margin: 2px 0;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.theme-switcher-dropdown .ant-dropdown-menu-item-selected,
+.theme-switcher-dropdown .ant-dropdown-menu-item-active {
+  background: var(--accent-soft) !important;
+}
+
+.theme-menu-item {
+  width: 100%;
+  min-width: 226px;
+}
+
+.theme-menu-item > .ant-space-item:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+}
+
+.theme-menu-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--accent-blue);
+  background: var(--accent-soft);
+  border-radius: 9px;
+}
+
+.theme-menu-check {
+  color: var(--accent-blue);
+}
+
+.sider-theme-switcher {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.portfolio-sider.ant-layout-sider-collapsed .sider-theme-switcher {
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+}
+
+@media (max-width: 560px) {
+  .sider-theme-switcher {
+    display: inline-flex;
   }
 }
 
@@ -3089,4 +3450,90 @@ button.sider-navigation-item {
   .return-value {
     text-align: left;
   }
+}
+
+/* Product-page theme normalization is last so page-specific baseline rules cannot win. */
+.app-shell[data-theme] :where(.module-link-button, .page-search-control) {
+  color: var(--text-secondary);
+  background: var(--surface-control);
+  border-color: var(--border-strong);
+}
+
+.app-shell[data-theme] :where(
+  .product-table-row,
+  .position-return-row,
+  .market-mini-row
+) {
+  color: var(--text-secondary);
+  background: var(--surface-subtle);
+  border-color: var(--border-subtle);
+}
+
+.app-shell[data-theme] :where(.module-link-button, .product-table-row):hover {
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-blue) 32%, transparent);
+}
+
+.app-shell[data-theme] :where(.page-primary-action, .return-track > b) {
+  background-image: var(--accent-gradient);
+}
+
+.app-shell[data-theme='apple-light'] .brand-mark-core {
+  filter: drop-shadow(0 2px 4px rgba(40, 100, 199, 0.18));
+}
+
+/* The Add Asset drawer is a body portal, so it must read document-level tokens. */
+html[data-theme] :where(
+  .add-coin-drawer.ant-drawer-content,
+  .add-coin-drawer .ant-drawer-content,
+  .add-coin-drawer-root .ant-drawer-content
+) {
+  color: var(--text-primary);
+  background-color: var(--surface-card) !important;
+  background-image: linear-gradient(180deg, var(--surface-2), var(--surface-1)) !important;
+  border-color: var(--border-subtle) !important;
+  box-shadow: var(--shadow-card);
+}
+
+html[data-theme] :where(
+  .add-coin-drawer .ant-drawer-header,
+  .add-coin-drawer-root .ant-drawer-header,
+  .asset-form-actions,
+  .coin-added-actions
+) {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--surface-overlay) 94%, transparent);
+  border-color: var(--border-subtle);
+}
+
+html[data-theme] :where(
+  .asset-form-section,
+  .asset-form-empty-state,
+  .coin-added-summary,
+  .coin-added-summary-grid > .ant-space
+) {
+  background: var(--surface-subtle) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+html[data-theme] .selected-coin-card {
+  background: linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--surface-card) 92%, transparent)) !important;
+  border-color: color-mix(in srgb, var(--accent-blue) 22%, transparent) !important;
+}
+
+html[data-theme] .asset-total-preview {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-blue) 22%, transparent);
+}
+
+html[data-theme] :where(
+  .drawer-coin-select .ant-select-selector,
+  .add-coin-form .ant-input-number,
+  .add-coin-form .ant-picker,
+  .add-coin-form .ant-input-number-group-addon
+) {
+  color: var(--text-primary) !important;
+  background: var(--surface-control) !important;
+  border-color: var(--border-strong) !important;
 }

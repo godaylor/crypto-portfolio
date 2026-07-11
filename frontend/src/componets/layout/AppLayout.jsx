@@ -7,7 +7,6 @@ import AppContent from './AppContent'
 import AppHeader from './AppHeader'
 import AppSider from './AppSider'
 
-const dashboardThemeName = 'dark-modern'
 const availableSections = new Set([
   'dashboard',
   'assets',
@@ -27,7 +26,7 @@ function readSectionFromHash() {
   return availableSections.has(sectionFromHash) ? sectionFromHash : 'dashboard'
 }
 
-export default function AppLayout() {
+export default function AppLayout({ themeName, setThemeName }) {
   const { loading } = useContext(CryptoContext)
   const [currentSection, setCurrentSection] = useState(readSectionFromHash)
   const [isAddAssetDrawerOpen, setIsAddAssetDrawerOpen] = useState(false)
@@ -63,21 +62,25 @@ export default function AppLayout() {
   }
 
   return (
-    <Layout className='app-shell' data-theme={dashboardThemeName}>
+    <Layout className='app-shell' data-theme={themeName}>
       <AppHeader
         isDrawerOpen={isAddAssetDrawerOpen}
         onCloseDrawer={() => setIsAddAssetDrawerOpen(false)}
         onOpenDrawer={() => setIsAddAssetDrawerOpen(true)}
+        setThemeName={setThemeName}
+        themeName={themeName}
       />
       <Layout className='app-body'>
         <AppSider
           currentSection={currentSection}
           onNavigate={handleNavigate}
+          setThemeName={setThemeName}
+          themeName={themeName}
         />
         <AppContent
           currentSection={currentSection}
           onNavigate={handleNavigate}
-          themeName={dashboardThemeName}
+          themeName={themeName}
         />
       </Layout>
     </Layout>

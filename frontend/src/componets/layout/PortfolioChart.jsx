@@ -92,7 +92,7 @@ export default function PortfolioChart({ compact = false, onNavigate, themeName 
   }, [themeName])
 
   const chartColors =
-    chartColorPalettes[themeName] ?? chartColorPalettes['dark-modern']
+    chartColorPalettes[themeName] ?? chartColorPalettes['premium-dark']
 
   const portfolioBalance = useMemo(
     () =>

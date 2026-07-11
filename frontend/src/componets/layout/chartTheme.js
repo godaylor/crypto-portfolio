@@ -1,5 +1,6 @@
 export const chartColorPalettes = {
-  'dark-modern': ['#f59e0b', '#8b5cf6', '#3b82f6', '#22d3ee', '#94a3b8'],
+  'premium-dark': ['#d99a3d', '#7890c2', '#4c78bd', '#45a783', '#8d78ad'],
+  'apple-light': ['#b77b2c', '#6b7fa8', '#3569b5', '#277d60', '#756390'],
 }
 
 export const defaultThemeValues = {
