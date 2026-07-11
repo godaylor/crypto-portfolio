@@ -112,6 +112,7 @@ function useMeasuredChartFrame() {
 }
 
 export default function PortfolioPerformanceChart({
+  compact = false,
   portfolioBalance,
   portfolioDailyChange,
   portfolioProfit,
@@ -259,13 +260,17 @@ export default function PortfolioPerformanceChart({
   )
 
   return (
-    <Card className='dashboard-card performance-card'>
+    <Card
+      className={`dashboard-card performance-card${compact ? ' is-compact' : ''}`}
+    >
       <div className='card-section-heading performance-card-header'>
         <div>
           <Typography.Title level={4}>Динамика</Typography.Title>
 
           <Typography.Text>
-            Демо-график стоимости на основе текущего баланса
+            {compact
+              ? 'Краткая динамика стоимости портфеля'
+              : 'Демо-график стоимости на основе текущего баланса'}
           </Typography.Text>
         </div>
 
@@ -296,7 +301,8 @@ export default function PortfolioPerformanceChart({
         )}
       </div>
 
-      <div className='performance-stat-row'>
+      {!compact && (
+        <div className='performance-stat-row'>
         <div>
           <span>Максимум</span>
           <strong>{formatCurrency(highValue)}</strong>
@@ -327,7 +333,8 @@ export default function PortfolioPerformanceChart({
             {formatPercent(portfolioProfitPercent)}%
           </strong>
         </div>
-      </div>
+        </div>
+      )}
     </Card>
   )
 }
