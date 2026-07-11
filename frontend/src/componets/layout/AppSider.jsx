@@ -4,9 +4,7 @@ import {
   GlobalOutlined,
   HomeOutlined,
   LineChartOutlined,
-  MenuFoldOutlined,
   MenuOutlined,
-  MenuUnfoldOutlined,
   SettingOutlined,
   SwapOutlined,
   WalletOutlined,
@@ -200,13 +198,7 @@ export default function AppSider({
     setIsSiderCollapsed((currentValue) => !currentValue)
   }
 
-  const toggleIcon = isMobileSider ? (
-    <CloseOutlined />
-  ) : isSiderCollapsed ? (
-    <MenuUnfoldOutlined />
-  ) : (
-    <MenuFoldOutlined />
-  )
+  const toggleIcon = isMobileSider ? <CloseOutlined /> : <MenuOutlined />
 
   const profitStatus = portfolioProfit >= 0 ? 'positive' : 'negative'
 

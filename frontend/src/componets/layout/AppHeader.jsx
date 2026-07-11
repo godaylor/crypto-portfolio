@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   SearchOutlined,
   UserOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
 import {
   Avatar,
@@ -182,7 +183,7 @@ export default function AppHeader({
   const addAssetDrawerTitle = (
     <Flex className='add-coin-drawer-title' align='center' gap={12}>
       <span className='add-coin-drawer-title-icon'>
-        <PlusOutlined />
+        <WalletOutlined />
       </span>
 
       <Space direction='vertical' size={1}>
@@ -321,8 +322,6 @@ export default function AppHeader({
           themeName={themeName}
           setThemeName={setThemeName}
         />
-
-        <span className='shortcut-hint'>/</span>
 
         <Popover
           arrow={false}

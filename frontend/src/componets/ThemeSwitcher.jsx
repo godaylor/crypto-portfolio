@@ -4,7 +4,7 @@ import {
   CloudOutlined,
   CodeOutlined,
   ExperimentOutlined,
-  MessageOutlined,
+  AlignLeftOutlined,
   MoonOutlined,
   SunOutlined,
 } from '@ant-design/icons'
@@ -17,7 +17,7 @@ const themeIcons = {
   'apple-light': <SunOutlined />,
   'blue-fintech': <BankOutlined />,
   'dark-glass': <ExperimentOutlined />,
-  'chatgpt-dark': <MessageOutlined />,
+  'chatgpt-dark': <AlignLeftOutlined />,
   'mocha-code': <CodeOutlined />,
   'ios-glass': <CloudOutlined />,
 }
