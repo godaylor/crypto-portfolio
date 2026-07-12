@@ -1,7 +1,6 @@
 import {
   BarChartOutlined,
   CloseOutlined,
-  GlobalOutlined,
   HomeOutlined,
   LineChartOutlined,
   MenuOutlined,
@@ -63,7 +62,7 @@ function formatPercent(value) {
   }).format(value)
 }
 
-const RESPONSIVE_SIDER_QUERY = '(max-width: 1150px)'
+const RESPONSIVE_SIDER_QUERY = '(max-width: 1320px)'
 const MOBILE_SIDER_QUERY = '(max-width: 720px)'
 
 function isResponsiveSiderViewport() {
@@ -332,26 +331,6 @@ export default function AppSider({
         </div>
 
         <div className='sider-bottom-area'>
-          <div className='sider-profile-card'>
-            <Avatar className='sider-profile-avatar'>M</Avatar>
-            <div className='sider-profile-copy'>
-              <Typography.Text strong>Портфель Макса</Typography.Text>
-              <Typography.Text>Демо-пространство</Typography.Text>
-              <span className='sider-profile-status'>
-                <span aria-hidden='true' />
-                Синхронизировано
-              </span>
-            </div>
-          </div>
-
-          <div className='market-status-card'>
-            <GlobalOutlined />
-            <div>
-              <Typography.Text>Статус рынков</Typography.Text>
-              <strong>Демо-данные активны</strong>
-            </div>
-          </div>
-
           <ThemeSwitcher
             className='sider-theme-switcher'
             themeName={themeName}

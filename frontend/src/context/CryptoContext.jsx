@@ -12,6 +12,7 @@ const CryptoContext = createContext({
   loading: false,
   addCoinToPortfolio: () => {},
   removeCoinFromPortfolio: () => {},
+  resetDemoData: () => {},
 })
 
 function getPortfolioEntryId(portfolioCoin, index) {
@@ -68,26 +69,20 @@ export function CryptoContextProvider({ children }) {
     })
   }
 
+  async function resetDemoData() {
+    setLoading(true)
+
+    const fetchedPortfolio = await fetchUserPortfolio()
+    const fetchedMarketCoins = await fetchMarketCoins()
+
+    setUserPortfolio(preparePortfolio(fetchedPortfolio, fetchedMarketCoins))
+    setMarketCoins(fetchedMarketCoins)
+    setLoading(false)
+  }
+
   // Load demo data on the first application render.
   useEffect(() => {
-    async function loadInitialData() {
-      setLoading(true)
-
-      const fetchedPortfolio = await fetchUserPortfolio()
-      const fetchedMarketCoins = await fetchMarketCoins()
-
-      setUserPortfolio(
-        preparePortfolio(
-          fetchedPortfolio,
-          fetchedMarketCoins
-        )
-      )
-
-      setMarketCoins(fetchedMarketCoins)
-      setLoading(false)
-    }
-
-    loadInitialData()
+    resetDemoData()
   }, [])
 
   // Add a new purchase to the current portfolio state.
@@ -124,6 +119,7 @@ export function CryptoContextProvider({ children }) {
         userPortfolio,
         addCoinToPortfolio,
         removeCoinFromPortfolio,
+        resetDemoData,
       }}
     >
       {children}

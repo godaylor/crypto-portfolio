@@ -10,6 +10,7 @@ import BrandMark, {
 
 export default function BrandLockup({
   className = '',
+  onClick,
   reviewable = true,
   variant: controlledVariant,
 }) {
@@ -21,6 +22,7 @@ export default function BrandLockup({
     <button
       className={`brand-lockup ${className}`.trim()}
       type='button'
+      onClick={reviewable ? undefined : onClick}
       aria-label={
         reviewable
           ? 'Криптопортфель — открыть варианты логотипа'

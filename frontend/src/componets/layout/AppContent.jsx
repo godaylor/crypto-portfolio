@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BankOutlined,
-  ClockCircleOutlined,
   DatabaseOutlined,
   DeleteOutlined,
   FireOutlined,
@@ -26,10 +25,30 @@ import { Button, Card, Flex, Layout, Popconfirm, Tooltip, Typography } from 'ant
 import { useCrypto } from '../../context/CryptoContext'
 
 import AssetsTable from './AssetsTable'
+import BrandLockup from './BrandLockup'
 import PortfolioChart from './PortfolioChart'
 import PortfolioPerformanceChart from './PortfolioPerformanceChart'
+import ThemeSwitcher from '../ThemeSwitcher'
 
 const stableCoinSymbols = new Set(['USDT', 'USDC', 'DAI'])
+const SETTINGS_STORAGE_KEY = 'crypto-portfolio-preferences'
+
+const defaultPreferences = {
+  baseCurrency: 'USD',
+  language: 'ru',
+  numberFormat: 'ru-RU',
+}
+
+function readStoredPreferences() {
+  try {
+    return {
+      ...defaultPreferences,
+      ...JSON.parse(window.localStorage.getItem(SETTINGS_STORAGE_KEY) ?? '{}'),
+    }
+  } catch {
+    return defaultPreferences
+  }
+}
 
 function getValueStatus(value) {
   if (value > 0) {
@@ -599,11 +618,6 @@ function DashboardView({
                 <strong>{snapshot.bestAsset?.name ?? 'Нет данных'}</strong>
               </div>
               <div className='hero-module'>
-                <ClockCircleOutlined />
-                <span>Обновлено</span>
-                <strong>Демо-данные</strong>
-              </div>
-              <div className='hero-module'>
                 <SafetyCertificateOutlined />
                 <span>Оценка риска</span>
                 <strong>{snapshot.riskScore}/100</strong>
@@ -687,14 +701,7 @@ function AssetsPage({ snapshot }) {
       title='Активы'
       description='Позиции, аллокация, цены входа и текущий нереализованный результат.'
     >
-      <div className='summary-tile-grid'>
-        <SummaryTile
-          icon={<WalletOutlined />}
-          label='Текущая стоимость'
-          value={formatCurrency(snapshot.portfolioBalance)}
-          detail='По всем позициям'
-          status='accent'
-        />
+      <div className='summary-tile-grid is-compact-summary'>
         <SummaryTile
           icon={<BankOutlined />}
           label='Инвестировано'
@@ -1024,26 +1031,12 @@ function MarketsPage({ marketCoins, snapshot }) {
       title='Рынки'
       description='Рыночный контекст для отслеживаемых активов без превращения приложения в биржу.'
     >
-      <div className='summary-tile-grid'>
-        <SummaryTile
-          icon={<GlobalOutlined />}
-          label='Активов в ленте'
-          value={`${marketCoins.length}`}
-          detail='Демо-активы'
-          status='accent'
-        />
+      <div className='summary-tile-grid is-compact-summary'>
         <SummaryTile
           icon={<StockOutlined />}
           label='Объем топ-10'
           value={formatCompactCurrency(topVolume)}
           detail='Заявленный объем'
-        />
-        <SummaryTile
-          icon={<WalletOutlined />}
-          label='В портфеле'
-          value={snapshot.sortedHoldings.length}
-          detail='Текущие позиции'
-          status='positive'
         />
         <SummaryTile
           icon={<FireOutlined />}
@@ -1169,7 +1162,7 @@ function TransactionsPage({ snapshot }) {
       title='Операции'
       description='Фронтенд-журнал покупок и их текущего нереализованного результата.'
     >
-      <div className='summary-tile-grid'>
+      <div className='summary-tile-grid is-compact-summary'>
         <SummaryTile
           icon={<SwapOutlined />}
           label='Записи'
@@ -1182,21 +1175,6 @@ function TransactionsPage({ snapshot }) {
           label='Сумма входа'
           value={formatCurrency(snapshot.portfolioInvested)}
           detail='Всего инвестировано'
-        />
-        <SummaryTile
-          icon={<WalletOutlined />}
-          label='Текущая стоимость'
-          value={formatCurrency(snapshot.portfolioBalance)}
-          detail='Рыночная стоимость'
-        />
-        <SummaryTile
-          icon={<LineChartOutlined />}
-          label='Нереализ. P/L'
-          value={formatCurrency(snapshot.portfolioProfit)}
-          detail={`${formatPercent(snapshot.portfolioProfitPercent, {
-            signDisplay: 'exceptZero',
-          })}% ROI`}
-          status={getValueStatus(snapshot.portfolioProfit)}
         />
       </div>
 
@@ -1293,45 +1271,119 @@ function TransactionsPage({ snapshot }) {
   )
 }
 
-function SettingsPage() {
+function SettingsPage({ setThemeName, themeName }) {
+  const { resetDemoData } = useCrypto()
+  const [preferences, setPreferences] = useState(readStoredPreferences)
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify(preferences)
+    )
+  }, [preferences])
+
+  function updatePreference(key, value) {
+    setPreferences((currentPreferences) => ({
+      ...currentPreferences,
+      [key]: value,
+    }))
+  }
+
   return (
     <SectionPage
-      eyebrow='Рабочая область'
+      eyebrow='Предпочтения'
       title='Настройки'
-      description='Фронтенд-настройки и статус демо-продукта.'
+      description='Параметры интерфейса и локальных данных.'
     >
       <div className='settings-grid'>
         <Card className='dashboard-card settings-card'>
           <span className='settings-icon'>
-            <DatabaseOutlined />
+            <SafetyCertificateOutlined />
           </span>
-          <Typography.Title level={4}>Режим демо-данных</Typography.Title>
-          <Typography.Text>
-            Портфель, рынки и операции работают на локальных фронтенд-данных до
-            этапа backend.
-          </Typography.Text>
+          <div>
+            <Typography.Title level={4}>Оформление</Typography.Title>
+            <Typography.Text>Тема сохраняется на этом устройстве.</Typography.Text>
+          </div>
+          <ThemeSwitcher
+            className='settings-theme-switcher'
+            themeName={themeName}
+            setThemeName={setThemeName}
+            placement='bottomLeft'
+            showLabel
+          />
         </Card>
 
         <Card className='dashboard-card settings-card'>
           <span className='settings-icon'>
-            <SafetyCertificateOutlined />
+            <GlobalOutlined />
           </span>
-          <Typography.Title level={4}>Система тем</Typography.Title>
-          <Typography.Text>
-            Светлые и темные варианты используют общие продуктовые токены и
-            сохраняют согласованную иерархию.
-          </Typography.Text>
+          <div>
+            <Typography.Title level={4}>Регион и числа</Typography.Title>
+            <Typography.Text>Предпочтения сохраняются локально.</Typography.Text>
+          </div>
+          <div className='settings-fields'>
+            <label className='settings-field'>
+              <span>Базовая валюта</span>
+              <select
+                value={preferences.baseCurrency}
+                onChange={(event) => updatePreference('baseCurrency', event.target.value)}
+              >
+                <option value='USD'>USD — доллар США</option>
+                <option value='EUR'>EUR — евро</option>
+                <option value='RUB'>RUB — российский рубль</option>
+              </select>
+            </label>
+            <label className='settings-field'>
+              <span>Формат чисел</span>
+              <select
+                value={preferences.numberFormat}
+                onChange={(event) => updatePreference('numberFormat', event.target.value)}
+              >
+                <option value='ru-RU'>12 345,67</option>
+                <option value='en-US'>12,345.67</option>
+              </select>
+            </label>
+            <label className='settings-field'>
+              <span>Язык интерфейса</span>
+              <select
+                value={preferences.language}
+                onChange={(event) => updatePreference('language', event.target.value)}
+              >
+                <option value='ru'>Русский</option>
+                <option value='en'>English — placeholder</option>
+              </select>
+            </label>
+          </div>
         </Card>
 
         <Card className='dashboard-card settings-card'>
           <span className='settings-icon'>
             <TableOutlined />
           </span>
-          <Typography.Title level={4}>Разделы продукта</Typography.Title>
-          <Typography.Text>
-            Обзор, Активы, Аналитика, Рынки и Операции работают как активные
-            фронтенд-разделы.
-          </Typography.Text>
+          <div>
+            <Typography.Title level={4}>Brand Lab</Typography.Title>
+            <Typography.Text>Внутренняя проверка существующих вариантов логотипа.</Typography.Text>
+          </div>
+          <BrandLockup className='settings-brand-lab' />
+        </Card>
+
+        <Card className='dashboard-card settings-card'>
+          <span className='settings-icon'>
+            <DatabaseOutlined />
+          </span>
+          <div>
+            <Typography.Title level={4}>Локальные данные</Typography.Title>
+            <Typography.Text>Верните исходный демонстрационный портфель.</Typography.Text>
+          </div>
+          <Popconfirm
+            title='Сбросить локальные данные?'
+            description='Добавленные и удаленные позиции будут восстановлены.'
+            okText='Сбросить'
+            cancelText='Отмена'
+            onConfirm={resetDemoData}
+          >
+            <Button danger>Сбросить демо-данные</Button>
+          </Popconfirm>
         </Card>
       </div>
     </SectionPage>
@@ -1341,6 +1393,7 @@ function SettingsPage() {
 export default function AppContent({
   currentSection,
   onNavigate,
+  setThemeName,
   themeName,
 }) {
   const { userPortfolio, marketCoins } = useCrypto()
@@ -1374,7 +1427,7 @@ export default function AppContent({
       />
     ),
     transactions: <TransactionsPage snapshot={snapshot} />,
-    settings: <SettingsPage />,
+    settings: <SettingsPage setThemeName={setThemeName} themeName={themeName} />,
   }
 
   return (

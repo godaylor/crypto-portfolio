@@ -1,25 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 
 import {
-  BellOutlined,
   CheckCircleOutlined,
   CloseOutlined,
-  LoginOutlined,
-  LogoutOutlined,
   PlusOutlined,
   SearchOutlined,
-  UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons'
 import {
-  Avatar,
-  Badge,
   Button,
   Drawer,
   Flex,
   Layout,
   Modal,
-  Popover,
   Select,
   Space,
   Typography,
@@ -35,6 +28,7 @@ import BrandLockup from './BrandLockup'
 export default function AppHeader({
   isDrawerOpen,
   onCloseDrawer,
+  onNavigate,
   onOpenDrawer,
   setThemeName,
   themeName,
@@ -51,24 +45,6 @@ export default function AppHeader({
   const [searchValue, setSearchValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [successNotice, setSuccessNotice] = useState(null)
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const [isAccountOpen, setIsAccountOpen] = useState(false)
-  const [isMockSignedIn, setIsMockSignedIn] = useState(true)
-
-  const notifications = [
-    {
-      title: 'BTC выше целевого уровня',
-      detail: 'Цена Bitcoin обновила локальный максимум в демо-ленте.',
-    },
-    {
-      title: 'Портфель пересчитан',
-      detail: 'Доходность и аллокация обновлены после последних операций.',
-    },
-    {
-      title: 'Риск в норме',
-      detail: 'Концентрация крупнейшей позиции остается в рабочем диапазоне.',
-    },
-  ]
 
   useEffect(() => {
     function handleScroll() {
@@ -146,8 +122,6 @@ export default function AppHeader({
   }
 
   function handleOpenDrawer() {
-    setIsNotificationsOpen(false)
-    setIsAccountOpen(false)
     onOpenDrawer()
   }
 
@@ -187,7 +161,7 @@ export default function AppHeader({
       </span>
 
       <Space direction='vertical' size={1}>
-        <Typography.Text strong>Добавить актив</Typography.Text>
+        <Typography.Text strong>Новая покупка</Typography.Text>
         <Typography.Text type='secondary'>
           Запишите новую покупку в портфель
         </Typography.Text>
@@ -195,77 +169,16 @@ export default function AppHeader({
     </Flex>
   )
 
-  const notificationsPanel = (
-    <div className='header-popover-panel notifications-panel'>
-      <div className='header-popover-title'>
-        <Typography.Text strong>Уведомления</Typography.Text>
-        <span>{notifications.length}</span>
-      </div>
-
-      <div className='notification-list'>
-        {notifications.map((notification) => (
-          <div className='notification-row' key={notification.title}>
-            <span className='notification-dot' aria-hidden='true' />
-            <div>
-              <Typography.Text strong>{notification.title}</Typography.Text>
-              <Typography.Text type='secondary'>
-                {notification.detail}
-              </Typography.Text>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <Button
-        block
-        type='text'
-        onClick={() => setIsNotificationsOpen(false)}
-      >
-        Закрыть
-      </Button>
-    </div>
-  )
-
-  const accountPanel = (
-    <div className='header-popover-panel account-panel'>
-      <div className='account-panel-head'>
-        <Avatar className='header-user-avatar'>
-          {isMockSignedIn ? 'M' : <UserOutlined />}
-        </Avatar>
-        <div>
-          <Typography.Text strong>
-            {isMockSignedIn ? 'Макс' : 'Гость'}
-          </Typography.Text>
-          <Typography.Text type='secondary'>
-            {isMockSignedIn ? 'Демо-аккаунт Pro' : 'Демо-вход выключен'}
-          </Typography.Text>
-        </div>
-      </div>
-
-      <div className='account-panel-meta'>
-        <span>Статус</span>
-        <strong>{isMockSignedIn ? 'Активен' : 'Гость'}</strong>
-      </div>
-
-      <Button
-        block
-        icon={isMockSignedIn ? <LogoutOutlined /> : <LoginOutlined />}
-        type={isMockSignedIn ? 'default' : 'primary'}
-        onClick={() => {
-          setIsMockSignedIn((currentValue) => !currentValue)
-          setIsAccountOpen(false)
-        }}
-      >
-        {isMockSignedIn ? 'Выйти из демо' : 'Войти в демо'}
-      </Button>
-    </div>
-  )
-
   return (
-    <Layout.Header
-      className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
-    >
-      <BrandLockup className='header-brand' />
+    <>
+      <Layout.Header
+        className={isHeaderCompact ? 'app-header is-compact' : 'app-header'}
+      >
+      <BrandLockup
+        className='header-brand'
+        reviewable={false}
+        onClick={() => onNavigate('dashboard')}
+      />
 
       <Select
         key={searchResetKey}
@@ -323,76 +236,23 @@ export default function AppHeader({
           setThemeName={setThemeName}
         />
 
-        <Popover
-          arrow={false}
-          content={notificationsPanel}
-          open={isNotificationsOpen}
-          overlayClassName='header-popover'
-          placement='bottomRight'
-          trigger='click'
-          onOpenChange={(open) => {
-            setIsNotificationsOpen(open)
-            if (open) {
-              setIsAccountOpen(false)
-            }
-          }}
-        >
-          <Badge count={notifications.length} size='small' offset={[-3, 4]}>
-            <Button
-              className='header-icon-button'
-              icon={<BellOutlined />}
-              type='text'
-              aria-label='Уведомления'
-              aria-expanded={isNotificationsOpen}
-            />
-          </Badge>
-        </Popover>
-
-        <Popover
-          arrow={false}
-          content={accountPanel}
-          open={isAccountOpen}
-          overlayClassName='header-popover'
-          placement='bottomRight'
-          trigger='click'
-          onOpenChange={(open) => {
-            setIsAccountOpen(open)
-            if (open) {
-              setIsNotificationsOpen(false)
-            }
-          }}
-        >
-          <button
-            className='header-user-chip'
-            type='button'
-            aria-label='Открыть меню аккаунта'
-            aria-expanded={isAccountOpen}
-          >
-            <Avatar className='header-user-avatar'>
-              {isMockSignedIn ? 'M' : <UserOutlined />}
-            </Avatar>
-            <span>
-              <strong>{isMockSignedIn ? 'Макс' : 'Гость'}</strong>
-              <small>{isMockSignedIn ? 'Демо Pro' : 'Войти'}</small>
-            </span>
-          </button>
-        </Popover>
-
         <Button
           className='add-coin-button'
           icon={<PlusOutlined />}
           type='primary'
           onClick={handleOpenDrawer}
         >
-          Добавить актив
+          Новая покупка
         </Button>
       </Flex>
+
+      </Layout.Header>
 
       <Button
         className='mobile-add-coin-button'
         icon={<PlusOutlined />}
         type='primary'
-        aria-label='Добавить актив'
+        aria-label='Новая покупка'
         onClick={handleOpenDrawer}
       />
 
@@ -451,6 +311,6 @@ export default function AppHeader({
       >
         <CoinInfoModal coin={coin} />
       </Modal>
-    </Layout.Header>
+    </>
   )
 }

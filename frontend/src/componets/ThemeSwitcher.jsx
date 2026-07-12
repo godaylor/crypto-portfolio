@@ -22,10 +22,19 @@ const themeIcons = {
   'ios-glass': <CloudOutlined />,
 }
 
-const themeOptions = Object.entries(appThemes).map(([key, theme]) => ({
+const publicThemeKeys = [
+  'premium-dark',
+  'apple-light',
+  'dark-glass',
+  'chatgpt-dark',
+  'mocha-code',
+  'ios-glass',
+]
+
+const themeOptions = publicThemeKeys.map((key) => ({
   key,
   icon: themeIcons[key],
-  ...theme,
+  ...appThemes[key],
 }))
 
 export default function ThemeSwitcher({

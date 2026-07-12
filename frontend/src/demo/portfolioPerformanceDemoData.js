@@ -1,7 +1,7 @@
 export const performanceRangeOptions = [
-  { label: '1Д', value: '1d' },
-  { label: '7Д', value: '7d' },
-  { label: '30Д', value: '30d' },
+  { label: '1 д', value: '1d' },
+  { label: '7 д', value: '7d' },
+  { label: '30 д', value: '30d' },
   { label: 'Все', value: 'all' },
 ]
 

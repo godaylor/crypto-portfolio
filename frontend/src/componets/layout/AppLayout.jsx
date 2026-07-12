@@ -67,6 +67,7 @@ export default function AppLayout({ themeName, setThemeName }) {
         isDrawerOpen={isAddAssetDrawerOpen}
         onCloseDrawer={() => setIsAddAssetDrawerOpen(false)}
         onOpenDrawer={() => setIsAddAssetDrawerOpen(true)}
+        onNavigate={handleNavigate}
         setThemeName={setThemeName}
         themeName={themeName}
       />
@@ -80,6 +81,7 @@ export default function AppLayout({ themeName, setThemeName }) {
         <AppContent
           currentSection={currentSection}
           onNavigate={handleNavigate}
+          setThemeName={setThemeName}
           themeName={themeName}
         />
       </Layout>
