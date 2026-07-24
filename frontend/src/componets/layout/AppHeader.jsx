@@ -31,6 +31,7 @@ export default function AppHeader({
   onNavigate,
   onOpenDrawer,
   setThemeName,
+  shellVariant = 'default',
   themeName,
 }) {
   const { marketCoins } = useCrypto()
@@ -177,7 +178,10 @@ export default function AppHeader({
       <BrandLockup
         className='header-brand'
         reviewable={false}
-        onClick={() => onNavigate('dashboard')}
+        variant={shellVariant === 'flagship' ? 'vault' : undefined}
+        onClick={() =>
+          onNavigate(shellVariant === 'flagship' ? 'dashboard-v2' : 'dashboard')
+        }
       />
 
       <Select
@@ -186,7 +190,11 @@ export default function AppHeader({
         className='coin-search-select'
         popupClassName='coin-search-dropdown'
         open={isSelectOpen}
-        placeholder='Поиск активов, рынков, токенов...'
+        placeholder={
+          shellVariant === 'flagship'
+            ? 'Поиск активов…'
+            : 'Поиск активов, рынков, токенов…'
+        }
         suffixIcon={<SearchOutlined />}
         searchValue={searchValue}
         showSearch
@@ -220,6 +228,8 @@ export default function AppHeader({
               className='coin-option-icon'
               src={option.data.icon}
               alt={option.data.label}
+              width='22'
+              height='22'
             />
             <span>{option.data.label}</span>
             <Typography.Text type='secondary'>
@@ -242,7 +252,7 @@ export default function AppHeader({
           type='primary'
           onClick={handleOpenDrawer}
         >
-          Новая покупка
+          {shellVariant === 'flagship' ? 'Записать покупку' : 'Новая покупка'}
         </Button>
       </Flex>
 

@@ -72,10 +72,27 @@ function MinimalMonogramMark() {
   )
 }
 
+function VaultSignalMark() {
+  return (
+    <svg className='brand-mark-svg' viewBox='0 0 44 44' focusable='false'>
+      <circle className='brand-vault-orbit' cx='22' cy='22' r='16.5' />
+      <path
+        className='brand-vault-vector'
+        d='m12.8 27.8 7.1-13.1 11.4 5.1-5.4 11.1-13.1-3.1Z'
+      />
+      <path className='brand-vault-signal' d='m19.9 14.7 2.4 7.1 9-2' />
+      <circle className='brand-vault-node' cx='19.9' cy='14.7' r='2.2' />
+      <circle className='brand-vault-node' cx='31.3' cy='19.8' r='1.7' />
+      <circle className='brand-vault-node' cx='25.9' cy='30.9' r='2.5' />
+    </svg>
+  )
+}
+
 const markComponents = {
   geometric: GeometricFintechMark,
   liquid: GlassLiquidMark,
   monogram: MinimalMonogramMark,
+  vault: VaultSignalMark,
 }
 
 export default function BrandMark({

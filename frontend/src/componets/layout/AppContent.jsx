@@ -26,6 +26,8 @@ import { useCrypto } from '../../context/CryptoContext'
 
 import AssetsTable from './AssetsTable'
 import BrandLockup from './BrandLockup'
+import DashboardDesignLab from './DashboardDesignLab'
+import DashboardV2 from './DashboardV2'
 import PortfolioChart from './PortfolioChart'
 import PortfolioPerformanceChart from './PortfolioPerformanceChart'
 import ThemeSwitcher from '../ThemeSwitcher'
@@ -1393,6 +1395,7 @@ function SettingsPage({ setThemeName, themeName }) {
 export default function AppContent({
   currentSection,
   onNavigate,
+  onOpenDrawer,
   setThemeName,
   themeName,
 }) {
@@ -1410,6 +1413,34 @@ export default function AppContent({
         snapshot={snapshot}
         themeName={themeName}
         userPortfolio={userPortfolio}
+      />
+    ),
+    'dashboard-aperture': (
+      <DashboardDesignLab
+        concept='dashboard-aperture'
+        snapshot={snapshot}
+        userPortfolio={userPortfolio}
+      />
+    ),
+    'dashboard-ledger': (
+      <DashboardDesignLab
+        concept='dashboard-ledger'
+        snapshot={snapshot}
+        userPortfolio={userPortfolio}
+      />
+    ),
+    'dashboard-orbit': (
+      <DashboardDesignLab
+        concept='dashboard-orbit'
+        snapshot={snapshot}
+        userPortfolio={userPortfolio}
+      />
+    ),
+    'dashboard-v2': (
+      <DashboardV2
+        marketCoins={marketCoins}
+        onOpenDrawer={onOpenDrawer}
+        snapshot={snapshot}
       />
     ),
     assets: <AssetsPage snapshot={snapshot} />,

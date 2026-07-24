@@ -83,6 +83,7 @@ export default function AppSider({
   currentSection,
   onNavigate,
   setThemeName,
+  shellVariant = 'default',
   themeName,
 }) {
   const { userPortfolio, marketCoins } = useCrypto()
@@ -91,6 +92,7 @@ export default function AppSider({
   const [isSiderCollapsed, setIsSiderCollapsed] = useState(
     isResponsiveSiderViewport
   )
+  const isFlagshipShell = shellVariant === 'flagship'
 
   const portfolioBalance = useMemo(
     () =>
@@ -227,7 +229,7 @@ export default function AppSider({
         className={
           isMobileSider ? 'portfolio-sider is-mobile-drawer' : 'portfolio-sider'
         }
-        width={264}
+        width={isFlagshipShell ? 224 : 264}
         collapsed={isSiderCollapsed}
         collapsedWidth={isMobileSider ? 0 : 72}
         trigger={null}
@@ -253,15 +255,19 @@ export default function AppSider({
         <div className='sider-scroll-region' ref={scrollRegionRef}>
           <Space className='sider-navigation' direction='vertical' size={8}>
             {navigationItems.map((navigationItem) => {
+              const destination =
+                isFlagshipShell && navigationItem.key === 'dashboard'
+                  ? 'dashboard-v2'
+                  : navigationItem.key
               const navigationNode = (
                 <button
                   className={
-                    navigationItem.key === currentSection
+                    destination === currentSection
                       ? 'sider-navigation-item is-active'
                       : 'sider-navigation-item'
                   }
                   type='button'
-                  onClick={() => handleNavigationClick(navigationItem.key)}
+                  onClick={() => handleNavigationClick(destination)}
                 >
                   {navigationItem.icon}
                   <Typography.Text>{navigationItem.label}</Typography.Text>
@@ -284,50 +290,60 @@ export default function AppSider({
             })}
           </Space>
 
-          <div className='portfolio-sider-summary'>
-            <Typography.Text>Стоимость портфеля</Typography.Text>
-            <Typography.Title level={4}>
-              {formatCurrency(portfolioBalance)}
-            </Typography.Title>
-            <span className={`status-pill is-${profitStatus}`}>
-              {formatPercent(portfolioProfitPercent)}% доходность
-            </span>
-          </div>
-
-          <div className='sider-section-heading'>
-            <Typography.Text>Крупные позиции</Typography.Text>
-            <span>{watchList.length}</span>
-          </div>
-
-          <Space className='sider-coin-list' direction='vertical' size={8}>
-            {watchList.map((portfolioCoin, index) => (
-              <div
-                className='portfolio-coin-row'
-                key={`${portfolioCoin.id}-${index}`}
-              >
-                <Avatar
-                  src={portfolioCoin.icon}
-                  alt={portfolioCoin.name}
-                  size={30}
-                >
-                  {portfolioCoin.symbol}
-                </Avatar>
-
-                <div className='portfolio-coin-meta'>
-                  <Typography.Text>{portfolioCoin.name}</Typography.Text>
-                  <Typography.Text>{portfolioCoin.symbol}</Typography.Text>
-                </div>
-
-                <div className='portfolio-coin-result'>
-                  <strong>{formatCurrency(portfolioCoin.totalAmount)}</strong>
-                  <span className={portfolioCoin.grow ? 'is-positive' : 'is-negative'}>
-                    {portfolioCoin.grow ? '+' : '-'}
-                    {portfolioCoin.growPercent.toFixed(2)}%
-                  </span>
-                </div>
+          {isFlagshipShell ? (
+            <div className='v2-sider-context'>
+              <span>Private wealth</span>
+              <strong>Личное пространство</strong>
+              <small><i /> Данные синхронизированы</small>
+            </div>
+          ) : (
+            <>
+              <div className='portfolio-sider-summary'>
+                <Typography.Text>Стоимость портфеля</Typography.Text>
+                <Typography.Title level={4}>
+                  {formatCurrency(portfolioBalance)}
+                </Typography.Title>
+                <span className={`status-pill is-${profitStatus}`}>
+                  {formatPercent(portfolioProfitPercent)}% доходность
+                </span>
               </div>
-            ))}
-          </Space>
+
+              <div className='sider-section-heading'>
+                <Typography.Text>Крупные позиции</Typography.Text>
+                <span>{watchList.length}</span>
+              </div>
+
+              <Space className='sider-coin-list' direction='vertical' size={8}>
+                {watchList.map((portfolioCoin, index) => (
+                  <div
+                    className='portfolio-coin-row'
+                    key={`${portfolioCoin.id}-${index}`}
+                  >
+                    <Avatar
+                      src={portfolioCoin.icon}
+                      alt={portfolioCoin.name}
+                      size={30}
+                    >
+                      {portfolioCoin.symbol}
+                    </Avatar>
+
+                    <div className='portfolio-coin-meta'>
+                      <Typography.Text>{portfolioCoin.name}</Typography.Text>
+                      <Typography.Text>{portfolioCoin.symbol}</Typography.Text>
+                    </div>
+
+                    <div className='portfolio-coin-result'>
+                      <strong>{formatCurrency(portfolioCoin.totalAmount)}</strong>
+                      <span className={portfolioCoin.grow ? 'is-positive' : 'is-negative'}>
+                        {portfolioCoin.grow ? '+' : '-'}
+                        {portfolioCoin.growPercent.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </Space>
+            </>
+          )}
         </div>
 
         <div className='sider-bottom-area'>

@@ -9,6 +9,10 @@ import AppSider from './AppSider'
 
 const availableSections = new Set([
   'dashboard',
+  'dashboard-aperture',
+  'dashboard-ledger',
+  'dashboard-orbit',
+  'dashboard-v2',
   'assets',
   'analytics',
   'markets',
@@ -61,14 +65,20 @@ export default function AppLayout({ themeName, setThemeName }) {
     return <Spin fullscreen />
   }
 
+  const shellVariant = currentSection === 'dashboard-v2' ? 'flagship' : 'default'
+
   return (
-    <Layout className='app-shell' data-theme={themeName}>
+    <Layout
+      className={`app-shell is-${shellVariant}-shell`}
+      data-theme={themeName}
+    >
       <AppHeader
         isDrawerOpen={isAddAssetDrawerOpen}
         onCloseDrawer={() => setIsAddAssetDrawerOpen(false)}
         onOpenDrawer={() => setIsAddAssetDrawerOpen(true)}
         onNavigate={handleNavigate}
         setThemeName={setThemeName}
+        shellVariant={shellVariant}
         themeName={themeName}
       />
       <Layout className='app-body'>
@@ -76,11 +86,13 @@ export default function AppLayout({ themeName, setThemeName }) {
           currentSection={currentSection}
           onNavigate={handleNavigate}
           setThemeName={setThemeName}
+          shellVariant={shellVariant}
           themeName={themeName}
         />
         <AppContent
           currentSection={currentSection}
           onNavigate={handleNavigate}
+          onOpenDrawer={() => setIsAddAssetDrawerOpen(true)}
           setThemeName={setThemeName}
           themeName={themeName}
         />
