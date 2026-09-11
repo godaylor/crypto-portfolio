@@ -1,6 +1,7 @@
 node_modules
 frontend/dist/
 frontend/release/
+/dist/
 frontend/test-results/
 frontend/playwright-report/
 .env

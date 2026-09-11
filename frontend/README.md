@@ -8,5 +8,5 @@ npm ci
 npm run dev
 ```
 
-Build output: `release/`. Entry: `src/main.tsx`; historical `.jsx` files are not
+Build output: `../dist/`. Entry: `src/main.tsx`; historical `.jsx` files are not
 part of the production build. Node 22 is used in CI.

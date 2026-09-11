@@ -105,7 +105,7 @@ persistence; production smoke tests use real providers.
 
 ## Deployment
 
-`npm run build` emits `frontend/release/`. Upload that directory to an HTTPS
+`npm run build` emits `dist/` at the repository root. Upload that directory to an HTTPS
 static host; relative asset paths support root and subpath hosting. No SPA
 rewrite is needed because navigation uses URL fragments.
 
