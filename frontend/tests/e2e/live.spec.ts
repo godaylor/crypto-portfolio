@@ -3,6 +3,13 @@ import fs from 'node:fs'
 test('real market smoke and portfolio screenshots', async ({ page }) => {
   test.setTimeout(90000)
   test.skip(!process.env.FOLIO_LIVE_QA, 'Opt-in live provider check')
+  if (process.env.FOLIO_PRIVATE_QA_TOKEN && process.env.FOLIO_TEST_URL) {
+    const origin = new URL(process.env.FOLIO_TEST_URL).origin
+    await page.route(`${origin}/**`, route => route.continue({ headers: {
+      ...route.request().headers(),
+      'OAI-Sites-Authorization': `Bearer ${process.env.FOLIO_PRIVATE_QA_TOKEN}`,
+    } }))
+  }
   fs.mkdirSync('../docs/screenshots', { recursive: true })
   const errors: string[] = []
   page.on('pageerror', e => errors.push(e.message))

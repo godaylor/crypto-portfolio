@@ -1,6 +1,6 @@
 # Screenshots
 
-Captured from the working application using real provider responses and three
+Captured from the deployed HTTPS application using real provider responses and three
 explicit QA purchases. No user holdings, fabricated chart history or mock
 market quotes are included. The application starts empty for new visitors.
 
@@ -12,5 +12,5 @@ market quotes are included. The application starts empty for new visitors.
 - `purchase-form-mobile-ru.png`: Russian mobile purchase form.
 
 Reproduce with `FOLIO_LIVE_QA=1 npm run e2e -- live.spec.ts` while a preview
-is running. These captures are QA artifacts, not proof of public deployment;
-see PORTFOLIO_HANDOFF.md for production verification.
+is running. Set FOLIO_TEST_URL to test a hosted release. These captures verify
+the private deployed build, not anonymous public access; see PORTFOLIO_HANDOFF.md.

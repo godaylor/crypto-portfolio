@@ -6,7 +6,7 @@ export default defineConfig({
   timeout: 30000,
   use: {
     baseURL: process.env.FOLIO_TEST_URL || "http://127.0.0.1:5188",
-    trace: "retain-on-failure",
+    trace: process.env.FOLIO_PRIVATE_QA_TOKEN ? "off" : "retain-on-failure",
     ...devices["Desktop Chrome"],
     launchOptions:
       process.platform === "win32"

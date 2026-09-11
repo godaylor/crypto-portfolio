@@ -7,6 +7,9 @@ hold, what they paid, and what it is worth now.
 
 **Repository:** https://github.com/godaylor/crypto-portfolio
 
+**Hosted app:** https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
+(currently owner-only; public access approval pending).
+
 ![Folio portfolio overview](docs/screenshots/portfolio-desktop.png)
 
 [Mobile RU](docs/screenshots/portfolio-mobile-ru.png) · [Purchase ledger](docs/screenshots/purchases-desktop.png) · [Market](docs/screenshots/market-desktop.png)
