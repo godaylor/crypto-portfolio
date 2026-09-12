@@ -23,9 +23,11 @@ the original tutorial/source license. The original snapshot contained no
 project LICENSE or identifiable copyright/NOTICE headers in the inspected source.
 No unsupported upstream attribution has been invented.
 
-Most superseded files were removed from the current tree while remaining in
-Git history. The following files remain untouched because local permission
-review rejected their deletion; they are NOT in the production module graph:
+All superseded runtime files were removed from the current tree after verifying
+that the production entry point loads `main.tsx` and `App.tsx`, the TypeScript
+configuration includes only `.ts` and `.tsx` modules, and no active source
+imports any of the seven historical files. Their last preserved snapshot is
+commit `3d903ccb7ef7ec49fb13cf47e5cab08f7c6f9c02`:
 
 - `frontend/src/App.jsx`
 - `frontend/src/theme.js`
@@ -35,8 +37,10 @@ review rejected their deletion; they are NOT in the production module graph:
 - `frontend/src/componets/layout/DashboardDesignLab.jsx`
 - `frontend/src/componets/layout/DashboardV2.jsx`
 
-Their rights remain unverified. The root MIT license explicitly excludes them
-and historical versions. Do not reuse these files under the new license.
+They can be restored for inspection with
+`git restore --source=3d903cc -- <path>`. Their rights remain unverified. The
+root MIT license explicitly excludes them and historical versions. Do not reuse
+these files under the new license.
 No history was rewritten or force-pushed; pre-existing branches are preserved.
 
 ## Media and dependencies

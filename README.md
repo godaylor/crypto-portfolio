@@ -8,7 +8,7 @@ hold, what they paid, and what it is worth now.
 **Repository:** https://github.com/godaylor/crypto-portfolio
 
 **Hosted app:** https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
-(currently owner-only; public access approval pending).
+(public; no account required).
 
 ![Folio portfolio overview](docs/screenshots/portfolio-desktop.png)
 
@@ -138,6 +138,6 @@ persistence and backup workflow, localization, tests and deployment work, with
 AI assistance. React, tooling and fonts are credited separately.
 
 MIT covers the new implementation only. Historical source rights are not
-inferred from Git authorship. Seven preserved historical files are excluded
-from production and the new license; see [PROVENANCE.md](PROVENANCE.md) and
+inferred from Git authorship. Seven removed historical files remain excluded
+from the new license and recoverable from Git history; see [PROVENANCE.md](PROVENANCE.md) and
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

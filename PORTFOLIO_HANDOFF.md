@@ -43,19 +43,17 @@ No cloud sync, historical backfill, sales accounting or trading is claimed.
 
 - GitHub: https://github.com/godaylor/crypto-portfolio
 - Hosted URL: https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
-- Public access: pending explicit confirmation requested after automatic
-  approval review did not recognize authorization in the attached task.
-- Hosted release: Sites version 1, deployed successfully on 2026-09-11.
-  Source commit: `4a48bb0a138b046643b5efdd9e60f20a09f8d7a7`.
+- Public access: enabled; no account is required.
+- Hosted release: Sites production release, publicly reachable and verified on
+  2026-09-12. The exact version and source commit are recorded in RELEASE_STATUS.md.
 - Production verification: real HTTPS browser smoke passed using existing
   owner-only test access. Real quotes, three purchase lots, calculated holdings,
   reload persistence, purchases/market views, RU mobile layout and zero page
   errors verified. Screenshots below were recaptured on this hosted build.
-- Anonymous access check: HTTP 401, as expected for owner-only access. A public
-  visitor scenario has NOT passed and must be rerun after public access approval.
-- GitHub release: blocked by automatic approval review on the QA screenshot
-  upload. The personal origin remains unchanged at the original main commit;
-  local release commits and the private Sites source repository preserve all work.
+- Anonymous access check: HTTP 200 without authorization headers, cookies or a
+  sign-in session. The public browser scenario is rerun after each production publish.
+- GitHub release: source, documentation, licensing files and six sanitized QA
+  screenshots are published in `godaylor/crypto-portfolio`.
 - Local verification: typecheck, lint, 9 domain/provider tests, browser CRUD,
   persistence, backups, offline/error paths, mobile RU, and axe contrast checks.
 - Dependency audit after compatible updates: 0 vulnerabilities.
@@ -71,14 +69,13 @@ from that directory. These contain QA purchases and real fetched quotes.
 
 New runtime: MIT. Fonts: SIL OFL 1.1. Runtime dependency notices ship with the
 site. No inherited media or tutorial implementation is in the production graph.
-Seven historical JS/JSX files remain untouched and explicitly excluded from
-the MIT grant because deletion was blocked by local approval review. Their
-rights are unverified. Git history and old branches are preserved.
+Seven historical JS/JSX files were removed after confirming that the production
+module graph does not use them. Their rights are unverified, they remain excluded
+from the MIT grant, and commit `3d903cc` preserves them for recovery.
 See PROVENANCE.md and THIRD_PARTY_NOTICES.md for exact boundaries.
 
 ## Production claims
 
-Private production works for the verified purchase-and-valuation flow above.
-Do not label the project publicly released until anonymous access and browser
-verification are complete. The product supports local-device persistence;
+Public production works for the verified purchase-and-valuation flow above.
+The product supports local-device persistence;
 it does not substitute cloud sync or an imaginary historical chart.
