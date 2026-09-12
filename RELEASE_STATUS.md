@@ -14,16 +14,17 @@
 - Production build succeeds. Main JavaScript is approximately 181 kB raw /
   59 kB gzip, CSS approximately 25 kB raw / 8.5 kB gzip; fonts are self-hosted.
 - npm audit reports zero vulnerabilities.
+- Sites version 2 deployed successfully from source commit
+  `e066a5fa52710015174f057fb68dfeb52de10aa1`.
 - The seven legacy JS/JSX files listed in PROVENANCE.md have no active imports,
   were removed, and remain recoverable from commit `3d903cc`.
 - LICENSE, THIRD_PARTY_NOTICES.md and packaged third-party license texts remain.
 - GitHub contains the release source, CI, documentation and six sanitized QA
   screenshots. The remote workflow result is checked after publication.
 
-The deployed Sites version and source commit are appended here after the final
-production publish. No other PetProjects processes, containers, Docker networks
-or volumes were modified. Local browser QA used a dedicated free port and only
-its own preview process was stopped.
+No other PetProjects processes, containers, Docker networks or volumes were
+modified. Local browser QA used a dedicated free port and only its own preview
+process was stopped.
 
 ## Readiness
 
