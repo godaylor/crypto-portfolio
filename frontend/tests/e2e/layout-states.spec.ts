@@ -1,5 +1,87 @@
 import { test, expect } from "@playwright/test";
 
+test("touch navigation and market purchase on a mobile viewport", async ({
+  browser,
+  browserName,
+}) => {
+  test.skip(
+    browserName === "firefox",
+    "Mobile touch emulation is checked in Chromium and WebKit",
+  );
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  try {
+    await page.addInitScript(() => {
+      localStorage.setItem("folio.language", "en");
+      localStorage.setItem("crypto-portfolio-theme", "dark-glass");
+    });
+    await page.route("https://api.coinbase.com/**", (r) =>
+      r.fulfill({
+        json: {
+          data: {
+            currency: "USD",
+            rates: Object.fromEntries(
+              [
+                "BTC",
+                "ETH",
+                "SOL",
+                "USDC",
+                "XRP",
+                "ADA",
+                "DOGE",
+                "AVAX",
+                "LINK",
+                "DOT",
+                "LTC",
+                "BCH",
+              ].map((s) => [s, "0.01"]),
+            ),
+          },
+        },
+      }),
+    );
+    await page.goto(process.env.FOLIO_TEST_URL || "http://127.0.0.1:5188");
+    await expect(page.locator(".price-status")).toContainText("Coinbase");
+    for (const hash of [
+      "assets",
+      "purchases",
+      "settings",
+      "appearance",
+      "overview",
+      "markets",
+    ])
+      await page.locator(`nav a[href="#${hash}"]`).tap();
+    await page
+      .locator(".market-card")
+      .filter({ hasText: "Ethereum" })
+      .getByRole("button")
+      .tap();
+    await expect(page.getByLabel("Coin", { exact: true })).toHaveValue("ETH");
+    await expect(page.getByLabel("Price per coin · USD")).toHaveValue("100");
+    await page.getByLabel("Quantity", { exact: true }).fill("1,5");
+    await page.getByLabel("Fee · USD").fill("1");
+    await expect(page.locator(".form-total")).toContainText("$151.00");
+    await page
+      .getByRole("button", { name: "Save purchase", exact: true })
+      .tap();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await page.locator('nav a[href="#assets"]').tap();
+    await expect(page.locator("tbody")).toContainText("Ethereum");
+    await page.reload();
+    expect(
+      await page.evaluate(
+        () => JSON.parse(localStorage.getItem("folio.portfolio.v1")!).purchases,
+      ),
+    ).toHaveLength(1);
+  } finally {
+    await context.close();
+  }
+});
+
 for (const count of [0, 1, 2, 24])
   test(`short viewports, keyboard and ${count} purchases`, async ({ page }) => {
     await page.addInitScript(
