@@ -1,5 +1,16 @@
 export const strings = {
   en: {
+    assets: "My assets",
+    assetsHelp:
+      "All holdings, their cost and current indicative value. Manage individual records in Purchases.",
+    appearance: "Appearance",
+    appearanceHelp:
+      "Nine themes for your portfolio. Your selection stays on this device.",
+    quoteHint: "Current quote · USD",
+    manualQuote: "No fresh quote. Enter the actual purchase price manually.",
+    historicalPrice:
+      "This is today’s indicative quote, not a historical purchase price. Changing the date keeps your entered price.",
+    useQuote: "Use current quote",
     overview: "Overview",
     purchases: "Purchases",
     markets: "Market",
@@ -121,8 +132,20 @@ export const strings = {
     backupCount: "Purchases in backup",
   },
   ru: {
+    assets: "Мои активы",
+    assetsHelp:
+      "Все позиции, их стоимость покупки и текущая оценка. Изменить отдельную запись можно в истории покупок.",
+    appearance: "Оформление",
+    appearanceHelp:
+      "Девять тем для вашего портфеля. Выбор сохраняется на этом устройстве.",
+    quoteHint: "Текущая котировка · USD",
+    manualQuote:
+      "Свежей котировки нет. Введите фактическую цену покупки вручную.",
+    historicalPrice:
+      "Это текущая ориентировочная котировка, а не цена покупки в прошлом. Смена даты не изменит введённую цену.",
+    useQuote: "Подставить текущую котировку",
     overview: "Обзор",
-    purchases: "Покупки",
+    purchases: "История покупок",
     markets: "Рынок",
     settings: "Ваши данные",
     portfolio: "Мой портфель",

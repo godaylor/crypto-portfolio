@@ -14,6 +14,13 @@ import {
 } from "./domain";
 import { fetchMarket, marketKey, readMarket } from "./market";
 import { strings, type Language, type Text } from "./strings";
+import {
+  decimal,
+  decimalInput,
+  freshQuote,
+  quoteInput,
+} from "./purchase-input";
+import { Appearance, ThemePicker } from "./themes";
 
 const portfolioKey = "folio.portfolio.v1";
 const money = (value: number | null, language: Language = "en") =>
@@ -56,6 +63,9 @@ function Icon({ name }: { name: string }) {
     overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
     purchases: "M7 3h10v18l-5-3-5 3z M10 7h4 M10 11h4",
     markets: "M3 17l5-7 5 3 8-10 M3 21h18",
+    assets: "M4 5h16v15H4z M4 9h16 M14 13h6 M16 16h1",
+    appearance:
+      "M12 3a9 9 0 1 0 9 9c0-2-3-2-4-1s-4 1-3-2 0-6-2-6z M7 8h.01 M6 13h.01 M10 17h.01",
     settings: "M4 7h16 M4 17h16 M8 4v6 M16 14v6",
     plus: "M12 5v14 M5 12h14",
     refresh: "M20 7a9 9 0 1 0 1 8 M20 2v5h-5",
@@ -104,6 +114,7 @@ function Modal({
     const previous = document.activeElement as HTMLElement;
     const dialog = ref.current!;
     dialog.showModal();
+    dialog.querySelector<HTMLInputElement>('input[name="quantity"]')?.focus();
     return () => {
       dialog.close();
       previous?.focus();
@@ -114,6 +125,28 @@ function Modal({
       ref={ref}
       onCancel={close}
       aria-labelledby="dialog-title"
+      onKeyDown={(e) => {
+        if (e.key !== "Tab") return;
+        const controls = Array.from(
+          e.currentTarget.querySelectorAll<HTMLElement>(
+            "button, input, select, textarea, a[href], [tabindex]",
+          ),
+        ).filter(
+          (el) =>
+            el.tabIndex >= 0 &&
+            !el.hasAttribute("disabled") &&
+            !el.hasAttribute("hidden"),
+        );
+        const first = controls[0],
+          last = controls.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) close();
       }}
@@ -130,6 +163,9 @@ function Modal({
           </button>
         </div>
         {children}
+        <ThemePicker
+          language={document.documentElement.lang === "en" ? "en" : "ru"}
+        />
       </div>
     </dialog>
   );
@@ -141,6 +177,8 @@ function PurchaseForm({
   close,
   t,
   language,
+  market,
+  quoteUnavailable,
 }: {
   purchase?: Purchase;
   symbol?: string;
@@ -148,29 +186,51 @@ function PurchaseForm({
   close: () => void;
   t: Text;
   language: Language;
+  market: Market | null;
+  quoteUnavailable: boolean;
 }) {
+  const [selectedSymbol, setSelectedSymbol] = useState(
+    purchase?.symbol ?? symbol ?? "BTC",
+  );
+  const [purchaseId] = useState(() => purchase?.id ?? crypto.randomUUID());
+  const submitted = useRef(false);
   const [error, setError] = useState("");
-  const [quantity, setQuantity] = useState(String(purchase?.quantity ?? ""));
-  const [price, setPrice] = useState(String(purchase?.price ?? ""));
-  const [fee, setFee] = useState(String(purchase?.fee ?? 0));
+  const [quantity, setQuantity] = useState(
+    purchase ? decimalInput(purchase.quantity) : "",
+  );
+  const [price, setPrice] = useState(() =>
+    purchase
+      ? decimalInput(purchase.price)
+      : quoteInput(
+          symbol ? freshQuote(market, symbol, quoteUnavailable) : null,
+        ),
+  );
+  const [fee, setFee] = useState(decimalInput(purchase?.fee ?? 0));
+  const quote = freshQuote(market, selectedSymbol, quoteUnavailable);
+  const cost = decimal(quantity) * decimal(price) + decimal(fee);
   return (
     <Modal title={purchase ? t.edit : t.add} close={close}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (submitted.current) return;
           const form = new FormData(e.currentTarget);
           try {
             const value = validatePurchase({
-              id: purchase?.id ?? crypto.randomUUID(),
+              id: purchaseId,
               symbol: form.get("symbol"),
-              quantity: Number(quantity),
-              price: Number(price),
-              fee: Number(fee),
+              quantity: decimal(quantity),
+              price: decimal(price),
+              fee: decimal(fee),
               date: form.get("date"),
               note: form.get("note"),
             } as Purchase);
+            submitted.current = true;
             if (save(value)) close();
-            else setError(t.storageError);
+            else {
+              submitted.current = false;
+              setError(t.storageError);
+            }
           } catch {
             setError(t.invalidPurchase);
           }
@@ -180,7 +240,16 @@ function PurchaseForm({
           {t.coin}
           <select
             name="symbol"
-            defaultValue={purchase?.symbol ?? symbol ?? "BTC"}
+            aria-label={t.coin}
+            value={selectedSymbol}
+            onChange={(e) => {
+              setSelectedSymbol(e.target.value);
+              setPrice(
+                quoteInput(
+                  freshQuote(market, e.target.value, quoteUnavailable),
+                ),
+              );
+            }}
           >
             {coins.map(([s, name]) => (
               <option key={s} value={s}>
@@ -194,7 +263,7 @@ function PurchaseForm({
           <input
             autoFocus
             name="quantity"
-            type="number"
+            type="text"
             min="0.000000000001"
             max="1000000000000"
             step="any"
@@ -210,7 +279,7 @@ function PurchaseForm({
             {t.purchasePrice}
             <input
               name="price"
-              type="number"
+              type="text"
               min="0"
               max="1000000000000"
               step="any"
@@ -225,7 +294,7 @@ function PurchaseForm({
             {t.fee}
             <input
               name="fee"
-              type="number"
+              type="text"
               min="0"
               max="1000000000000"
               step="any"
@@ -235,6 +304,19 @@ function PurchaseForm({
               inputMode="decimal"
             />
           </label>
+        </div>
+        <div className="quote-hint" aria-live="polite">
+          <p>
+            {quote === null
+              ? t.manualQuote
+              : `${t.quoteHint}: ${money(quote, language)} · ${market?.source}`}
+          </p>
+          <p>{t.historicalPrice}</p>
+          {quote !== null && (
+            <button type="button" onClick={() => setPrice(quoteInput(quote))}>
+              {t.useQuote}
+            </button>
+          )}
         </div>
         <label>
           {t.date}
@@ -258,7 +340,7 @@ function PurchaseForm({
         <div className="form-total">
           <span>{t.purchaseTotal}</span>
           <strong>
-            {money(Number(quantity) * Number(price) + Number(fee), language)}
+            {money(Number.isFinite(cost) ? cost : null, language)}
           </strong>
         </div>
         {error && (
@@ -345,8 +427,16 @@ function History({
           >
             <defs>
               <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3863dc" stopOpacity=".16" />
-                <stop offset="100%" stopColor="#3863dc" stopOpacity="0" />
+                <stop
+                  offset="0%"
+                  stopColor="var(--chart-line)"
+                  stopOpacity=".16"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--chart-line)"
+                  stopOpacity="0"
+                />
               </linearGradient>
             </defs>
             {[30, 80, 130, 180].map((y) => (
@@ -363,14 +453,14 @@ function History({
             <path
               d={path("cost")}
               fill="none"
-              stroke="#9ba6bb"
+              stroke="var(--chart-cost)"
               strokeWidth="2"
               strokeDasharray="5 5"
             />
             <path
               d={path("value")}
               fill="none"
-              stroke="#3863dc"
+              stroke="var(--chart-line)"
               strokeWidth="3"
             />
             {points.map((s, i) => (
@@ -379,7 +469,7 @@ function History({
                 cx={40 + (i / Math.max(points.length - 1, 1)) * 620}
                 cy={180 - (s.value / max) * 150}
                 r="4"
-                fill="#3863dc"
+                fill="var(--chart-line)"
               >
                 <title>
                   {s.date}: {money(s.value, language)}
@@ -402,7 +492,12 @@ function History({
       {points.length > 0 && (
         <details>
           <summary>{t.historyTable}</summary>
-          <div className="table-scroll">
+          <div
+            className="table-scroll"
+            tabIndex={0}
+            role="region"
+            aria-label={t.history}
+          >
             <table>
               <thead>
                 <tr>
@@ -430,8 +525,16 @@ function History({
     </section>
   );
 }
-type Page = "overview" | "purchases" | "markets" | "settings";
-const pages: Page[] = ["overview", "purchases", "markets", "settings"];
+type Page =
+  "overview" | "assets" | "purchases" | "markets" | "settings" | "appearance";
+const pages: Page[] = [
+  "overview",
+  "assets",
+  "markets",
+  "purchases",
+  "settings",
+  "appearance",
+];
 const readPage = (): Page =>
   pages.includes(location.hash.slice(1) as Page)
     ? (location.hash.slice(1) as Page)
@@ -442,9 +545,9 @@ export default function App() {
   const [storageError, setStorageError] = useState(initial.error);
   const [language, setLanguage] = useState<Language>(() => {
     try {
-      return localStorage.getItem("folio.language") === "ru" ? "ru" : "en";
+      return localStorage.getItem("folio.language") === "en" ? "en" : "ru";
     } catch {
-      return "en";
+      return "ru";
     }
   });
   const t = strings[language];
@@ -588,7 +691,12 @@ export default function App() {
     b.date.localeCompare(a.date),
   );
   const purchaseRows = (list: Purchase[]) => (
-    <div className="table-scroll">
+    <div
+      className="table-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label={t.purchases}
+    >
       <table>
         <thead>
           <tr>
@@ -617,14 +725,20 @@ export default function App() {
               <td>
                 <div className="row-actions">
                   <button
-                    onClick={() => setForm({ purchase: p })}
+                    onClick={(e) => {
+                      e.currentTarget.focus();
+                      setForm({ purchase: p });
+                    }}
                     aria-label={`${t.edit} ${p.symbol}`}
                   >
                     {t.edit}
                   </button>
                   <button
                     className="danger-text"
-                    onClick={() => setDeleting(p)}
+                    onClick={(e) => {
+                      e.currentTarget.focus();
+                      setDeleting(p);
+                    }}
                     aria-label={`${t.remove} ${p.symbol}`}
                   >
                     {t.remove}
@@ -681,7 +795,7 @@ export default function App() {
         <div className="profile">
           <span>G</span>
           <div>
-            <strong>Folio workspace</strong>
+            <strong>Folio</strong>
             <small>USD · {t.local}</small>
           </div>
         </div>
@@ -692,6 +806,7 @@ export default function App() {
             {t.portfolio} <span>/</span> <strong>{t[page]}</strong>
           </span>
           <div className="topbar-actions">
+            <ThemePicker language={language} />
             <span
               className={`price-status ${stale || marketError ? "warn" : ""}`}
             >
@@ -726,12 +841,19 @@ export default function App() {
                     ? t.ledgerHelp
                     : page === "markets"
                       ? t.marketHelp
-                      : t.localHelp}
+                      : page === "assets"
+                        ? t.assetsHelp
+                        : page === "appearance"
+                          ? t.appearanceHelp
+                          : t.localHelp}
               </p>
             </div>
             <button
               className="primary"
-              onClick={() => setForm({})}
+              onClick={(e) => {
+                e.currentTarget.focus();
+                setForm({});
+              }}
               disabled={storageError === "corrupt"}
             >
               <Icon name="plus" />
@@ -823,7 +945,12 @@ export default function App() {
                     <h2>{t.empty}</h2>
                     <p>{t.emptyHelp}</p>
                   </div>
-                  <button onClick={() => setForm({})}>
+                  <button
+                    onClick={(e) => {
+                      e.currentTarget.focus();
+                      setForm({});
+                    }}
+                  >
                     {t.start}
                     <Icon name="arrow" />
                   </button>
@@ -845,7 +972,7 @@ export default function App() {
                     style={{
                       background:
                         totals.value && totals.positions.length
-                          ? `conic-gradient(${totals.positions.map((p, i, all) => `${p.color} ${(all.slice(0, i).reduce((s, c) => s + (c.value ?? 0), 0) / totals.value!) * 100}% ${(all.slice(0, i + 1).reduce((s, c) => s + (c.value ?? 0), 0) / totals.value!) * 100}%`).join(",")})`
+                          ? `conic-gradient(${totals.positions.map((p, i, all) => `${`var(--chart-${(i % 6) + 1})`} ${(all.slice(0, i).reduce((s, c) => s + (c.value ?? 0), 0) / totals.value!) * 100}% ${(all.slice(0, i + 1).reduce((s, c) => s + (c.value ?? 0), 0) / totals.value!) * 100}%`).join(",")})`
                           : undefined,
                     }}
                   >
@@ -856,10 +983,14 @@ export default function App() {
                   </div>
                   <div className="allocation-list">
                     {totals.positions.length ? (
-                      totals.positions.map((p) => (
+                      totals.positions.map((p, i) => (
                         <div key={p.symbol}>
                           <span>
-                            <i style={{ background: p.color }} />
+                            <i
+                              style={{
+                                background: `var(--chart-${(i % 6) + 1})`,
+                              }}
+                            />
                             {p.name}
                           </span>
                           <strong>
@@ -875,72 +1006,93 @@ export default function App() {
                   </div>
                 </section>
               </div>
-              <section className="panel holdings">
+              <section className="panel holdings-preview">
                 <div className="section-heading">
                   <h2>{t.holdings}</h2>
-                  <span className="caption">USD</span>
+                  <a href="#assets">{t.assets} →</a>
                 </div>
-                {totals.positions.length ? (
-                  <div className="table-scroll">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{t.coin}</th>
-                          <th>{t.price}</th>
-                          <th>{t.quantity}</th>
-                          <th>{t.average}</th>
-                          <th>{t.total}</th>
-                          <th>{t.pnl}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {totals.positions.map((p) => (
-                          <tr key={p.symbol}>
-                            <td>
-                              <div className="coin-cell">
-                                <CoinMark symbol={p.symbol} />
-                                <div>
-                                  <strong>{p.name}</strong>
-                                  <small>{p.symbol}</small>
-                                </div>
-                              </div>
-                            </td>
-                            <td>{money(p.price, language)}</td>
-                            <td>{number(p.quantity)}</td>
-                            <td>{money(p.average, language)}</td>
-                            <td className="strong">
-                              {money(p.value, language)}
-                            </td>
-                            <td
-                              className={
-                                p.pnl !== null && p.pnl < 0
-                                  ? "negative"
-                                  : "positive"
-                              }
-                            >
-                              {money(p.pnl, language)}
-                              <small>{percent(p.roi)}</small>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p className="empty-inline">{t.noPositions}</p>
-                )}
+                <div className="holdings-preview-list">
+                  {totals.positions.length ? (
+                    totals.positions.slice(0, 3).map((p) => (
+                      <div className="holding-preview" key={p.symbol}>
+                        <CoinMark symbol={p.symbol} />
+                        <span>
+                          {p.name}
+                          <small>
+                            {number(p.quantity)} {p.symbol}
+                          </small>
+                        </span>
+                        <strong>{money(p.value, language)}</strong>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="empty-inline">{t.noPositions}</p>
+                  )}
+                </div>
               </section>
-              {recent.length > 0 && (
-                <section className="panel">
-                  <div className="section-heading">
-                    <h2>{t.recent}</h2>
-                    <a href="#purchases">{t.viewAll} →</a>
-                  </div>
-                  {purchaseRows(recent.slice(0, 3))}
-                </section>
-              )}
             </>
           )}
+          {page === "assets" && (
+            <section className="panel holdings">
+              <div className="section-heading">
+                <h2>{t.holdings}</h2>
+                <span className="caption">USD</span>
+              </div>
+              {totals.positions.length ? (
+                <div
+                  className="table-scroll"
+                  tabIndex={0}
+                  role="region"
+                  aria-label={t.holdings}
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{t.coin}</th>
+                        <th>{t.price}</th>
+                        <th>{t.quantity}</th>
+                        <th>{t.average}</th>
+                        <th>{t.total}</th>
+                        <th>{t.pnl}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {totals.positions.map((p) => (
+                        <tr key={p.symbol}>
+                          <td>
+                            <div className="coin-cell">
+                              <CoinMark symbol={p.symbol} />
+                              <div>
+                                <strong>{p.name}</strong>
+                                <small>{p.symbol}</small>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{money(p.price, language)}</td>
+                          <td>{number(p.quantity)}</td>
+                          <td>{money(p.average, language)}</td>
+                          <td className="strong">{money(p.value, language)}</td>
+                          <td
+                            className={
+                              p.pnl !== null && p.pnl < 0
+                                ? "negative"
+                                : "positive"
+                            }
+                          >
+                            {money(p.pnl, language)}
+                            <small>{percent(p.roi)}</small>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="empty-inline">{t.noPositions}</p>
+              )}
+            </section>
+          )}
+          {page === "appearance" && <Appearance language={language} />}
           {page === "purchases" && (
             <section className="panel">
               <div className="section-heading">
@@ -977,7 +1129,13 @@ export default function App() {
                 <div className="empty-inline">
                   <h2>{t.empty}</h2>
                   <p>{t.emptyHelp}</p>
-                  <button className="primary" onClick={() => setForm({})}>
+                  <button
+                    className="primary"
+                    onClick={(e) => {
+                      e.currentTarget.focus();
+                      setForm({});
+                    }}
+                  >
                     {t.add}
                   </button>
                 </div>
@@ -1017,7 +1175,12 @@ export default function App() {
                       <strong className="market-price">
                         {money(market?.quotes[symbol]?.price ?? null, language)}
                       </strong>
-                      <button onClick={() => setForm({ symbol })}>
+                      <button
+                        onClick={(e) => {
+                          e.currentTarget.focus();
+                          setForm({ symbol });
+                        }}
+                      >
                         <Icon name="plus" />
                         {t.add}
                       </button>
@@ -1043,7 +1206,12 @@ export default function App() {
                   <button className="primary" onClick={exportBackup}>
                     {t.export}
                   </button>
-                  <button onClick={() => importInput.current?.click()}>
+                  <button
+                    onClick={(e) => {
+                      e.currentTarget.focus();
+                      importInput.current?.click();
+                    }}
+                  >
                     {t.import}
                   </button>
                 </div>
@@ -1139,6 +1307,8 @@ export default function App() {
           close={() => setForm(null)}
           t={t}
           language={language}
+          market={market}
+          quoteUnavailable={stale || marketError}
         />
       )}
       {deleting && (

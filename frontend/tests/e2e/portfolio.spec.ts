@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("folio.language"))
+      localStorage.setItem("folio.language", "en");
+  });
   await page.route("https://api.coinbase.com/**", (route) =>
     route.fulfill({
       json: {
@@ -76,15 +80,13 @@ test("purchase → value → edit → reload → delete → undo → backup", as
     .getByRole("button", { name: "Export backup", exact: true })
     .click();
   expect((await download).suggestedFilename()).toMatch(/^folio-.*\.json$/);
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "folio.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({ version: 1, purchases: [], snapshots: [] }),
-      ),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "folio.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({ version: 1, purchases: [], snapshots: [] }),
+    ),
+  });
   await page.getByRole("button", { name: "Replace with backup" }).click();
   await page.getByRole("link", { name: "Overview" }).click();
   await expect(
@@ -104,13 +106,11 @@ test("market failure, cached data and invalid imports stay honest", async ({
     ),
   ).toBeVisible();
   await page.getByRole("link", { name: "Your data" }).click();
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "bad.json",
-      mimeType: "application/json",
-      buffer: Buffer.from("{bad}"),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "bad.json",
+    mimeType: "application/json",
+    buffer: Buffer.from("{bad}"),
+  });
   await expect(page.getByRole("alert")).toContainText(
     "not a valid Folio backup",
   );

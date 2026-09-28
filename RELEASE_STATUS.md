@@ -1,42 +1,102 @@
-# Folio release status — 2026-09-12
+# Folio — проверка задания 08_FOLIO, 28.09.2026
 
-## Released and verified
+## Результат
 
-- Public production: https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
-- Anonymous HTTP request returns 200 and the Folio document without an
-  authorization header, cookie or sign-in session.
-- Strict TypeScript and ESLint pass.
-- Nine domain/provider tests pass: fees, weighted averages, missing quotes,
-  zero cost, validation, backups, observations and provider fallback.
-- Four deterministic browser scenarios pass: purchase/edit/reload/delete/undo/
-  backup flow, cached failure handling, invalid import, Russian mobile UI and
-  axe WCAG A/AA checks at 1440/800/390 widths plus the purchase dialog.
-- Production build succeeds. Main JavaScript is approximately 181 kB raw /
-  59 kB gzip, CSS approximately 25 kB raw / 8.5 kB gzip; fonts are self-hosted.
-- npm audit reports zero vulnerabilities.
-- Sites version 2 deployed successfully from source commit
-  `e066a5fa52710015174f057fb68dfeb52de10aa1`.
-- The seven legacy JS/JSX files listed in PROVENANCE.md have no active imports,
-  were removed, and remain recoverable from commit `3d903cc`.
-- LICENSE, THIRD_PARTY_NOTICES.md and packaged third-party license texts remain.
-- GitHub contains the release source, CI, documentation and six sanitized QA
-  screenshots. The remote workflow result is checked after publication.
+В текущем `godaylor/crypto-portfolio` реализованы все девять тем и исправлена
+покупка из рынка. Код расчётов, формат покупок, API и ключи хранения сохранены.
+Публикация этой версии ещё не подтверждена; результат проверки сайта будет
+добавлен сюда после развёртывания.
 
-No other PetProjects processes, containers, Docker networks or volumes were
-modified. Local browser QA used a dedicated free port and only its own preview
-process was stopped.
+## Выполнено
 
-## Readiness
+- Premium Dark, Apple Light, Blue Fintech, Dark Glass, Light Glass, iOS Glass,
+  Mocha Code, ChatGPT Dark и Graphite доступны в оформлении и селекторе темы.
+- Dark Glass использует прозрачные панели, blur, тонкие светлые грани,
+  сине-фиолетовые градиенты и свечение графика. Основной ориентир — приложенный
+  Folio_Dark_Glass_reference.png; учтены исторические палитры, а не откат к старому коду.
+- Light Glass отличается от непрозрачной Apple Light. В iOS Glass стекло
+  применяется к навигации, а данные лежат на плотных поверхностях. Mocha — тёплая;
+  ChatGPT Dark — монохромная; Graphite — холодная графитовая.
+- Общие семантические токены оформляют панели, графики, формы, диалоги,
+  native select/date, hover/focus, ошибки и пустые состояния. Есть opaque fallback
+  без backdrop-filter и при reduced-transparency, а также reduced-motion.
+- Старые семь theme IDs и ключ `crypto-portfolio-theme` сохранены. Новые темы
+  не меняют `folio.portfolio.v1`, `folio.market.v1` и `folio.language`.
+- «Рынок → Добавить покупку» независимо переносит монету и свежую ценовую
+  подсказку USD. Цена редактируется; смена даты и поздний API-ответ её не заменяют.
+  При недоступной/устаревшей котировке предлагается ручной ввод, без выдуманного 0.
+- Запятая/точка, комиссия, итоговая стоимость, очень малые дроби и повторное
+  сохранение проверяются. Форматирование применяется только к новой подсказке,
+  а существующие значения сохраняют точность JavaScript Number.
+- Обзор содержит сводку, графики и три позиции; полные активы и история покупок
+  находятся в отдельных разделах. Добавлено «Оформление», без фиктивной аналитики,
+  чата, платежей, тура или чужого брендинга. Русский — по умолчанию, EN сохранён.
+- Исправлены контраст кнопки Mocha при hover, фокус после Escape в WebKit,
+  начальный фокус формы и видимый фокус внутренних частей native datepicker.
 
-| Category | Score | Evidence |
-| --- | ---: | --- |
-| Concept | 95% | Independent manual holdings tracker with a clear scope |
-| UX/UI | 94% | RU/EN, responsive views, real forms/states and tested accessibility |
-| Core functionality | 96% | CRUD, quotes/fallback, P&L/ROI, allocation, observations and backups |
-| Quality/security | 95% | Types, lint, tests, browser checks, production build and clean audit |
-| Backend/data/auth | 92% | Deliberate local-only persistence; no server or account required |
-| Public production | 96% | Public HTTPS release and anonymous response verified |
-| GitHub/docs/licenses | 95% | Published source, QA evidence, CI, provenance and notices |
-| Portfolio handoff | 96% | Public links, production evidence and six deployed screenshots |
+## Проверки и границы доказательств
 
-Arithmetic mean: **94.875%** (759 ÷ 8), displayed rounded as **95%**.
+- TypeScript, ESLint, 11 unit-тестов и production build: успешно.
+- Chromium: основной прогон 25/25; финальные изменения — 8/8 (пять сценариев
+  цены и три стеклянные темы). Firefox: основной прогон 24/24 и финальные 8/8.
+- WebKit: 22 сценария прошли сразу; два дефекта контраста стеклянной навигации
+  исправлены, после чего финальные 8/8 прошли. Все девять тем проверены.
+- Chromium-specific media emulation не запускается в Firefox/WebKit. Live
+  smoke включается отдельно; пропуски этих проверок в обычном прогоне явные.
+- Для каждой темы: обзор, активы, рынок, история, оформление/меню, данные,
+  заполненный диалог и ошибка формы на 1440 и 390 CSS px; axe WCAG A/AA;
+  графики; переключение в открытом диалоге; reload и сохранность покупок.
+- Отдельно: CRUD, удаление/undo, JSON export/import, ошибочный импорт, fallback
+  API и cache, пустая/устаревшая котировка, поздний ответ, комиссия и total,
+  повторный submit, сохранение малых дробей, unreadable storage и ошибка записи.
+- Клавиатура: Tab/Shift+Tab, Enter, Escape, удержание фокуса в диалоге и возврат
+  к кнопке. Проверены списки 0/1/2/24 покупки, RU/EN и Назад/Вперёд.
+- Ширины: 320/360/390/430/649/650/651/768/949/950/951/1024/1199/1200/1201/
+  1280/1440/1920/2560/3840/5120/7680 CSS px. Горизонтальный скролл разрешён
+  только таблицам; глобальный overflow:hidden не добавлен.
+- Reflow при 640×450 и 320×225 эквивалентен 200%/400% для окна 1280×900.
+  Это проверка CSS-размеров, не заявление о физическом устройстве или реальном
+  увеличении браузера. Широкие экраны и WebKit — эмуляция, не телевизор/iPhone.
+- reduced-transparency/reduced-motion проверены в Chromium через media emulation;
+  fallback без backdrop-filter проверен по CSS. Реальные старые браузеры,
+  физические сенсорные устройства и исследование с независимыми пользователями
+  не тестировались.
+
+## Визуальные свидетельства
+
+Реальные снимки локального приложения, а не макеты. В них только изолированные
+QA-покупки, контролируемые котировки и тестовые наблюдения, не данные владельца.
+Ни записи, ни котировки QA не входят в runtime. Контактные листы уменьшены;
+мобильный лист показывает viewport, форма ошибки прокручена к действиям.
+
+- [Все девять тем — desktop](docs/screenshots/themes/contact-desktop.jpg)
+- [Все девять тем — mobile](docs/screenshots/themes/contact-mobile.jpg)
+- [Все девять тем — заполненная форма](docs/screenshots/themes/contact-forms.jpg)
+- [Dark Glass](docs/screenshots/themes/dark-glass-desktop.jpg)
+- [Light Glass](docs/screenshots/themes/light-glass-desktop.jpg)
+- [Мобильная форма и ошибка](docs/screenshots/themes/dark-glass-mobile-form.jpg)
+
+Полные промежуточные снимки остаются в игнорируемой `qa-browser-smoke/`;
+повторяемые сценарии — `frontend/tests/e2e/`. Старые шесть live-снимков в
+`docs/screenshots/` относятся к предыдущей версии до их повторного захвата.
+
+## Изоляция, происхождение и публикация
+
+Работа выполнялась только в `E:/Projects/PetProjects/08-crypto-portfolio`,
+remote `https://github.com/godaylor/crypto-portfolio.git`, ветка `main`.
+Использованы проверенные свободные локальные порты 5197 и 5198. Другие
+PetProjects, процессы, Docker-контейнеры/сети/volumes не изменялись.
+
+Изучены точки истории 6ad56d5/e5c938a/eec9fc9/7f8d5d9 и сокращённый
+Folio_Visual_References_v3.zip. Исторический Dark Glass и приложенный PNG
+различаются: восстановлена совместимость ID и объединено согласованное
+оформление, без утверждения о нахождении неизвестной ранней версии.
+
+LICENSE, THIRD_PARTY_NOTICES.md и обязательные notices сохранены. Семь
+legacy-файлов были удалены в предыдущей работе; в этой задаче их не удаляли.
+Они по-прежнему восстанавливаются из `3d903cc`, как описано в PROVENANCE.md.
+
+Существующий адрес: https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
+Публикация выполняется в существующий Sites-проект с публичным доступом,
+без создания ресурсов или изменения тарифа. Точный commit и результат
+анонимной проверки будут зафиксированы после публикации.

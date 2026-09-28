@@ -10,7 +10,7 @@ hold, what they paid, and what it is worth now.
 **Hosted app:** https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
 (public; no account required).
 
-![Folio portfolio overview](docs/screenshots/portfolio-desktop.png)
+![Folio Dark Glass overview](docs/screenshots/themes/dark-glass-desktop.jpg)
 
 [Mobile RU](docs/screenshots/portfolio-mobile-ru.png) · [Purchase ledger](docs/screenshots/purchases-desktop.png) · [Market](docs/screenshots/market-desktop.png)
 
@@ -30,6 +30,14 @@ hold, what they paid, and what it is worth now.
   validation and replacement confirmation, and CSV purchase export.
 - English/Russian interface, mobile navigation, keyboard-operated dialogs,
   empty/loading/error states and recovery download for corrupt data.
+- Russian by default; an existing English preference is preserved. Overview,
+  My assets, Market, Purchases, Your data and Appearance have separate views.
+- Nine persistent themes: Premium Dark, Apple Light, Blue Fintech, Dark Glass,
+  Light Glass, iOS Glass, Mocha Code, ChatGPT Dark and Graphite. Glass themes
+  include opaque fallbacks and respect reduced transparency/motion.
+- Market → Add purchase selects the clicked coin and suggests its fresh USD
+  quote. The price stays editable; dates and late API responses never overwrite
+  manual input. Comma/dot decimals and purchase fees are supported.
 
 This is a manual holdings tracker, not an exchange. It does not execute trades,
 connect wallets, model sales, calculate taxes or offer investment recommendations.
@@ -43,7 +51,15 @@ connect wallets, model sales, calculate taxes or offer investment recommendation
 5. Use **Your data → Export backup** before clearing browser data or changing devices.
 
 New visitors always start with an empty portfolio. Documentation screenshots
-use QA purchases and real fetched prices; these purchases are not bundled.
+use isolated QA purchases, never bundled into the app. Theme comparisons use
+controlled test quotes; live smoke screenshots use fetched quotes. See
+[release evidence and all nine themes](RELEASE_STATUS.md).
+
+Appearance uses the legacy `crypto-portfolio-theme` key and preserves all seven
+historical theme IDs. Purchases (`folio.portfolio.v1`), quote cache
+(`folio.market.v1`) and language (`folio.language`) keep their existing formats.
+Theme changes never migrate or reset portfolio data. Unavailable storage shows
+a warning; export backups before clearing browser storage or moving devices.
 
 ## Architecture and stack
 
@@ -105,6 +121,10 @@ npm run e2e
 Windows E2E uses installed Google Chrome. Linux CI uses Playwright Chromium.
 Browser tests use mocked quotes to verify arithmetic, failure handling and
 persistence; production smoke tests use real providers.
+Set `FOLIO_TEST_URL` for the current project-specific port. For other engines,
+install Playwright Firefox/WebKit and set `FOLIO_BROWSER=firefox` or `webkit`.
+Set `FOLIO_QA_DIR` to keep each engine's screenshots separate. `FOLIO_LIVE_QA=1`
+enables the real-provider smoke in an isolated browser context.
 
 ## Deployment
 

@@ -25,6 +25,10 @@ This is not a claim of authorship of React, tooling, fonts or historical code.
 6. Versioned browser persistence, cross-tab updates, corrupt-data protection.
 7. Validated JSON backup/restore and CSV purchase exports.
 8. English/Russian interface and keyboard/mobile accessibility.
+9. Nine persistent themes, including Dark/Light/iOS Glass, with reduced-motion
+   and opaque fallbacks. Overview and full holdings have separate pages.
+10. Market purchase coin/quote prefill, comma/dot input and protection against
+    late quote overwrites and duplicate submissions.
 
 ## Actual stack and architecture
 
@@ -44,26 +48,18 @@ No cloud sync, historical backfill, sales accounting or trading is claimed.
 - GitHub: https://github.com/godaylor/crypto-portfolio
 - Hosted URL: https://folio-crypto-godaylor.maxeemzhuparov.chatgpt.site
 - Public access: enabled; no account is required.
-- Hosted release: Sites production release, publicly reachable and verified on
-  2026-09-12. The exact version and source commit are recorded in RELEASE_STATUS.md.
-- Production verification: real HTTPS browser smoke passed using existing
-  owner-only test access. Real quotes, three purchase lots, calculated holdings,
-  reload persistence, purchases/market views, RU mobile layout and zero page
-  errors verified. Screenshots below were recaptured on this hosted build.
-- Anonymous access check: HTTP 200 without authorization headers, cookies or a
-  sign-in session. The public browser scenario is rerun after each production publish.
-- GitHub release: source, documentation, licensing files and six sanitized QA
-  screenshots are published in `godaylor/crypto-portfolio`.
-- Local verification: typecheck, lint, 9 domain/provider tests, browser CRUD,
-  persistence, backups, offline/error paths, mobile RU, and axe contrast checks.
-- Dependency audit after compatible updates: 0 vulnerabilities.
+- Current release, exact source/publication state and evidence:
+  [RELEASE_STATUS.md](RELEASE_STATUS.md). It distinguishes local mocked scenarios
+  from anonymous hosted verification and live provider checks.
+- Source, tests, licensing and sanitized QA evidence belong to
+  `godaylor/crypto-portfolio`; there is no portfolio data in the shipped bundle.
 
 ## Screenshots
 
-Best lead image: `docs/screenshots/portfolio-desktop.png`.
-Also use `portfolio-mobile-ru.png`, `purchases-desktop.png`,
-`market-desktop.png`, `first-run-desktop.png`, and `purchase-form-mobile-ru.png`
-from that directory. These contain QA purchases and real fetched quotes.
+Current theme lead: `docs/screenshots/themes/dark-glass-desktop.jpg`.
+Three contact sheets in that directory compare all nine themes on desktop,
+mobile and forms using controlled QA data. The six earlier live-provider images
+in `docs/screenshots/` are dated separately in the release report.
 
 ## Licensing / provenance
 

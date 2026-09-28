@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("core pages and purchase dialog have no serious accessibility violations", async ({
   page,
 }) => {
+  await page.addInitScript(() => localStorage.setItem("folio.language", "en"));
   await page.route("https://api.coinbase.com/**", (route) => route.abort());
   await page.route("https://api.kraken.com/**", (route) => route.abort());
   for (const width of [1440, 800, 390]) {
